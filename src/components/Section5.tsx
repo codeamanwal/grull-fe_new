@@ -59,7 +59,7 @@ function Section5() {
             position: "relative",
           }}
         >
-          <Typography sx={{ color: "white",typography:{xs:"font_12_600",md:"font_20_600"},textAlign:{xs:"left",md:""} }}>
+          <Typography sx={{ color: "white",typography:{xs:"font_12_600",md:"font_20_600"},textAlign:{xs:"left",md:""},padding:{xs:'8px 0',md:'0'} }}>
             Was super skeptical about another freelancing platform, but Grull
             was a game-changer for me. Got matched with gigs that actually fit
             my skill set and the project management bit is smooth. Also, didn’t

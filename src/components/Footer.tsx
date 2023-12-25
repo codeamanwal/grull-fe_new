@@ -9,6 +9,7 @@ import { footerLinks } from "../helper/constant";
 function Footer() {
   const { dustyOrange } = shades;
 
+
   return (
     <Grid
       sx={{
@@ -63,16 +64,19 @@ function Footer() {
                 src={twitterIcon}
                 alt="twitterIcon"
                 style={{ height: "32px", width: "32px", margin: "0 8px" }}
+                onClick={() => window.open(` https://twitter.com/Grull_work`)}
               />
               <img
                 src={linkedInIcon}
                 alt="linkedInIcon"
                 style={{ height: "32px", width: "32px", margin: "0 8px" }}
+                onClick={() => window.open('https://www.linkedin.com/company/grull-work/')}
               />
               <img
                 src={instaIcon}
                 alt="linkedInIcon"
                 style={{ height: "32px", width: "32px", margin: "0 8px" }}
+                onClick={() => window.open(` https://www.instagram.com/grull.work?igsh=MmVlMjlkMTBhMg==`)}
               />
             </Box>
           </Box>

@@ -1,11 +1,82 @@
-import { Box, Grid, Input, Typography, useMediaQuery } from "@mui/material";
-import React from "react";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Grid,
+  Input,
+  Snackbar,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import React, { useState } from "react";
 import { shades } from "../helper/shades";
 
 function Section18() {
   const { lavender, black, white } = shades;
+  const [submitBtnText, setSubmitBtnText] = useState("Submit");
+  const [alertText, setAlertText] = useState("");
+  const [data, setData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    message: "",
+    helpOption: "",
+  });
 
   const isDesktop = useMediaQuery("(min-width:600px)");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setData({ ...data, [e.target.name]: e.target.value });
+  const updateMessage = (e: any) => {
+    setData({ ...data, message: e.target.value });
+  };
+  const updateHandleOption = (e: any) => {
+    setData({ ...data, helpOption: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    if (data.firstName === "") {
+      setAlertText("First Name");
+
+      setTimeout(() => {
+        setAlertText("");
+      }, 3000);
+      return;
+    }
+    if (data.lastName === "") {
+      setAlertText("Last Name");
+
+      setTimeout(() => {
+        setAlertText("");
+      }, 3000);
+      return;
+    }
+    if (data.email === "") {
+      setAlertText("Email Address");
+
+      setTimeout(() => {
+        setAlertText("");
+      }, 3000);
+      return;
+    }
+    try {
+      const res = await fetch(
+        "https://sheet.best/api/sheets/e47f0ab0-f6c0-430d-b794-7fa11e96e654",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      if (res.ok) {
+        setSubmitBtnText("Request Sent");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Grid
@@ -14,8 +85,23 @@ function Section18() {
         width: "100vw",
         padding: "24px",
         display: "grid",
+        position: "relative",
       }}
     >
+      {alertText ? (
+        <Alert
+          severity="error"
+          sx={{
+            position: "absolute",
+            top: "16px",
+            right: "16px",
+            borderRadius: "12px",
+          }}
+        >
+          <AlertTitle>Please enter {alertText}</AlertTitle>
+        </Alert>
+      ) : null}
+
       <Grid sx={{ width: { xs: "100%", md: "90%" }, margin: "auto" }}>
         <Box
           sx={{
@@ -53,6 +139,7 @@ function Section18() {
             <Input
               type="text"
               placeholder="First Name*"
+              name="firstName"
               sx={{
                 background: "white",
                 height: { xs: "24px", md: "64px" },
@@ -60,10 +147,13 @@ function Section18() {
                 padding: { xs: "16px 12px", md: "8px 40px" },
                 typography: { xs: "font_12_500", md: "font_20_400" },
               }}
+              value={data.firstName}
+              onChange={handleChange}
             />
             <Input
               type="text"
               placeholder="Last Name*"
+              name="lastName"
               sx={{
                 background: "white",
                 height: { xs: "24px", md: "64px" },
@@ -71,6 +161,8 @@ function Section18() {
                 padding: { xs: "16px 12px", md: "8px 40px" },
                 typography: { xs: "font_12_500", md: "font_20_400" },
               }}
+              value={data.lastName}
+              onChange={handleChange}
             />
           </Box>
           <Box
@@ -85,6 +177,7 @@ function Section18() {
               <Input
                 type="text"
                 placeholder="Email*"
+                name="email"
                 sx={{
                   background: "white",
                   height: { xs: "24px", md: "64px" },
@@ -93,6 +186,8 @@ function Section18() {
                   typography: { xs: "font_12_500", md: "font_20_400" },
                   width: "100%",
                 }}
+                value={data.email}
+                onChange={handleChange}
               />
               <Box sx={{ margin: { xs: "8px 0", md: "24px 0" } }}>
                 <textarea
@@ -108,6 +203,9 @@ function Section18() {
                     width: "100%",
                     display: isDesktop ? "none" : "block",
                   }}
+                  name="message"
+                  value={data.message}
+                  onChange={updateMessage}
                 />
 
                 <Typography
@@ -130,14 +228,17 @@ function Section18() {
                   <Box
                     sx={{ display: "flex", alignItems: "center", gap: "12px" }}
                   >
-                    <Input
+                    <input
                       type="radio"
-                      sx={{
+                      style={{
                         background: "white",
                         height: isDesktop ? "20px" : "8px",
                         width: isDesktop ? "20px" : "8px",
                         borderRadius: "50%",
                       }}
+                      checked={data.helpOption === "portfolio"}
+                      value="portfolio"
+                      onClick={updateHandleOption}
                     />
                     <Typography
                       sx={{
@@ -151,14 +252,17 @@ function Section18() {
                   <Box
                     sx={{ display: "flex", alignItems: "center", gap: "12px" }}
                   >
-                    <Input
+                    <input
                       type="radio"
-                      sx={{
+                      style={{
                         background: "white",
                         height: isDesktop ? "20px" : "8px",
                         width: isDesktop ? "20px" : "8px",
                         borderRadius: "50%",
                       }}
+                      checked={data.helpOption === "course"}
+                      value="course"
+                      onClick={updateHandleOption}
                     />
                     <Typography
                       sx={{
@@ -172,14 +276,17 @@ function Section18() {
                   <Box
                     sx={{ display: "flex", alignItems: "center", gap: "12px" }}
                   >
-                    <Input
+                    <input
                       type="radio"
-                      sx={{
+                      style={{
                         background: "white",
                         height: isDesktop ? "20px" : "8px",
                         width: isDesktop ? "20px" : "8px",
                         borderRadius: "50%",
                       }}
+                      value="jobPosting"
+                      checked={data.helpOption === "jobPosting"}
+                      onClick={updateHandleOption}
                     />
                     <Typography
                       sx={{
@@ -193,14 +300,16 @@ function Section18() {
                   <Box
                     sx={{ display: "flex", alignItems: "center", gap: "12px" }}
                   >
-                    <Input
+                    <input
                       type="radio"
-                      sx={{
+                      checked={data.helpOption === "other"}
+                      style={{
                         background: "white",
                         height: isDesktop ? "20px" : "8px",
                         width: isDesktop ? "20px" : "8px",
                         borderRadius: "50%",
                       }}
+                      onClick={updateHandleOption}
                     />
                     <Typography
                       sx={{
@@ -245,8 +354,9 @@ function Section18() {
                 margin: { xs: "12px 0", md: "" },
                 padding: { xs: "12px 0", md: "16px 0" },
               }}
+              onClick={handleSubmit}
             >
-              Submit
+              {submitBtnText}
             </Box>
           </Box>
         </Box>

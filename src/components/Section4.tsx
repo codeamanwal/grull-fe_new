@@ -246,7 +246,7 @@ function Section4() {
                 display: { xs: "block", md: "none" },
               }}
             >
-              Begin Your Journey
+              Start Your Journey
             </Box>
           </Box>
         </Box>

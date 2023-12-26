@@ -3,10 +3,12 @@ import React from "react";
 import { shades } from "../helper/shades";
 import section11AcademyCircle from "../assets/section11AcademyCircle.png";
 import section11AcademyCircleMobile from "../assets/section11AcademyCircleMobile.png";
+import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 
 function Section11() {
   const { lavender, white } = shades;
   const isDesktop = useMediaQuery("(min-width:600px)");
+  const scrollToSection = useScrollToContactUsHook();
 
   return (
     <Grid
@@ -65,7 +67,9 @@ function Section11() {
             padding:{xs:"12px 0" ,md:"16px 0"},
             typography:{xs:"font_12_600", md:"font_20_700"},
             textAlign: "center",
+            cursor:'pointer'
           }}
+          onClick={scrollToSection}
         >
           Become Mentor
         </Box>
@@ -79,7 +83,9 @@ function Section11() {
             padding:{xs:"12px 0" ,md:"16px 0"},
             typography:{xs:"font_12_600", md:"font_20_700"},
             textAlign: "center",
+            cursor:'pointer'
           }}
+          onClick={scrollToSection}
         >
          Talk to Mentor
         </Box>

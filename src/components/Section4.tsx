@@ -12,10 +12,11 @@ import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section4Animation.json";
 import * as animationData2 from "../jsonAnimations/section4Animation2.json";
 import section4LeftArrow  from "../assets/section4LeftArrow.png"
+import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 
 function Section4() {
   const { lavender, royalBlue } = shades;
-
+  const scrollToSection = useScrollToContactUsHook();
   const isDesktop = useMediaQuery("(min-width:600px)");
 
   const defaultOptions1 = {
@@ -132,7 +133,9 @@ function Section4() {
                 width: "250px",
                 background: lavender,
                 textAlign: "center",
+                cursor:'pointer'
               }}
+              onClick={scrollToSection}
             >
               Explore Now
             </Typography>
@@ -184,7 +187,9 @@ function Section4() {
                 textAlign: "center",
                 margin: "12px 0 !important",
                 display: "block",
+                cursor:'pointer'
               }}
+              onClick={scrollToSection}
             >
               Explore Now
             </Box>
@@ -244,7 +249,9 @@ function Section4() {
                 padding: "12px 0",
                 margin: "auto !important",
                 display: { xs: "block", md: "none" },
+                cursor:'pointer'
               }}
+              onClick={scrollToSection}
             >
               Start Your Journey
             </Box>
@@ -315,9 +322,11 @@ function Section4() {
                 padding: "12px 0",
                 marginTop: "48px",
                 display: { xs: "none", md: "block" },
+                cursor:'pointer'
               }}
+              onClick={scrollToSection}
             >
-              Begin Your Journey
+              Start Your Journey
             </Box>
           </Box>
         </Box>

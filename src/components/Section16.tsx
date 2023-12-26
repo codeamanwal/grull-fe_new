@@ -8,6 +8,7 @@ import crossIcon from "../assets/crossIcon.svg";
 import section6GreenTicks from "../assets/section6GreenTicks.svg";
 import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section16Animation.json";
+import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 
 function Section16() {
   const {
@@ -18,6 +19,7 @@ function Section16() {
   } = shades;
 
   const isDesktop = useMediaQuery("(min-width:600px)");
+  const scrollToSection = useScrollToContactUsHook();
 
   const defaultOptions = {
     loop: true,
@@ -182,7 +184,9 @@ function Section16() {
               padding:{xs:"12px 0", md:"20px 0"},
               margin: "24px auto",
               typography:{xs:"font_12_600", md:"font_18_600"},
+              cursor:'pointer'
             }}
+            onClick={scrollToSection}
           >
             Choose Plan
           </Box>
@@ -292,7 +296,9 @@ function Section16() {
               padding:{xs:"12px 0", md:"20px 0"},
               margin: "24px auto",
               typography:{xs:"font_12_600", md:"font_18_600"},
+              cursor:'pointer'
             }}
+            onClick={scrollToSection}
           >
             Choose Plan
           </Box>

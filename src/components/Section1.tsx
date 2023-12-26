@@ -6,13 +6,13 @@ import section1TextCircle from "../assets/section1TextCircle.svg";
 import section1Landing from "../assets/section1Landing.png";
 import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section1Animation.json";
-import 'animate.css';
-
+import "animate.css";
+import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 
 function Section1() {
   const { dustyOrange, lavender, black, white, silverTree, racingGreen } =
     shades;
-
+  const scrollToSection = useScrollToContactUsHook();
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -99,12 +99,14 @@ function Section1() {
               typography: { xs: "font_12_700", md: "font_20_700" },
               color: black,
               width: { xs: "120px", md: "200px" },
+              cursor:'pointer'
               //   "&:hover": {
               //     background: dustyOrange,
               //     color: white,
               //     border: `1px solid ${white}`,
               //   },
             }}
+            onClick={scrollToSection}
           >
             Post a Project
           </Button>
@@ -118,18 +120,23 @@ function Section1() {
               typography: { xs: "font_12_700", md: "font_20_700" },
               borderRadius: "16px",
               width: { xs: "120px", md: "200px" },
+              cursor:'pointer'
               //   "&:hover": {
               //     border: `1px solid ${black}`,
               //     background: white,
               //     color:black
               //   },
             }}
+            onClick={scrollToSection}
           >
             Find Work
           </Button>
         </Box>
       </Box>
-      <Box sx={{ position: "relative" }} className="animate__animated animate__fadeInRight">
+      <Box
+        sx={{ position: "relative" }}
+        className="animate__animated animate__fadeInRight"
+      >
         <Box
           sx={{
             width: { xs: "90%", md: "110%" },
@@ -152,7 +159,7 @@ function Section1() {
        
           }}
         /> */}
-          <Lottie options={defaultOptions} height={'100%'} width={'110%'} />
+          <Lottie options={defaultOptions} height={"100%"} width={"110%"} />
         </Box>
       </Box>
     </Grid>

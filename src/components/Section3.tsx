@@ -4,11 +4,13 @@ import { shades } from "../helper/shades";
 import arrowRight from "../assets/arrowRight.svg";
 import { section3CardsArr } from "../helper/constant";
 import { useIsInViewport } from "../customHooks/useIsInViewPort";
+import { useNavigate } from "react-router-dom";
 
 function Section3() {
   const { black } = shades;
   const ref = useRef(null);
   const isIntersecting = useIsInViewport(ref);
+  const navigate = useNavigate()
 
   return (
     <Grid
@@ -37,7 +39,8 @@ function Section3() {
           </Typography>
           <Typography
             variant="font_26_600"
-            sx={{ display: { xs: "none", md: "block" } }}
+            sx={{ display: { xs: "none", md: "block" },cursor:'pointer' }}
+            onClick={() => navigate('/coming-soon')}
           >
             View all categories
             <img

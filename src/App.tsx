@@ -19,9 +19,26 @@ import Footer from "./components/Footer";
 import Section4 from "./components/Section4";
 import Section15 from "./components/Section15";
 import Navbar from "./components/Navbar";
-
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 function App() {
+  const { hash,pathname } = useLocation();
+
+  function scrollToSection(id: string) {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+      window.history.replaceState(null, "", `#${id}`);
+    }
+  }
+
+  useEffect(() => {
+    if (hash) {
+      scrollToSection(hash.replace("#", ""));
+    }
+  }, [hash]);
+
   return (
     <Grid sx={{ overflow: "hidden" }}>
       <Navbar />

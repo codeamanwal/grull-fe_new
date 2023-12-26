@@ -5,9 +5,11 @@ import twitterIcon from "../assets/twitter.svg";
 import linkedInIcon from "../assets/linkedIn.svg";
 import instaIcon from "../assets/instaIcon.svg";
 import { footerLinks } from "../helper/constant";
+import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 
 function Footer() {
   const { dustyOrange } = shades;
+  const scrollToSection = useScrollToContactUsHook()
 
 
   return (
@@ -135,7 +137,9 @@ function Footer() {
               color: "white",
               textAlign: "center",
               margin: { xs: "24px 0", md: "56px 0 0 0" },
+              cursor:'pointer'
             }}
+            onClick={scrollToSection}
           >
             Hire a Designer
           </Box>

@@ -1,6 +1,6 @@
 import { Box, Grid, Input, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
-import section19Character from "../assets/section19Character.png";
+import section19Character from "../assets/section19Character.webp";
 import { shades } from "../helper/shades";
 
 function Section19() {

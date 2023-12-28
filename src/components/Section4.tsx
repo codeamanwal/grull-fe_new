@@ -1,14 +1,12 @@
-import { Box, Button, Grid, Typography, useMediaQuery } from "@mui/material";
-import React from "react";
-import section4Character1 from "../assets/section4Character1.png";
+import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
+import section4Character1 from "../assets/section4Character1.webp";
 import section4Character1Mobile from "../assets/section4Character1Mobile.png";
-import section4Character2 from "../assets/section4Character2.png";
+import section4Character2 from "../assets/section4Character2.webp";
 import checkIconWhite from "../assets/checkIconWhite.svg";
 import { shades } from "../helper/shades";
-import { section4Cards, section8FeatureArr } from "../helper/constant";
+import { section4Cards } from "../helper/constant";
 import section4ArrowMobile1 from "../assets/section4ArrowMobile1.png";
 import section4ArrowMobile2 from "../assets/section4ArrowMobile2.svg";
-import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section4Animation.json";
 import * as animationData2 from "../jsonAnimations/section4Animation2.json";
 import section4LeftArrow  from "../assets/section4LeftArrow.png"
@@ -36,8 +34,8 @@ function Section4() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "5fr 5fr" },
-          // padding: "24px 0 0 0",
           position: "relative",
+          marginLeft:'24px'
         }}
       >
         <Box
@@ -45,6 +43,7 @@ function Section4() {
             display: "grid",
             placeContent: "center",
             position: "relative",
+
           }}
         >
           <Box
@@ -123,6 +122,7 @@ function Section4() {
               height: "140px",
               justifyContent: "space-between",
               alignItems: "flex-end",
+              borderBottom:'1px solid black'
             }}
           >
             <Typography
@@ -133,13 +133,16 @@ function Section4() {
                 width: "250px",
                 background: lavender,
                 textAlign: "center",
-                cursor:'pointer'
+                cursor:'pointer',
+                position:'absolute',
+                bottom:'-20px',
+                left:0,
+
               }}
               onClick={scrollToSection}
             >
               Explore Now
             </Typography>
-            <img src={section4LeftArrow} alt="section4LeftArrow" style={{height:"32px",width:"320px"}}/>
           </Box>
         </Box>
         <Box
@@ -148,7 +151,7 @@ function Section4() {
             margin: { xs: "auto", md: "24px 0" },
           }}
         >
-          {/* <img
+          <img
             src={isDesktop ? section4Character1 : section4Character1Mobile}
             alt="section4Character1"
             style={{
@@ -158,8 +161,8 @@ function Section4() {
               position: "relative",
               display: "block",
             }}
-          /> */}
-          <Lottie options={defaultOptions1} height={"100%"} width={"100%"} />
+          />
+          {/* <Lottie options={defaultOptions1} height={"100%"} width={"100%"} /> */}
 
           <Box
             sx={{
@@ -210,7 +213,7 @@ function Section4() {
           }}
         >
           <Box sx={{ width: "80%", margin: "auto" }}>
-            {/* <img
+            <img
               src={section4Character2}
               alt="section4Character2"
               style={{
@@ -219,8 +222,8 @@ function Section4() {
                 margin: "auto",
                 display: "block",
               }}
-            /> */}
-            <Lottie options={defaultOptions2} height={"100%"} width={"100%"} />
+            />
+            {/* <Lottie options={defaultOptions2} height={"100%"} width={"100%"} /> */}
             <Box
               sx={{
                 display: { xs: "grid", md: "none" },

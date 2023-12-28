@@ -2,7 +2,7 @@ import { Box, Card, Grid, Typography } from "@mui/material";
 import { shades } from "../helper/shades";
 import section6Sticks from "../assets/section6Sticks.png";
 import { section6Counts } from "../helper/constant";
-import section6SocialMedia from "../assets/section6SocialMedia.png";
+import section6SocialMedia from "../assets/section6SocialMedia.webp";
 import section6GreenTicks from "../assets/section6GreenTicks.svg";
 
 function Section6() {

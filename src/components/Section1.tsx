@@ -3,7 +3,7 @@ import React from "react";
 import { shades } from "../helper/shades";
 import section1Text from "../assets/section1Text.svg";
 import section1TextCircle from "../assets/section1TextCircle.svg";
-import section1Landing from "../assets/section1Landing.png";
+import section1Landing from "../assets/section1Landing.webp";
 import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section1Animation.json";
 import "animate.css";
@@ -134,21 +134,21 @@ function Section1() {
         </Box>
       </Box>
       <Box
-        sx={{ position: "relative" }}
+        sx={{ position:"relative" }}
         className="animate__animated animate__fadeInRight"
       >
         <Box
           sx={{
-            width: { xs: "90%", md: "110%" },
+            width: { xs: "90%", md: "108%" },
             margin: { xs: "24px 0 0 0" },
-            // position:'absolute',
-            // left:'-100px',
-            // right:'200px',
-            // top:0,
-            // bottom:'-100px'
+            position:{md:'absolute'},
+            left:'-100px',
+            right:'200px',
+            top:0,
+            bottom:'-100px'
           }}
         >
-          {/* <img
+          <img
           src={section1Landing}
           alt="hero image"
           style={{
@@ -156,10 +156,9 @@ function Section1() {
             objectFit: "contain",
             margin: "auto",
             display: "block",
-       
           }}
-        /> */}
-          <Lottie options={defaultOptions} height={"100%"} width={"110%"} />
+        />
+          {/* <Lottie options={defaultOptions} height={"100%"} width={"110%"} /> */}
         </Box>
       </Box>
     </Grid>

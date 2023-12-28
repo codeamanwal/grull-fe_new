@@ -1,7 +1,7 @@
 import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
 import section16BottomLines from "../assets/section16BottomLines.svg";
-import section16CharacterSale from "../assets/section16CharacterSale.png";
+import section16CharacterSale from "../assets/section16CharacterSale.webp";
 import { shades } from "../helper/shades";
 import { section16BasicPlan, section16PremiumPlan } from "../helper/constant";
 import crossIcon from "../assets/crossIcon.svg";
@@ -37,10 +37,10 @@ function Section16() {
         position: "relative",
       }}
     >
-      <Box sx={{width:{xs:"256px",md:"440px"},objectFit:'contain',position:{xs:"static",md:"absolute"},top:0,left:'-4%',margin:{xs:"0 auto 24px auto",md:"0"}}}>
+      {/* <Box sx={{width:{xs:"256px",md:"440px"},objectFit:'contain',position:{xs:"static",md:"absolute"},top:0,left:'-4%',margin:{xs:"0 auto 24px auto",md:"0"}}}>
       <Lottie options={defaultOptions} height={"100%"} width={"100%"}  />
-      </Box>
-      {/* <img
+      </Box> */}
+      <img
         src={section16CharacterSale}
         alt="section16CharacterSale"
         style={{
@@ -52,7 +52,7 @@ function Section16() {
           margin:isDesktop ? "" : "0 auto 24px auto",
           display:"block"
         }}
-      /> */}
+      />
       <img
         src={section16BottomLines}
         alt="section16BottomLines"

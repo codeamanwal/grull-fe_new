@@ -2,19 +2,12 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import { shades } from "../helper/shades";
 import section7WhiteStrike from "../assets/section7WhiteStrike.svg";
-import section7HeroImage from "../assets/section7HeroImage.png";
-import Lottie from "react-lottie";
-import * as animationData from "../jsonAnimations/section7Animation.json";
+import section7HeroImage from "../assets/section7HeroImage.webp";
+
 
 function Section7() {
   const { dustyOrange, lavender, black, white, silverTree, racingGreen } =
     shades;
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-  };
 
   return (
     <Grid
@@ -83,8 +76,8 @@ function Section7() {
           margin: { xs: "24px auto", md: "auto" },
         }}
       >
-        <Lottie options={defaultOptions} height={"100%"} width={"110%"} />
-        {/* <img src={section7HeroImage} alt="section7HeroImage" style={{width:"100%",display:'block',objectFit:'contain',margin:'24px auto'}} /> */}
+        {/* <Lottie options={defaultOptions} height={"100%"} width={"110%"} /> */}
+        <img src={section7HeroImage} alt="section7HeroImage" style={{width:"100%",display:'block',objectFit:'contain',margin:'24px auto'}} />
       </Box>
     </Grid>
   );

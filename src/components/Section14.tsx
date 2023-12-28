@@ -1,7 +1,7 @@
 import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import section14VerticalArrow from "../assets/section14VerticalArrow.png";
-import section14Characters from "../assets/section14Characters.png";
+import section14Characters from "../assets/section14Characters.webp";
 import { shades } from "../helper/shades";
 import { section11FeatureArr, section8FeatureArr } from "../helper/constant";
 

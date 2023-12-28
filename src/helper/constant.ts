@@ -2,7 +2,7 @@ import section2TheBuilderClub from "../assets/section2TheBuildersClub.png";
 import section2IndiaToday from "../assets/section2IndiaToday.png";
 import section2LuxGuild from "../assets/section2LuxGuild.png";
 import section2MbcGroup from "../assets/section2MbcGroup.png";
-import section3GraphicDesign from "../assets/section3GraphicDesign.png";
+import section3GraphicDesign from "../assets/section3GraphicDesign.webp";
 import section3UiUx from "../assets/section3UiUx.png";
 import section3VideoEditing from "../assets/section3VideoEditing.png";
 import section3Visualization from "../assets/section3Visualization.png";

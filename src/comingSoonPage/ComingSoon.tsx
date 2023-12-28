@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import { shades } from "../helper/shades";
 import Navbar from "../components/Navbar";
-import section6SocialMedia from '../assets/section6SocialMedia.png'
+import section6SocialMedia from '../assets/section6SocialMedia.webp'
 
 function ComingSoon() {
   const { dustyOrange } = shades;

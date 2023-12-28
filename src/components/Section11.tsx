@@ -1,7 +1,7 @@
 import { Box, Button, Grid, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
 import { shades } from "../helper/shades";
-import section11AcademyCircle from "../assets/section11AcademyCircle.png";
+import section11AcademyCircle from "../assets/section11AcademyCircle.webp";
 import section11AcademyCircleMobile from "../assets/section11AcademyCircleMobile.png";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 

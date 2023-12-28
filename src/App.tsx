@@ -41,6 +41,28 @@ function App() {
 
   return (
     <Grid sx={{ overflow: "hidden" }}>
+    
+        <Grid
+          sx={{
+            height: "40px",
+            width: "100%",
+            background: "white",
+            typography: "font_16_600",
+            display: { xs: "none", md: "flex" },
+            justifyContent: "center",
+            alignItems: "center",
+            position:'fixed',
+            top:0,
+            left:0,
+            right:0,
+            zIndex:100,
+          }}
+        >
+          {/* {" "}
+          GRULL does not ask for any OTP for verification purpose.{" "} */}
+          Comming Soon...
+        </Grid>
+ <Grid sx={{marginTop:{xs:"0",md:"40px"}}}></Grid>
       <Navbar />
       <Section1 />
       <Section2 />

@@ -72,6 +72,13 @@ function Section18() {
       );
       if (res.ok) {
         setSubmitBtnText("Request Sent");
+        setData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          message: "",
+          helpOption: "",
+        });
       }
     } catch (error) {
       console.log(error);
@@ -79,7 +86,8 @@ function Section18() {
   };
 
   return (
-    <Grid id='contactus'
+    <Grid
+      id="contactus"
       sx={{
         minHeight: { xs: "fit-content", md: "100vh" },
         width: "100vw",

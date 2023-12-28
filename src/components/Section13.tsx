@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import section13Bg from "../assets/section13Bg.png";
-import section13Quote from "../assets/section13Quote.png";
+import section13Quote from "../assets/section13Quote.webp";
 import section13QuoteText from "../assets/section13QuoteText.png";
 import section13InnovationCircle from "../assets/section13InnovationCircle.svg";
 import * as animationData from "../jsonAnimations/section13CircleAnimation.json";
@@ -65,7 +65,7 @@ function Section13() {
               rotate: "-10%",
             }}
           >
-            {/* <img
+            <img
             src={section13InnovationCircle}
             alt="section13QuoteText"
             style={{
@@ -79,8 +79,8 @@ function Section13() {
               margin: "auto",
               left: "12%",
             }}
-          /> */}
-            <Lottie options={defaultOptions} height={"100%"} width="100%" />
+          />
+            {/* <Lottie options={defaultOptions} height={"100%"} width="100%" /> */}
           </Box>
           <Typography
             sx={{

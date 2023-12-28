@@ -83,12 +83,13 @@ function Footer() {
             </Box>
           </Box>
         </Box>
-        <Box sx={{ order: { xs: 1, md: 2 } }}>
+        <Box sx={{ order: { xs: 1, md: 2 },              placeContent:{xs:'center',md:'left'},textAlign:{xs:"center",md:"left"} }}>
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "repeat(2,1fr)", md: "repeat(4,1fr)" },
               gap: { xs: "24px", md: "0" },
+
             }}
           >
             {Object.keys(footerLinks).map((keyName) => {

@@ -1,23 +1,14 @@
 import { Box, Grid, Typography } from "@mui/material";
-import React from "react";
 import section10Bg from "../assets/section10Bg.png";
 import section10Sparkle from "../assets/section10Sparkle.svg";
 import section7WhiteStrike from "../assets/section7WhiteStrike.svg";
 import section10Text from "../assets/section10Text.png";
 import { shades } from "../helper/shades";
-import section10Character from "../assets/section10Character.png";
-import Lottie from "react-lottie";
-import * as animationData from "../jsonAnimations/section7Animation.json";
+import section10Character from "../assets/section10Character.webp";
+
 
 function Section10() {
   const { black } = shades;
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-  };
-
 
   return (
     <Grid
@@ -116,13 +107,13 @@ function Section10() {
         </Box>
       </Box>
       <Box sx={{background:{xs:"#47D487",md:""},paddingBottom:{xs:"12px",md:"0"}}}>
-      <Lottie options={defaultOptions} height={"100%"} width={"80%"} />
+      {/* <Lottie options={defaultOptions} height={"100%"} width={"80%"} /> */}
     
-      {/* <img
+      <img
         src={section10Character}
         alt="section10Character"
         style={{ width: "72%", margin: "0 auto 0px auto", display: "block" }}
-      /> */}
+      />
       </Box>
     </Grid>
   );

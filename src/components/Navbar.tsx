@@ -21,22 +21,6 @@ function Navbar() {
 
   return (
     <>
-      {pathname !== "/coming-soon" && (
-        <Grid
-          sx={{
-            height: "40px",
-            width: "100%",
-            background: "white",
-            typography: "font_16_600",
-            display: { xs: "none", md: "flex" },
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {" "}
-          GRULL does not ask for any OTP for verification purpose.{" "}
-        </Grid>
-      )}
       <Grid
         sx={{ background: "#121717", padding: { xs: "8px 0", md: "16px 0" } }}
       >

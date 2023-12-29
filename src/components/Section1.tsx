@@ -147,12 +147,12 @@ function Section1() {
         <Box
           sx={{
             width: { xs: "90%", md: "102%" },
-            margin: { xs: "24px 0 0 0" },
+            margin: { xs: "24px 0 0 0",md:'0' },
             position: { md: "absolute" },
             left: "-40px",
             right: "200px",
             top: 0,
-            bottom: "-100px",
+            bottom: "-0px",
           }}
         >
           <img

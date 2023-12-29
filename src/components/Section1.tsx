@@ -1,11 +1,11 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
 import { shades } from "../helper/shades";
 import section1Text from "../assets/section1Text.svg";
 import section1TextCircle from "../assets/section1TextCircle.svg";
 import section1Landing from "../assets/section1Landing.webp";
 import Lottie from "react-lottie";
-import * as animationData from "../jsonAnimations/section1Animation.json";
+import * as animationData from "../jsonAnimations/section1CircleAnimation.json";
 import "animate.css";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 
@@ -38,54 +38,61 @@ function Section1() {
         <Box
           sx={{
             position: "relative",
-            padding: { xs: "0", md: "48px 0 24px 0" },
+            padding: { xs: "0", md: "auto" },
+            width: "90%",
+            margin: { md: "auto" },
           }}
         >
-          <Box sx={{ display: { xs: "none", md: "block" } }}>
-            <img
-              src={section1TextCircle}
-              alt="hover circle"
-              style={{
-                width: "40%",
-                objectFit: "contain",
-                position: "absolute",
-                left: "0",
-                top: "-8%",
-                right: "0",
-                margin: "auto",
-                rotate: "-2deg",
-                zIndex: 2,
-              }}
-            />
-          </Box>
-
-          <img
-            src={section1Text}
-            alt="main-text"
-            style={{
-              position: "inherit",
-              width: "90%",
-              objectFit: "contain",
+          <Box sx={{  margin: "auto" }}>
+          <Box
+            sx={{
+              display: { xs: "none", md: "block" },
+              position: "absolute",
+        
+              height: "120px",
+              width: "220px",
+              left: "-10%",
+              top: "-16%",
+              right: "0",
               margin: "auto",
-              display: "block",
-              zIndex: 4,
+              rotate: "-10deg",
+              zIndex: 2,
             }}
-          />
+          >
+            <Lottie options={defaultOptions} height={"100%"} width="100%" />
+          </Box>
+            <Typography
+              sx={{
+                typography: {xs:"font_24_800", md: "font_64_800" },
+                lineHeight: { xs: "", md: "72px" },
+                margin: "auto",
+                zIndex: 4,
+                position:'relative',
+              }}
+            >
+              Be the pioneer
+              <br /> in navigating your <br /> <span style={{color:white}}>freelance</span>  journey
+            </Typography>
+          </Box>
         </Box>
-        <Box sx={{ width: "90%", margin: { xs: "24px auto", md: "auto" } }}>
+        <Box
+          sx={{
+            width: "90%",
+            margin: { xs: "12px 0", md: "24px auto" },
+          }}
+        >
           <Typography
             sx={{ typography: { xs: "font_12_500", md: "font_20_500" } }}
           >
-            No matter what your business needs, we can connect you with a
-            creative expert to make your business look and feel professional.
-            Because good design makes great business.
+            Unlock a world where opportunities, learning and community converge
+            to evaluate your freelancing career.
           </Typography>
         </Box>
         <Box
           sx={{
             width: "90%",
             margin: "auto",
-            padding: { xs: "0", md: "24px" },
+            padding: { xs: "0", md: "24px 0" },
             display: "flex",
             gap: "24px",
           }}
@@ -99,7 +106,7 @@ function Section1() {
               typography: { xs: "font_12_700", md: "font_20_700" },
               color: black,
               width: { xs: "120px", md: "200px" },
-              cursor:'pointer'
+              cursor: "pointer",
               //   "&:hover": {
               //     background: dustyOrange,
               //     color: white,
@@ -120,7 +127,7 @@ function Section1() {
               typography: { xs: "font_12_700", md: "font_20_700" },
               borderRadius: "16px",
               width: { xs: "120px", md: "200px" },
-              cursor:'pointer'
+              cursor: "pointer",
               //   "&:hover": {
               //     border: `1px solid ${black}`,
               //     background: white,
@@ -134,30 +141,30 @@ function Section1() {
         </Box>
       </Box>
       <Box
-        sx={{ position:"relative" }}
+        sx={{ position: "relative" }}
         className="animate__animated animate__fadeInRight"
       >
         <Box
           sx={{
-            width: { xs: "90%", md: "108%" },
+            width: { xs: "90%", md: "102%" },
             margin: { xs: "24px 0 0 0" },
-            position:{md:'absolute'},
-            left:'-100px',
-            right:'200px',
-            top:0,
-            bottom:'-100px'
+            position: { md: "absolute" },
+            left: "-40px",
+            right: "200px",
+            top: 0,
+            bottom: "-100px",
           }}
         >
           <img
-          src={section1Landing}
-          alt="hero image"
-          style={{
-            width: "100%",
-            objectFit: "contain",
-            margin: "auto",
-            display: "block",
-          }}
-        />
+            src={section1Landing}
+            alt="hero image"
+            style={{
+              width: "100%",
+              objectFit: "contain",
+              margin: "auto",
+              display: "block",
+            }}
+          />
           {/* <Lottie options={defaultOptions} height={"100%"} width={"110%"} /> */}
         </Box>
       </Box>

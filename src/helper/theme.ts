@@ -4,6 +4,7 @@ import { TypographyOptions } from "@mui/material/styles/createTypography";
 declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     font_64_800: true;
+    font_60_800: true;
     font_48_900: true;
     font_48_800: true;
     font_44_800: true;
@@ -44,6 +45,7 @@ declare module "@mui/material/Typography" {
 }
 interface ExtendedTypographyOptions extends TypographyOptions {
   font_64_800: React.CSSProperties;
+  font_60_800: React.CSSProperties;
   font_48_900: React.CSSProperties;
   font_48_800: React.CSSProperties;
   font_44_800: React.CSSProperties;
@@ -102,6 +104,11 @@ export const grullCustomTheme = createTheme({
     font_64_800: {
       fontWeight: 800,
       fontSize: "4rem",
+      margin: "8px 0",
+    },
+    font_60_800: {
+      fontWeight: 800,
+      fontSize: "3.75rem",
       margin: "8px 0",
     },
     font_48_900: {

@@ -60,7 +60,7 @@ function App() {
         >
           {/* {" "}
           GRULL does not ask for any OTP for verification purpose.{" "} */}
-          Comming Soon...
+          Coming Soon...
         </Grid>
  <Grid sx={{marginTop:{xs:"0",md:"40px"}}}></Grid>
       <Navbar />

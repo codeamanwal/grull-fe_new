@@ -33,13 +33,11 @@ function Section11() {
       <Box
         sx={{
           width: { xs: "100%", md: "80%" },
-          margin: { xs: "16px 0", md: "auto" },
+          margin: { xs: "16px 0", md: "24px auto" },
         }}
       >
         <img
-          src={
-            isDesktop ? section11AcademyCircle : section11AcademyCircleMobile
-          }
+          src={section11AcademyCircle}
           alt="section11AcademyCircle"
           style={{
             width: "100%",
@@ -54,8 +52,8 @@ function Section11() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          gap:{xs:"12px", md:"24px"},
-          margin:{xs:"20px 0 0 0",md:"0"}
+          gap: { xs: "12px", md: "24px" },
+          margin: { xs: "20px 0 0 0", md: "0" },
         }}
       >
         <Box
@@ -63,11 +61,11 @@ function Section11() {
             border: `1px solid ${lavender}`,
             borderRadius: "16px",
             color: white,
-            width:{xs:"140px", md:"200px"},
-            padding:{xs:"12px 0" ,md:"16px 0"},
-            typography:{xs:"font_12_600", md:"font_20_700"},
+            width: { xs: "140px", md: "200px" },
+            padding: { xs: "12px 0", md: "16px 0" },
+            typography: { xs: "font_12_600", md: "font_20_700" },
             textAlign: "center",
-            cursor:'pointer'
+            cursor: "pointer",
           }}
           onClick={scrollToSection}
         >
@@ -79,15 +77,15 @@ function Section11() {
             background: lavender,
             borderRadius: "16px",
             color: white,
-            width:{xs:"140px", md:"200px"},
-            padding:{xs:"12px 0" ,md:"16px 0"},
-            typography:{xs:"font_12_600", md:"font_20_700"},
+            width: { xs: "140px", md: "200px" },
+            padding: { xs: "12px 0", md: "16px 0" },
+            typography: { xs: "font_12_600", md: "font_20_700" },
             textAlign: "center",
-            cursor:'pointer'
+            cursor: "pointer",
           }}
           onClick={scrollToSection}
         >
-         Talk to Mentor
+          Talk to Mentor
         </Box>
       </Box>
     </Grid>

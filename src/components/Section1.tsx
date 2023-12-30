@@ -162,7 +162,7 @@ function Section1() {
               width: "100%",
               objectFit: "contain",
               margin: "auto",
-              display: "block",
+              display: "blohttps://github.com/grull-work/grull-fe_new.gitck",
             }}
           />
           {/* <Lottie options={defaultOptions} height={"100%"} width={"110%"} /> */}

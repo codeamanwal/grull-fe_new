@@ -5,12 +5,11 @@ import section5Freelancer from "../assets/section5Freelancer.png";
 import section5DoubleQuotes from "../assets/section5DoubleQuotes.png";
 
 function Section5() {
-  const { black} = shades;
   const isDesktop = useMediaQuery("(min-width:600px)");
 
   return (
     <Grid
-      sx={{ background: black, padding:{xs:"24px" ,md:"48px 32px"}, position: "relative",margin:{xs:"0 24px",md:"0"},borderRadius:{xs:"16px",md:"0"} }}
+      sx={{ background: "#111717", padding:{xs:"24px" ,md:"48px 32px"}, position: "relative",margin:{xs:"0 24px",md:"0"},borderRadius:{xs:"16px",md:"0"} }}
     >
       <Box
         sx={{

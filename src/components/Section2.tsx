@@ -15,7 +15,7 @@ function Section2() {
       <Grid
         sx={{
           background: black,
-          minHeight: { xs: "", md: "480px" },
+          minHeight: { xs: "", md: "580px" },
           width: "100vw",
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "2fr 8fr" },
@@ -54,7 +54,7 @@ function Section2() {
           />
           </Box>
         </Box>
-        <Box sx={{ margin: "auto", order: { xs: 1, md: 2 } }}>
+        <Box sx={{ margin:{xs:"auto", md:"auto"}, order: { xs: 1, md: 2 } }}>
           <Typography
             sx={{
               color: lavender,
@@ -62,7 +62,7 @@ function Section2() {
               display: "block",
               textAlign: "center",
               typography: { xs: "font_20_700", md: "font_48_800" },
-              margin: "auto",
+               margin:'auto'
             }}
           >
             Trusted by millions worldwide for unmatched opportunities and

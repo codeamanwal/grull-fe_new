@@ -42,7 +42,7 @@ function Footer() {
           />
           <Box sx={{ width: { xs: "100%", md: "60%" }, margin: "24px 0" }}>
             <Typography variant="font_16_600">
-              1st floor, Appek Building, 93/A,4th B Cross Rd, 5th Block,
+              1st floor, Appek Building, 20/A,7th A Cross Rd, 10th Block,
               Koramangala, Bengaluru,
             </Typography>
             <Typography variant="font_16_600" sx={{ margin: "12px 0" }}>
@@ -65,19 +65,19 @@ function Footer() {
               <img
                 src={twitterIcon}
                 alt="twitterIcon"
-                style={{ height: "32px", width: "32px", margin: "0 8px" }}
+                style={{ height: "32px", width: "32px", margin: "0 8px",cursor:"pointer" }}
                 onClick={() => window.open(` https://twitter.com/Grull_work`)}
               />
               <img
                 src={linkedInIcon}
                 alt="linkedInIcon"
-                style={{ height: "32px", width: "32px", margin: "0 8px" }}
+                style={{ height: "32px", width: "32px", margin: "0 8px",cursor:"pointer" }}
                 onClick={() => window.open('https://www.linkedin.com/company/grull-work/')}
               />
               <img
                 src={instaIcon}
                 alt="linkedInIcon"
-                style={{ height: "32px", width: "32px", margin: "0 8px" }}
+                style={{ height: "32px", width: "32px", margin: "0 8px",cursor:"pointer" }}
                 onClick={() => window.open(` https://www.instagram.com/grull.work?igsh=MmVlMjlkMTBhMg==`)}
               />
             </Box>

@@ -310,6 +310,7 @@ function Section18() {
                   >
                     <input
                       type="radio"
+                      value="other"
                       checked={data.helpOption === "other"}
                       style={{
                         background: "white",
@@ -361,6 +362,7 @@ function Section18() {
                 width: { xs: "120px", md: "200px" },
                 margin: { xs: "12px 0", md: "" },
                 padding: { xs: "12px 0", md: "16px 0" },
+                cursor:'pointer'
               }}
               onClick={handleSubmit}
             >

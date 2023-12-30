@@ -7,11 +7,28 @@
   font-family: 'Urbanist', sans-serif;
   scroll-behavior: smooth;
 }
-::-webkit-scrollbar {
+
+#section9Scroll::-webkit-scrollbar,#section17Scroll::-webkit-scrollbar {
   display: none;
 }
 
 input:focus{
   border:none;
   outline:none
+}
+
+::-webkit-scrollbar {
+  width: 10px; /* adjust the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* change the background color of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* change the color of the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* change the color of the scrollbar thumb on hover */
 }

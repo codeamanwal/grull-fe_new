@@ -33,6 +33,7 @@ function Section17() {
           </Typography>
         </Box>
         <Box
+        id="section17Scroll"
           sx={{
             display:{xs:"flex" ,md:"grid"},
             gridTemplateColumns: "repeat(3,1fr)",
@@ -99,6 +100,7 @@ function Section17() {
             margin: "auto",
             typography:{xs:"font_12_500", md:"font_20_600"},
             display: "block",
+            cursor:'pointer'
           }}
         >
           Read More

@@ -53,6 +53,7 @@ function Section15() {
           typography:{xs:"font_12_600",md:"font_20_600"},
           textAlign: "center",
           margin:{xs:"12px auto" ,md:"48px auto"},
+          cursor:'pointer'
         }}
       >
         Discover More

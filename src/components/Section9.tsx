@@ -36,6 +36,7 @@ function Section9() {
                 border: "1px solid black",
                 borderRadius: "16px",
                 textAlign: "center",
+                cursor:'pointer',
                 typography: { xs: "font_12_600", md: "font_20_600" },
                 "&:hover": {
                   background: lavender,
@@ -48,6 +49,7 @@ function Section9() {
         })}
       </Box>
       <Box
+      id="section9Scroll"
         sx={{
           width: "100%",
           margin:{xs:"0px 0 24px 24px", md:"24px auto"},

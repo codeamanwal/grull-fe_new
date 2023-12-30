@@ -1,32 +1,90 @@
-import { Box, Grid, Input, Typography, useMediaQuery } from "@mui/material";
-import React from "react";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Grid,
+  Input,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import React, { useState } from "react";
 import section19Character from "../assets/section19Character.webp";
 import { shades } from "../helper/shades";
 
 function Section19() {
   const { silverTree } = shades;
   const isDesktop = useMediaQuery("(min-width:600px)");
+  const [email, setEmail] = useState<string>("");
+  const [alertText, setAlertText] = useState("");
+
+  const handleSubmit = async () => {
+    if (email === "") {
+      setAlertText("Email Address");
+      setTimeout(() => {
+        setAlertText("");
+      }, 3000);
+      return;
+    }
+    try {
+      const res = await fetch(
+        "https://sheet.best/api/sheets/e47f0ab0-f6c0-430d-b794-7fa11e96e654",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            countMeInEmail:email
+          }),
+        }
+      );
+      if (res.ok) {
+        setEmail("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Grid
       sx={{
-        minHeight: {xs:"fit-content",md:"70vh"},
+        minHeight: { xs: "fit-content", md: "70vh" },
         width: "100vw",
         display: "grid",
         placeContent: "center",
+        position:'relative'
       }}
     >
+      {alertText ? (
+        <Alert
+          severity="error"
+          sx={{
+            position: "absolute",
+            top: "16px",
+            right: "16px",
+            borderRadius: "12px",
+          }}
+        >
+          <AlertTitle>Please enter {alertText}</AlertTitle>
+        </Alert>
+      ) : null}
       <Grid
         sx={{
           display: "grid",
-          gridTemplateColumns:{xs:"1fr", md:"3fr 7fr"},
-          width:{xs:"100%", md:"90%"},
+          gridTemplateColumns: { xs: "1fr", md: "3fr 7fr" },
+          width: { xs: "100%", md: "90%" },
           margin: "auto",
         }}
       >
         <Box sx={{ position: "relative" }}>
-        <Typography
-            sx={{ color: silverTree, display:{xs:"block", md:"none"},typography:{xs:"font_20_700",md:"font_48_900"},textAlign:{xs:"center",md:"0"} }}
+          <Typography
+            sx={{
+              color: silverTree,
+              display: { xs: "block", md: "none" },
+              typography: { xs: "font_20_700", md: "font_48_900" },
+              textAlign: { xs: "center", md: "0" },
+            }}
           >
             Stay Up-to Date
           </Typography>
@@ -34,9 +92,9 @@ function Section19() {
             src={section19Character}
             alt="section19Character"
             style={{
-              width:isDesktop ? "90%" : "60%",
+              width: isDesktop ? "90%" : "60%",
               objectFit: "contain",
-              margin:isDesktop ? "auto" : "24px auto",
+              margin: isDesktop ? "auto" : "24px auto",
               display: "block",
               position: isDesktop ? "absolute" : "static",
               bottom: "-50px",
@@ -49,11 +107,18 @@ function Section19() {
         <Box sx={{ display: "grid", placeContent: "center" }}>
           <Typography
             variant="font_48_900"
-            sx={{ color: silverTree, display:{xs:"none", md:"block"} }}
+            sx={{ color: silverTree, display: { xs: "none", md: "block" } }}
           >
             Stay Up-to Date
           </Typography>
-          <Typography sx={{ color: "black",typography:{xs:"font_12_600",md:"font_32_600"},textAlign:{xs:"center",md:"left"},margin:{xs:"0 24px",md:"0"}, }}>
+          <Typography
+            sx={{
+              color: "black",
+              typography: { xs: "font_12_600", md: "font_32_600" },
+              textAlign: { xs: "center", md: "left" },
+              margin: { xs: "0 24px", md: "0" },
+            }}
+          >
             Subscribe to Our Newsletter for the Latest Updates and Exclusive
             Content
           </Typography>
@@ -62,9 +127,9 @@ function Section19() {
             sx={{
               height: "80px",
               width: "90%",
-              typography:{xs:"font_12_500", md:"font_20_400"},
+              typography: { xs: "font_12_500", md: "font_20_400" },
               position: "relative",
-              margin:{xs:"16px auto", md:"48px 0 0 0"},
+              margin: { xs: "16px auto", md: "48px 0 0 0" },
             }}
           >
             <Input
@@ -77,10 +142,12 @@ function Section19() {
                 padding: "12px 36px",
                 borderRadius: "16px",
               }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Box
               sx={{
-                width:{xs:"100px", md:"200px"},
+                width: { xs: "100px", md: "200px" },
                 padding: "16px 0",
                 height: "min-content",
                 borderRadius: "16px",
@@ -92,7 +159,9 @@ function Section19() {
                 bottom: 0,
                 right: "20px",
                 margin: "auto",
+                cursor: "pointer",
               }}
+              onClick={handleSubmit}
             >
               Count Me In!
             </Box>

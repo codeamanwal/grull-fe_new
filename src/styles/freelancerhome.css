@@ -1,0 +1,48 @@
+@media only screen and (max-width:1350px){
+    .home-container{
+        padding:70px 80px !important;
+    }
+ }
+ @media only screen and (max-width:1200px){
+    .home-container{
+        padding:60px !important;
+    }
+ }
+ @media only screen and (max-width:1100px){
+    .home-container{
+        padding:70px 85px !important;
+    }
+ }
+ @media only screen and (max-width:850px){
+    .home-container{
+        padding:60px !important;
+    }
+    .home-container-grid{
+        grid-template-columns: repeat(1,1fr) !important;
+        gap: 20px !important
+    }
+ }
+ @media only screen and (max-width:600px){
+    .home-container{
+        padding:30px !important;
+    }
+    .home-heading{
+        font-size: 21px !important;
+    }
+    .home-subheading{
+        font-size: 17px !important;
+    }
+    .home-content{
+        font-size: 15px !important;
+    }
+ }
+ @media only screen and (max-width:400px){
+    .home-container{
+        padding:20px !important;
+    }
+    .homeongoingjobslider{
+        width: 150px !important;
+        height: 5px !important;
+    }
+    .MuiSlider-thumb{width: 18px !important;height: 18px !important}
+ }

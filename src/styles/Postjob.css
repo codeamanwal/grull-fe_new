@@ -1,0 +1,95 @@
+.browse-jobs{
+    margin-left: 100px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.manage-jobs{
+    margin-left: 60px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.notification {
+    width: 40px;
+    height: 30px;
+    margin-left:100px;
+    cursor: pointer;
+}
+
+.profile {
+    width: 40px;
+    height: 30px;
+    margin-right: 10px; /* Adjusted margin-right value */
+    border-radius: 22px;
+    cursor: pointer;
+}
+.search-container{
+    width: 500px;
+    height: 30px;
+    border-radius: 20px;
+    margin-left: 120px;
+    background-color: black;
+    border: 1px solid white;
+    color: white;
+}
+.search-container input::placeholder {
+    color: white;
+    margin-left: 20px;
+}
+
+.input-form{
+    margin-left: 80px;
+}
+
+.save-button{
+    width: 200px;
+    height:40px;
+    border-radius: 20px;
+    color: white;
+    background-color: #b27ee3;
+    border: none;
+    margin-left: 40px;
+}
+
+.cancel-button{
+    width: 200px;
+    height:40px;
+    border-radius: 20px;
+    background-color: white;
+    color: #b27ee3;
+    border: 1px solid #b27ee3;
+    margin-left: 40px;
+}
+
+.container {
+    display: inline-block;
+    width:120px;
+ }
+ .button {
+    padding: 0;
+    width: 100px;
+    border: 0;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    outline: 0;
+    font-size: 20px;
+ }
+
+ ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+   }
+   li {
+    padding: 8px 12px;
+   }
+   
+   li:hover {
+    background-color: rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+   }

@@ -1,0 +1,136 @@
+body {
+    overflow-y: hidden; 
+    /*prevent scrollbar*/
+}
+.headerStyle {
+    background: black;
+    color: #b27ee3;
+    padding: 1px;
+    margin: 0;
+    padding-left: 5px;
+    height: 45px;
+}
+.outer-most {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    overflow: hidden;
+    height: 100vh;
+    /* Using full height of the viewport */
+    margin-top: -2px;
+    margin-left: 50px;
+}
+
+.content {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-top: -100px;
+}
+
+.content2 {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.image {
+    width: 318.14px;
+    height: auto;
+    margin-top: -20px;
+    margin-right: 120px;
+}
+
+.apple-button {
+    width: 500px;
+    border-radius: 20px;
+    height: 38px;
+    border-color: grey;
+    border: #000000;
+    position: relative;
+}
+
+.google-button {
+    width: 500px;
+    border-radius: 20px;
+    border: none;
+    height: 38px;
+    background-color: #4285F4;
+    color: white;
+    position: relative;
+}
+
+.apple-button,
+.google-button {
+    margin-bottom: 10px;
+    /* margin between the buttons */
+}
+
+.button-with-icon {
+    position: relative;
+    overflow: hidden;
+}
+
+.button-with-icon::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;  
+    height: 30px;  
+    border-radius: 20px;
+    margin-right: 10px;  
+    background-size: cover;
+}
+
+.apple-button::before {
+    background-image: url('../assets/apple.jpg');
+}
+
+.google-button::before {
+    background-image: url('../assets/google.jpg');
+}
+
+.form-vals{
+    width: 240px;
+    height: 28px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    color: #a3a3a3;
+}
+
+.form-vals-two {
+    width: 500px;
+    height: 28px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    color: #a3a3a3;
+}
+
+.hr-line {
+    background: '#ddd';
+    border-color: '#ddd';
+    height: 0.1px;
+    width: 200px;
+    margin: 0 10px;
+}
+
+.form-group {
+    margin-bottom: 12px; /* Add margin between form inputs */
+}
+
+.create-account-button{
+    width: 500px;
+    height: 35px;
+    border-radius: 10px;
+    border: none;
+    background-color: #b27ee3;
+    color: white;
+    margin-bottom: -10px;
+}

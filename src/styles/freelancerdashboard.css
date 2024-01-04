@@ -1,0 +1,32 @@
+@media only screen and (max-width:1350px){
+   .dashboard-drawer{
+    padding:0 25px 0 65px !important;
+   }
+   .dashboard-navbar{
+    padding: 0 40px 0 60px !important;
+   }
+   .dashboard-navbar-buttons{
+    gap:30px !important;
+   }
+}
+@media only screen and (max-width:1230px){
+    .dashboard-navbar{
+     padding: 0 30px 0 40px !important;
+    }
+    .dashboard-navbar-buttons{
+     gap:20px !important;
+    }
+ }
+ @media only screen and (max-width:1150px){
+    .dashboard-drawer{
+        padding:10px 30px!important;
+       }
+    .dashboard-navbar{
+     padding: 0 10px 0 20px !important;
+    }
+ }
+ @media only screen and (max-width:600px){
+    .css-k008qs{
+     display: block !important;
+    }
+ }

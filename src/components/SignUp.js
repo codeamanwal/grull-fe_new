@@ -11,9 +11,54 @@ const SignUp = () => {
         navigate('/login');
     };
 
-    const handleCreateAccountClick = () => {
-        navigate('/freelancerprofile');
-    }
+    const handleCreateAccountClick = async () => {
+        const firstName = document.querySelector('[name="First_name"]').value;
+        const lastName = document.querySelector('[name="Last_name"]').value;
+        const email = document.querySelector('[name="email"]').value;
+        const mobileNumber = document.querySelector('[name="MobileNumber"]').value;
+        const password = document.querySelector('[name="password"]').value;
+
+        // Check if email and password are not empty
+        if (email.trim() === '') {
+            alert('Email field cannot be empty');
+            return;
+        }
+
+        if (password.trim() === '') {
+            alert('Password field cannot be empty');
+            return;
+        }
+
+        const registrationData = {
+            email: email,
+            password: password,
+            // Include other relevant form fields in the registrationData object
+        };
+
+        try {
+            const response = await fetch('http://35.154.4.80/api/v0/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registrationData),
+            });
+
+            if (response.status === 201) {
+                // User registered successfully, navigate to the profile section
+                navigate('/freelancerprofile');
+            } else if (response.status === 400) {
+                // User already exists, show alert
+                alert('REGISTER USER ALREADY EXISTS');
+            } else {
+                // Handle other status codes as needed
+                console.error('Unexpected response:', response);
+            }
+        } catch (error) {
+            // Handle network or other errors
+            console.error('Error during registration:', error);
+        }
+    };
 
     const countryOptions = [
         { value: 'India', label: 'India' },

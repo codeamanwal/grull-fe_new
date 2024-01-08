@@ -14,11 +14,11 @@ const Start = () => {
   };
 
   const handleBox1Click=()=>{
-    navigate('/freelancerprofile');
+    navigate('/signup');
   }
 
   const handleBox2Click=()=>{
-    navigate('/employerprofile');
+    navigate('/signup');
   }
 
   return (

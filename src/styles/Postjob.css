@@ -12,6 +12,14 @@
     border: none;
     cursor: pointer;
 }
+.form-val{
+    border-radius: 16px;
+    border: 1px solid #ddd;
+    color: #00000080;
+    font-weight: 500;
+    padding: 10px 20px;
+    font-size: 16px;
+}
 
 .notification {
     width: 40px;

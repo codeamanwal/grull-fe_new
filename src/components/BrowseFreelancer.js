@@ -1,12 +1,13 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
 import '../styles/Browsefreelancer.css';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import axios from 'axios';
 
 const BrowseFreelancer = () => {
 
@@ -18,7 +19,7 @@ const BrowseFreelancer = () => {
     navigate('/browsefreelancer');
   }
 
-  const ClickPostJobs=()=>{
+  const ClickPostJobs = () => {
     navigate('/postjob');
   }
 
@@ -45,6 +46,47 @@ const BrowseFreelancer = () => {
 
   const [locationExpanded, setLocationExpanded] = useState(true);
   const toggleLocation = () => setLocationExpanded(!locationExpanded);
+
+  //fetch all freelancers
+  const [allFreelancers, setAllFreelancers] = useState([]);
+  const accessToken = localStorage.getItem('accessToken');
+  useEffect(() => {
+    const getFreelancers = async () => {
+      try {
+        const response = await axios.get('http://35.154.4.80/api/v0/freelancers', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
+
+        if (response.status === 200) {
+          console.log('Freelancers Fetched successfully');
+
+          // Set all freelancers
+          setAllFreelancers(response.data.results);
+        } else {
+          console.error('Error fetching freelancers:', response.data.error);
+        }
+      } catch (error) {
+        console.error('Error occurred:', error);
+      }
+    };
+
+    getFreelancers();
+  }, [accessToken]);
+
+  const handleDislikeClick=()=>{
+
+  }
+
+  const handleLikeClick=()=>{
+
+  }
+
+  const handleHire=()=>{
+
+  }
 
   return (
     <div>
@@ -355,7 +397,55 @@ const BrowseFreelancer = () => {
           </div>
         </div>
 
-        <div className='browseJobs-right-box'></div>
+
+        {/* right box  */}
+        <div className='browseFreelancer-right-box'>
+          {allFreelancers.map((freelancer) => (
+            <div key={freelancer.id} style={{ marginBottom: '30px', padding: '10px' }}>
+
+              <div style={{ marginBottom: '-15px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+              <h3>{freelancer.full_name}</h3>
+                <img
+                  src={require('../assets/dislikeIcon.png')} 
+                  alt="Dislike"
+                  style={{ marginLeft: '350px', cursor: 'pointer', height:'50px', width:'50px', borderRadius:'50%' }}
+                  onClick={() => handleDislikeClick(freelancer.freelancer_id)}  
+                />
+                <img
+                  src={require('../assets/likeIcon.png')}  
+                  alt="Like"
+                  style={{ marginLeft: '5px', cursor: 'pointer',height:'50px', width:'50px', borderRadius:'50%' }}
+                  onClick={() => handleLikeClick(freelancer.freelancer_id)}  
+                />
+              </div>
+
+              <div style={{ marginBottom: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+                <p>{freelancer.role}</p>
+                {/* Add any other details you want to display */}
+              </div>
+
+              <div style={{ marginBottom: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+                <p>${freelancer.rate_per_hour}/hr</p>
+                {/* Add any other details you want to display */}
+              </div>
+
+              <div style={{ marginBottom: '18px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+                {freelancer.skills.map((skill, index) => (
+                  <div key={index} style={{ backgroundColor: '#E9E9E9', color: 'black', borderRadius: '12px', padding: '5px', marginRight: '5px', height: '25px' }}>
+                    {skill}
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ borderRadius: '10px', backgroundColor: '#B27EE3', height: '35px', width: '120px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+                <p style={{ cursor:'pointer',color: 'white', marginLeft: '20px' }} onClick={()=>handleHire(freelancer.freelancer_id)}>Hire</p>
+              </div>
+
+              {/* You can customize the display of other details as needed */}
+              <hr style={{ color: '#FFFFFF', marginTop: '35px', marginBottom: '-15px' }} />
+            </div>
+          ))}
+        </div>
       </div>
 
     </div>

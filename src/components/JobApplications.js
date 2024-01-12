@@ -8,9 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from 'axios';
-import { Box, Button, Divider, Typography } from "@mui/material";
 
-const BrowseJobs = () => {
+const JobApplications = () => {
   const accessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
 
@@ -64,102 +63,26 @@ const BrowseJobs = () => {
     const viewProfileClick = () => {
       navigate('/employerprofile');
   }
-  const [jobs, setJobs] = useState([]);
-  
-  useEffect(() => {
-    const getJobs = async (page = 1) => {
-      try {
-        const response = await axios.get('http://35.154.4.80/api/v0/jobs', {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-          },
-          params: {
-            page: page,
-            per_page: 8,
-          },
-        });
-  
-        if (response.status === 200) {
-          setJobs(prevJobs => {
-            const newJobs = response.data.results.filter(newJob => !prevJobs.some(existingJob => existingJob.id === newJob.id));
-            return [...prevJobs, ...newJobs];
-          });
-          
-          if (response.data.next) {
-            // await getJobs(page + 1);
-            console.log(jobs);
-          }
+  useEffect (()=>{
+     const getjobs=async()=>{
+        try{
+          const response = await axios.get(`http://35.154.4.80/api/v0/jobs/${job}/applications`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            console.log(response.data.result)
+            if (response.status===200) {
+                console.log('Applications Fetchedd successfully');
+            }
         }
-      } catch (error) {
-        console.error('Error occurred:', error);
+        catch (error) {
+          console.error('Error occurred:', error);
       }
-    };
-  
-    getJobs();
-  }, [accessToken]);
-
-  const getTimeDifference = (modifiedAt) => {
-    const now = new Date();
-    const modifiedDate = new Date(modifiedAt);
-    const differenceInMilliseconds = now - modifiedDate;
-
-    const minutes = Math.floor(differenceInMilliseconds / (1000 * 60));
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const weeks = Math.floor(days / 7);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(days / 365);
-
-    if (years > 0) {
-      return `${years} ${years === 1 ? 'year' : 'years'} ago`;
-    } else if (months > 0) {
-      return `${months} ${months === 1 ? 'month' : 'months'} ago`;
-    } else if (weeks > 0) {
-      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
-    } else if (days > 0) {
-      return `${days} ${days === 1 ? 'day' : 'days'} ago`;
-    } else if (hours > 0) {
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-    } else {
-      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-    }
-  };
-  const [selectedLocations, setSelectedLocations] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const handleLocationChange = (location) => {
-    setSelectedLocations((prevSelected) => {
-      if (prevSelected.includes(location)) {
-        return prevSelected.filter((loc) => loc !== location);
-      } else {
-        return [...prevSelected, location];
-      }
-    });
-  };
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategories((prevSelected) => {
-      if (prevSelected.includes(category)) {
-        return prevSelected.filter((cat) => cat !== category);
-      } else {
-        return [...prevSelected, category];
-      }
-    });
-  };
-
-  const filteredJobs = jobs.filter((job) => {
-    if (selectedLocations.length > 0 && !selectedLocations.includes(job.location)) {
-      return false;
-    }
-  
-    if (selectedCategories.length > 0 && !selectedCategories.includes(job.category)) {
-      return false;
-    }
-  
-    return true;
-  });
-
+     }
+     getjobs();
+  },[])
   const sortByOptions = [
     { value: 'Newest', label: 'Newest' },
     { value: 'Cheapest', label: 'Cheapest' },
@@ -177,9 +100,6 @@ const BrowseJobs = () => {
   const [locationExpanded, setLocationExpanded] = useState(true);
   const toggleLocation = () => setLocationExpanded(!locationExpanded);
 
-  const handleApplynow=(job_id)=>{
-       navigate(`/jobdetails/${job_id}`)
-  }
   return (
     <div>
       {/* div 1 for header */}
@@ -351,37 +271,37 @@ const BrowseJobs = () => {
 
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleCategoryChange('Graphic_Designer')}/>
+                    <input type="checkbox" />
                     Graphic Designer
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleCategoryChange('ILLUSTRATOR')}/>
+                    <input type="checkbox" />
                     Illustrator
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleCategoryChange('PROGRAMMER')}/>
+                    <input type="checkbox" />
                     Programmer
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleCategoryChange('VIDEO_EDITOR')}/>
+                    <input type="checkbox" />
                     Video Editor
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleCategoryChange('THREE_D_ARTIST')}/>
+                    <input type="checkbox" />
                     3D Artist
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleCategoryChange('PRODUCT_DESIGNER')}/>
+                    <input type="checkbox" />
                     Product Designer
                   </label>
                 </div>
@@ -497,37 +417,37 @@ const BrowseJobs = () => {
               <div style={{ marginLeft: '10px' }}>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleLocationChange('INDIA')} />
+                    <input type="checkbox" />
                     India
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox"  onChange={() => handleLocationChange('USA')}/>
+                    <input type="checkbox" />
                     USA
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleLocationChange('CANADA')}/>
+                    <input type="checkbox" />
                     Canada
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleLocationChange('ENGLAND')}/>
+                    <input type="checkbox" />
                     England
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleLocationChange('CHINA')}/>
+                    <input type="checkbox" />
                     China
                   </label>
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <label>
-                    <input type="checkbox" onChange={() => handleLocationChange('RUSSIA')}/>
+                    <input type="checkbox" />
                     Russia
                   </label>
                 </div>
@@ -536,46 +456,10 @@ const BrowseJobs = () => {
           </div>
         </div>
 
-        <div className='browseJobs-right-box'>
-            {
-              filteredJobs.map((job,index)=>
-              <>
-              <Box sx={{padding:'30px'}}>
-               <Box sx={{display:'flex',flexDirection:'column',gap:'10px'}}>
-                <Box sx={{display:'flex',flexDirection:'column',gap:'10px'}}>
-                  <Typography sx={{fontSize:'32px',fontWeight:'700',letterSpacing:'-1px'}}>{job.title}</Typography>
-                  <Box sx={{display:'flex',flexDirection:'row',gap:'15px',alignItems:'center'}}>
-                  <Typography sx={{fontSize:'24px',fontWeight:'500',letterSpacing:'-1px'}}>Budget {job.rate_per_hour}</Typography>
-                  <Typography sx={{fontSize:'16px',fontWeight:'500',letterSpacing:'-1px',color:'#00000080'}}>Posted {getTimeDifference(job.modified_at)}</Typography>
-                  </Box>
-                </Box>
-                <Typography sx={{color:'#454545',fontSize:'20px'}}>
-                    {job.description}
-                </Typography>
-                <Box sx={{margin:'5px 0'}}>
-                  <ul style={{display:'flex',flexWrap:'wrap',gap:'15px'}}>
-                    {
-                      job.required_skills.map(skill=><li style={{fontSize:'18px',padding:"10px 20px",backgroundColor:'#E9E9E9',color:'#000',borderRadius:'10px',width:'fit-content'}}>{skill}</li>)
-                    }
-                    
-                  </ul>
-                </Box>
-                <Box sx={{display:'flex',flexDirection:'column',gap:'5px'}}>
-                  <Typography sx={{color:'#B27EE3',fontSize:'16px',fontWeight:'500'}}>Non Negotiable</Typography>
-                  <Button onClick={()=>{handleApplynow(job.id)}} sx={{padding:'5px 24px',backgroundColor:'#B27EE3',color:'#fff',textTransform:'none',fontSize:'20px',borderRadius:'16px',width:'fit-content',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>
-                    Apply Now
-                  </Button>
-                </Box>
-               </Box>
-             </Box>
-             {index !== jobs.length - 1 && <Divider />}
-              </>)
-            }
-             
-        </div>
+        <div className='browseJobs-right-box'></div>
       </div>
 
     </div>
   )
 }
-export default BrowseJobs;
+export default JobApplications;

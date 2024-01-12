@@ -1,15 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import '../styles/Applyproposal.css';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faTimes } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const ApplyProposal = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
-
+    const accessToken = localStorage.getItem('accessTokenFreelancer');
     const container = useRef();
     const [dropdownState, setDropdownState] = useState({ open: false });
     const handleDropdownClick = () =>
@@ -68,12 +69,12 @@ const ApplyProposal = () => {
     };
 
     const CurrencyOptions = [
-        { value: 'India', label: 'INR' },
+        { value: 'INDIA', label: 'INR' },
         { value: 'USA', label: 'USD' },
-        { value: 'Canada', label: 'CAD' },
-        { value: 'England', label: 'GBP' },
-        { value: 'China', label: 'CNY' },
-        { value: 'Russia', label: 'RUB' },
+        { value: 'CANADA', label: 'CAD' },
+        { value: 'ENGLAND', label: 'GBP' },
+        { value: 'CHINA', label: 'CNY' },
+        { value: 'RUSSIA', label: 'RUB' },
     ];
 
 
@@ -101,8 +102,28 @@ const ApplyProposal = () => {
     const handleCancelClick = () => {
         navigate('/employerprofile');
     }
-    const handleSaveClick = () => {
-        navigate('/employerprofile');
+    const { jobid } = useParams();
+    const handleSaveClick = async() => {
+        try{
+            const proposal = document.querySelector('[name="proposal"]').value;
+            const proposed_rate = document.querySelector('[name="proposed_rate"]').value;
+            const response = await axios.post(`http://35.154.4.80/api/v0/jobs/${jobid}/apply`, 
+                 {"proposed_rate":proposed_rate,"proposal":proposal},{
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${accessToken}`,
+                  },
+              });
+              console.log(response);
+              if (response.status===200) {
+                  console.log('Applied Proposal successfully');
+                  navigate('/managejobs/applied');
+              }
+          }
+          catch (error) {
+            console.error('Error occurred:', error);
+        }
+        
     }
 
     return (
@@ -191,7 +212,7 @@ const ApplyProposal = () => {
                     <h2 style={{ marginTop: '40px', marginBottom: '40px' }}>Proposal</h2>
                     <Form.Group className='form-group' style={{ flex: '1' }} controlId="form">
                         <h4>Why are you fit for this job?</h4>
-                        <Form.Control style={{ width: '510px', height: '200px' }} className='form-vals' type="text" name='Title' placeholder="Enter answer here" />
+                        <Form.Control style={{ width: '510px', height: '200px' }} className='form-val' type="text" name='proposal' placeholder="Enter answer here" />
                     </Form.Group>
 
                     <h4 style={{ marginTop: '40px' }}>Any files to support your proposal</h4>
@@ -220,7 +241,7 @@ const ApplyProposal = () => {
                     <h4 style={{ marginTop: '40px' }} >What is your Proposed rate?</h4>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <Form.Group className="mb-3 form-group" controlId="formBudget">
-                            <Form.Control style={{ width: '180px', height: '33px' }} className='form-vals-two' type="text" name='budget' placeholder="" />
+                            <Form.Control style={{ width: '180px', height: '33px' }} className='form-vals-two' type="text" name='proposed_rate' placeholder="" />
                         </Form.Group>
 
                         <Form.Group className="mb-3 form-group" controlId="formCurrency">

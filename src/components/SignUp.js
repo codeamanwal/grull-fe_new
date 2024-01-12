@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Signup.css';
 import Select from 'react-select';
+import Button from '@mui/material/Button';
+import { FcGoogle } from "react-icons/fc";
+import { FaApple } from "react-icons/fa";
 
 const SignUp = () => {
     const navigate = useNavigate();
-
+    const [isReceiveEmailsChecked, setReceiveEmailsChecked] = useState(false);
+    const [isAgreeToTermsChecked, setAgreeToTermsChecked] = useState(false);
     const handleLoginClick = () => {
         navigate('/login');
     };
+    const { userType } = useParams();
 
     const handleCreateAccountClick = async () => {
+        if (isReceiveEmailsChecked && isAgreeToTermsChecked) {
         const firstName = document.querySelector('[name="First_name"]').value;
         const lastName = document.querySelector('[name="Last_name"]').value;
         const email = document.querySelector('[name="email"]').value;
@@ -28,13 +34,14 @@ const SignUp = () => {
             alert('Password field cannot be empty');
             return;
         }
-
+        
         const registrationData = {
             email: email,
             password: password,
-            // Include other relevant form fields in the registrationData object
-        };
-
+            first_name: firstName,
+            last_name: lastName,
+          };
+        console.log(registrationData)
         try {
             const response = await fetch('http://35.154.4.80/api/v0/auth/register', {
                 method: 'POST',
@@ -43,21 +50,20 @@ const SignUp = () => {
                 },
                 body: JSON.stringify(registrationData),
             });
-
+            console.log(response)
             if (response.status === 201) {
-                // User registered successfully, navigate to the profile section
-                navigate('/freelancerprofile');
+                navigate('/login');
             } else if (response.status === 400) {
-                // User already exists, show alert
                 alert('REGISTER USER ALREADY EXISTS');
             } else {
-                // Handle other status codes as needed
                 console.error('Unexpected response:', response);
             }
         } catch (error) {
-            // Handle network or other errors
             console.error('Error during registration:', error);
         }
+    } else {
+        alert('Please Tick the Checkboxes')    
+    }
     };
 
     const countryOptions = [
@@ -69,16 +75,20 @@ const SignUp = () => {
     return (
         <div>
             <div className='headerStyle'>
-                <h2 style={{ marginLeft: '80px', marginTop: '10px' }}>Grull</h2>
+                <h2 className='header-logo'>Grull</h2>
+            </div>
+            <div>
+            <div className='res-content'>
+                <h2>Complete your Grull profile</h2>
             </div>
             <div className='outer-most'>
                 <div className='content'>
-                    <h2>Complete Your Grull profile</h2>
+                <h2>Complete Your Grull profile</h2>
                     <div>
-                        <button className='apple-button button-with-icon'>Continue with Apple</button>
+                        <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
                     </div>
                     <div>
-                        <button className='google-button button-with-icon'>Continue with Google</button>
+                        <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
                     </div>
 
 
@@ -89,60 +99,55 @@ const SignUp = () => {
                     </div>
 
                     <Form>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <Form.Group className='form-group' style={{ flex: '1' }} controlId="formBasicFirstName">
+                        <div style={{ display: 'flex', gap: '15px',justifyContent:'space-between' }} >
+                            <Form.Group className='form-group' controlId="formBasicFirstName" style={{display:'flex',flex:1}}>
                                 <Form.Control className='form-vals' type="text" name='First_name' placeholder="First Name" />
                             </Form.Group>
-
-                            <Form.Group className='form-group' style={{ flex: '1' }} controlId="formBasicLastName">
+                            <Form.Group className='form-group' controlId="formBasicLastName" style={{display:'flex',flex:1}}>
                                 <Form.Control className='form-vals' type="text" name='Last_name' placeholder="Last Name" />
                             </Form.Group>
                         </div>
 
-                        <Form.Group className="mb-3 form-group" controlId="formBasicEmail">
+                        <Form.Group className="mb-3 form-group" controlId="formBasicEmail" style={{display:'flex'}}>
                             <Form.Control className='form-vals-two' type="email" name='email' placeholder="Email" />
                         </Form.Group>
 
-                        <Form.Group className="mb-3 form-group" controlId="formBasicMobile">
+                        <Form.Group className="mb-3 form-group" controlId="formBasicMobile" style={{display:'flex'}}>
                             <Form.Control className='form-vals-two' type="text" name="MobileNumber" placeholder="Mobile Number"
                                 pattern="[0-9]{10}" // Specify the pattern for a 10-digit number
                                 title="Please enter a 10-digit mobile number" required />
                         </Form.Group>
 
-                        <Form.Group className="mb-3 form-group" controlId="formBasicPassword">
+                        <Form.Group className="mb-3 form-group" controlId="formBasicPassword" style={{display:'flex'}}>
                             <Form.Control className='form-vals-two' type="password" name='password' placeholder="Password (8 or more Characters)" />
                         </Form.Group>
 
                         <Form.Group className="mb-3 form-group" controlId="formBasicCountry">
-                            <Select
+                            <Select 
                                 options={countryOptions} placeholder="Select Country"
-                                styles={{ control: (provided) => ({ ...provided, borderRadius: '10px', width: '510px', height: '2px' }) }}
+                                styles={{ control: (provided) => ({ ...provided, borderRadius: '10px', height: '2px',width:'100%',textAlign:'left',padding:'0 10px ' }) }}
                             />
                         </Form.Group>
                     </Form>
 
-                    <div>
+                    <div style={{marginBottom:'15px'}}>
                         <div style={{ display: 'flex', marginTop: '12px', marginBottom: '10px' }}>
-                            <input type="checkbox" style={{ marginRight: '10px' }} />
-                            <span style={{ fontSize: '13px' }}>Send me helpful emails to find regarding work and job leads.</span>
+                            <input type="checkbox" style={{ marginRight: '10px' }} checked={isReceiveEmailsChecked} onChange={() => setReceiveEmailsChecked(!isReceiveEmailsChecked)} />
+                            <span style={{ fontSize: '14px',color:'#656565' }}>Send me helpful emails to find regarding work and job leads.</span>
                         </div>
 
                         <div style={{ display: 'flex', marginTop: '5px' }}>
-                            <input type="checkbox" style={{ marginRight: '10px' }} />
-                            <p style={{ fontSize: '13px', margin: '0' }}>Yes, I understand and agree to the Grull Terms of Service, including the User Agreement</p>
-                        </div>
-
-                        <div style={{ display: 'flex', marginBottom: '10px' }}>
-                            <p style={{ fontSize: '13px', margin: '0', marginLeft: '24px' }}>and Privacy Policy.</p>
+                            <input type="checkbox" style={{ marginRight: '10px' }} checked={isAgreeToTermsChecked} onChange={() => setAgreeToTermsChecked(!isAgreeToTermsChecked)} />
+                            <p style={{ fontSize: '14px', margin: '0',color:'#656565' }}>Yes, I understand and agree to the Grull Terms of Service, including the User Agreement and Privacy Policy.</p>
                         </div>
                     </div>
 
-                    <button className='create-account-button' onClick={handleCreateAccountClick}>Create my account</button>
-                    <h5 style={{ fontWeight: 'normal' }}>
-                        Already have an account?{' '}
-                        <a href="" style={{ color: '#b27ee3', textDecoration: 'none' }} onClick={handleLoginClick}>
+                    <Button className='create-account-button' onClick={handleCreateAccountClick} >Create my account</Button>
+                    <h5 style={{fontWeight:'normal',color: '#656565',fontSize: '16px'}}>
+                            Already have an account?{' '}
+                            <a style={{ color: '#b27ee3', textDecoration: 'none',fontWeight:'700',cursor:'pointer' }} onClick={handleLoginClick}>
                             Log In
-                        </a>
+                            </a>
                     </h5>
                 </div>
                 <div className='content2'>
@@ -150,6 +155,7 @@ const SignUp = () => {
                 </div>
             </div>
         </div>
+    </div>
     );
 }
 

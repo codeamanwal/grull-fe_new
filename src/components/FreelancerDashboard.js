@@ -23,10 +23,15 @@ interface Props {
 }
 
 export default function FreelancerDashboard(props: Props) {
-
+  const [fullname,setFullname]=useState('');
+  const [role,setRole]=useState('');
   const [activeButton, setActiveButton] = useState('home');
   const navigate = useNavigate();
-
+  const avatarBackgroundColor = 'Grey'; 
+  const getInitials = (name) => {
+    const names = name.split(' ');
+    return names.map((word) => word[0]).join('').toUpperCase();
+  };
   const handleButtonClick = (button) => {
     setActiveButton(button);
     if (button === 'manageJobs') {
@@ -66,7 +71,29 @@ export default function FreelancerDashboard(props: Props) {
       return 340;
     }
   };
-
+  const accessToken = localStorage.getItem('accessToken');
+  useEffect(()=>{
+       const infofetch=async()=>{
+        try {
+          const response = await fetch(
+            'http://35.154.4.80/api/v0/users/me', 
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+              },
+            }
+          );
+          const responseData = await response.json();
+          setFullname(responseData.full_name);
+          setRole(responseData.role);
+        } catch (error) {
+          console.error('Error during fetching data:', error);
+        }
+       }
+       infofetch();
+  },[])
   const drawer = (
     <div style={{backgroundColor:'#000',paddingLeft:'80px',paddingRight:'40px',height:'100vh'}} className='dashboard-drawer'>
       <Box sx={{display:'flex',padding:'18px 0'}} >
@@ -74,10 +101,15 @@ export default function FreelancerDashboard(props: Props) {
       </Box>
       <Box sx={{marginTop:'100px'}}>
          <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
-             <Avatar alt="Remy Sharp" src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
+         <Avatar
+        alt={fullname}
+        style={{ backgroundColor: avatarBackgroundColor }}
+      >
+        {getInitials(fullname)}
+      </Avatar>
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
-               <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>Astle Benjamin</Typography>
-               <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>UI UX Designer</Typography>
+               <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>{fullname}</Typography>
+               <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>{role}</Typography>
              </Grid>
          </Box>
          <Box
@@ -122,7 +154,7 @@ export default function FreelancerDashboard(props: Props) {
         <Toolbar sx={{
             display:'flex',
             justifyContent:'space-between'
-        }} >
+        }} className='dashboard-navbar-con'>
             <Box >
                 <Typography style={{
                     // fontFamily: 'Urbanist',
@@ -135,7 +167,7 @@ export default function FreelancerDashboard(props: Props) {
                 Dashboard </Typography>
             </Box>
             <Box sx={{display:'flex',gap:'40px',alignItems:'center'}} className='dashboard-navbar-buttons'>
-                  <Box
+                <Box
                   sx={{
                     background: 'linear-gradient(90deg, #ED8335 0%, #B27EE3 100%)',
                     // display: 'inline-block',
@@ -143,7 +175,7 @@ export default function FreelancerDashboard(props: Props) {
                     borderRadius: '17px',
                   }}
                 >
-                  <Button
+                  <Button 
                     sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',border: 'none', borderRadius: '16px',color:'#000',textTransform: 'none',fontSize:'16px',':hover':{background:"#fff"}}}
                     >Grull Premium
                   </Button>
@@ -152,9 +184,15 @@ export default function FreelancerDashboard(props: Props) {
                   sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}}> 
                   {<CiShare2 style={{height:'1.5em',width:'1.3em'}}/>}Share Profile
                 </Button>
-                <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',':hover':{}}}/>
-                <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}}/>
-                <Avatar alt="Remy Sharp" src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
+                <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',':hover':{}}} className='resdash' />
+                <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
+                <Avatar
+                  alt={fullname}
+                  style={{ backgroundColor: avatarBackgroundColor }}
+                  className='dashboardavatar'
+                >
+                  {getInitials(fullname)}
+                </Avatar>
             </Box>
         </Toolbar>
       </AppBar>
@@ -198,7 +236,6 @@ export default function FreelancerDashboard(props: Props) {
         <Toolbar />
         {activeButton === 'home' && (
           <FreelancerHome />
-          // <ClientHome />
         )}
         {activeButton === 'wallet' && (
           <Freelancerwallet />

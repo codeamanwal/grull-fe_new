@@ -2,7 +2,7 @@ import React,{useEffect, useState} from 'react'
 import Typography from '@mui/material/Typography';
 import { Box, Button, Grid } from '@mui/material';
 import { Radio, RadioGroup, FormControl, FormControlLabel } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HiDotsVertical } from "react-icons/hi";
 import Slider from '@mui/material/Slider';
 import '../styles/freelancerhome.css';
@@ -25,7 +25,10 @@ export default function ClientHome() {
           window.removeEventListener('resize', handleResize);
         };
       }, []);
-
+    const navigate=useNavigate();
+    const clickpostjobs =()=>{
+      navigate('/postjob')
+    }
   return (
     <Box sx={{padding:'70px 90px'}} className='home-container'>
        <Box>
@@ -34,7 +37,7 @@ export default function ClientHome() {
             <Box sx={{ backgroundColor: '#B27EE31A', padding: '25px 30px',borderRadius:'16px',display:'flex',flexDirection:'column',gap:'7px' }}>
                 <Typography sx={{color:"#000",fontSize:'22px'}} className='home-subheading'>Post your next job</Typography>
                 <Typography sx={{color:"#656565",fontSize:'20px'}} className='home-content'>Explore exclusive freelancers.</Typography>
-                <Button sx={{width:'fit-content',boxShadow:' 0px 0px 4px 0px #00000040',backgroundColor:'#fff',borderRadius:'16px',padding:'8px 20px',color:'#000',textTransform:'none',marginTop:'10px'}}>Post Jobs</Button>
+                <Button sx={{width:'fit-content',boxShadow:' 0px 0px 4px 0px #00000040',backgroundColor:'#fff',borderRadius:'16px',padding:'8px 20px',color:'#000',textTransform:'none',marginTop:'10px'}} onClick={clickpostjobs}>Post Jobs</Button>
             </Box>
          </Grid>
        </Box>
@@ -56,7 +59,7 @@ export default function ClientHome() {
        <Box sx={{marginTop:windowWidth>=600?'80px':'50px'}}>
          <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                 <Typography sx={{fontSize:'32px',fontWeight:'600',letterSpacing:'-1px'}} className='home-heading'>Ongoing Jobs</Typography>
-                <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/ongoing'>View All</Link>
+                <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/clientmanagejobs/ongoing'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
             <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
@@ -115,7 +118,7 @@ export default function ClientHome() {
        <Box sx={{marginTop:windowWidth>=600?'80px':'50px'}}>
          <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                 <Typography sx={{fontSize:'32px',fontWeight:'600',letterSpacing:'-1px'}} className='home-heading'>Completed Jobs</Typography>
-                <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/completed'>View All</Link>
+                <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/clientmanagejobs/completed'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
             <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>

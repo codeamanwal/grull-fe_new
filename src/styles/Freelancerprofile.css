@@ -1,158 +1,144 @@
-body{
-    overflow-y: auto;
+
+.headerStyle-freelancer{
+    background: #000000;
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 90px;
+    flex-wrap: nowrap;
 }
-.headerStyle {
-    background: black;
-    color: #b27ee3;
-    padding: 1px;
-    margin: 0;
-    padding-left: 5px;
-    height: 45px;
+.headerStyle-freelancer div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap:40px ;
+    align-items: center;
 }
-.findWorkButton{
-    border:none;
-    background-color: black;
-    color: white;
-    margin-left: 60px;
-    cursor: pointer;
-    width: 75px;
+.headerStyle-freelancer h2{
+    color: #B27EE3;
+}
+.headerStyle-freelancer button{
+    color: #fff;
+    text-transform: none;
 }
 .postProjectButton{
-    border:1 px white;
-    background-color: black;
-    color: white;
-    width: 150px;
-    height: 30px;
-    border-radius: 16px;
-    background: url('../assets/FreelancerProfileHeaderArrow.png') no-repeat right center;
-    background-size: 16px 16px; 
-    padding-right: 20px; 
-    background-position: calc(100% - 10px) center;
-    margin-left: 40px;
-    cursor: pointer;
-    border: 1px solid white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    height: fit-content;
+    border: 1px solid #FFFFFF !important;
+    padding: 7px 14px !important;
+    border-radius: 16px !important;
 }
-.fas{
-    color: white;
+.container {
+    position: relative;
+    width: fit-content !important
 }
-.buttonIcon{
-    color: white;
-    font-size: 15px;
+.dropdown {
+    height: 300px;
+    width: 300px;
+    margin-top: 20px;
+    border: 1px solid #9c9b9b;
+    position: absolute;
+    top: 60%;
+    /* Position the dropdown below the button */
+    margin-left: -300px;
+    /* Adjust the width as needed */
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 2;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column !important;
+    gap:10px !important
 }
 
-.learnButton{
-    border:none;
-    background-color: black;
-    color: white;
-    margin-left:410px;
-    cursor: pointer;
-}
-.collaborateButton{
-    border:none;
-    background-color: black;
-    color: white;
-    margin-left:60px;
-    cursor: pointer;
-}
-.message{
-    width: 40px;
-    height: 30px;
-    margin-left: 50px;
-    cursor: pointer;
-}
-.profile{
-    width: 40px;
-    height: 30px;
-    margin-left: 10px;
-    border-radius: 22px;
-    cursor: pointer;
-}
-.notification{
-    width: 40px;
-    height: 30px;
-    margin-right:40px; 
-    cursor: pointer;
+.profilepage{
+    display: flex;
+    flex-direction: column;
+    gap:50px;
+    width: 88%;
+    margin: auto;
 }
 
 .switch-to-employer-button{
     color: white;
     background-color: #b27ee3;
-    height: 40px;
-    width: 200px;
+    width: fit-content;
+    padding: 13px 18px;
     border: none;
     border-radius: 15px;
-    margin-left:1100px;
-    margin-top: 20px;
+    margin-left: auto;
+}
+.firstcompprofile{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0;
 }
 .profile-background-image{
-    width:1200px;
-    height:300px;
-    margin-top:10px;
-    margin-left:100px;
+    width:100%;
+    height:320px;
 }
 .user-picture{
-    position: absolute;
-     top: 50%;
-     left: 20%;
-     transform: translate(-50%, -50%);
-    z-index: 1;
+    position: relative;
 }
 .user-picture-img{
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
+    width: 200px !important;
+    height: 200px !important;
     border: 1px solid black;
 }
 .camera-icon {
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 35px; 
-    height: 30px;
     cursor: pointer;
+    font-size: 35px;
 }
 
 .skills-about{
-    margin-top: 100px;
+    margin-top: 50px;
     display: flex;
-    margin-bottom: 300px;
+    /* margin-bottom: 300px; */
 }
 .left-box{
     width: 300px;
     height: 600px;
     border: 1px solid #9c9b9b; 
     padding: 10px; 
-    margin-left: 100px;
+    /* margin-left: 100px; */
     margin-right: 70px;
     border-radius: 20px;
 }
 
 .right-box{
-    width: 880px;  
+    /* width: auto;  
+     */
+     flex: 1;
     height: 600px;
     border: 1px solid #9c9b9b; 
     padding: 10px; 
-    margin-right: 100px;
+    /* margin-right: 100px; */
     border-radius: 20px;
 }
 
 .review-box{
-    width: 1200px;  
+    width: 100%;  
     height: 600px;
     border: 1px solid #9c9b9b; 
     padding: 10px; 
-    margin-left: 100px;
-    margin-right: 100px;
+    /* margin-left: 100px; */
+    /* margin-right: 100px; */
     border-radius: 20px;
-    margin-top: -200px;
+    /* margin-top: -200px; */
     margin-bottom: 50px;
 }
 
 .about-box{
    height:200px;
-   width: 750px;
+   width: 90%;
+   margin: auto;
    border-radius: 20px;
    border: 1px solid #9c9b9b;
    margin-top: -10px;
@@ -196,17 +182,11 @@ body{
     background-size: cover; 
     background-position: center;
     background-repeat: no-repeat;
-    position: absolute;
-    top: 15px; /* top value to position it vertically */
-    right: 130px; /* right value to position it horizontally */
+    float: right !important;
 }
 
 .edit-buttons-container {
-    position: absolute;
-    bottom: 10px; /* Adjust the bottom value as needed */
-    right: 10px; /* Adjust the right value as needed */
     display: flex;
-    margin-right: 10px ;
 }
 
 /* .edit-buttons-container > div {
@@ -236,34 +216,33 @@ body{
 }
 
 .save-button{
-    width: 200px;
-    height:40px;
-    border-radius: 20px;
+    width: 150px !important;
+    border-radius: 16px !important;
     color: white;
     background-color: #b27ee3;
     border: none;
-    margin-left: 40px;
+    margin: 0 !important;
+    cursor: pointer;
 }
 
 .cancel-button{
-    width: 200px;
-    height:40px;
-    border-radius: 20px;
+    width: 150px !important;
+    border-radius: 16px !important;
+    border-radius: 16px;
     background-color: white;
     color: #b27ee3;
     border: 1px solid #b27ee3;
-    margin-left: 40px;
+    margin: 0 !important;
+    cursor: pointer;
 }
+
 .buttons-container {
+    
     display: flex;
     justify-content: 'flex-end'; /* Center buttons horizontally */
     margin-top: 20px; /* Push buttons to the bottom */
     margin-bottom: 10px; /* Add some bottom margin for spacing */
 }
-.save-button, .cancel-button {
-    margin: 0 10px; /* Add some margin between the buttons */
-  }
-
   .overlay {
     position: relative;
     top: 100%; /* Position just below the header */

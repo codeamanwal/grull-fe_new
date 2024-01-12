@@ -2,8 +2,9 @@
 import { Box, Button, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link,useNavigate, useParams } from 'react-router-dom';
-import Job from './Job';
 import '../styles/freelancermanagejobs.css';
+import ClientJob from './ClientJob';
+import axios from 'axios';
 
 const ClientManageJobs = () => {
   const { section } = useParams();
@@ -19,104 +20,94 @@ const ClientManageJobs = () => {
     }
   }, [section]);
 
-const jobData = [
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Started on Tue',
-    status: 'Posted'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Started on Tue',
-    status: 'Posted'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Started on Tue',
-    status: 'Posted'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Saved on Tue',
-    status: 'Completed'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Saved on Tue',
-    status: 'Completed'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Saved on Tue',
-    status: 'Completed'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Started on Tue',
-    status: 'Ongoing'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Started on Tue',
-    status: 'Ongoing'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Started on Tue',
-    status: 'Ongoing'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Saved on Tue',
-    status: 'Saved'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Saved on Tue',
-    status: 'Saved'
-  },
-  {
-    position: 'UI/UX Designer',
-    companyName: 'Elula Tech Pvt Ltd',
-    companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-    location: 'Bengaluru, Karnataka',
-    startDate: 'Saved on Tue',
-    status: 'Saved'
-  },
-];
+  const accessToken = localStorage.getItem('accessToken');
+  const [jobData,setJobdata]=useState([]);
+  useEffect (()=>{
+    const getjobs=async()=>{
+       try{
+         const response = await axios.get('http://35.154.4.80/api/v0/users/me/jobs', {
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Authorization': `Bearer ${accessToken}`,
+               },
+           });
+           console.log(response.data.results);
+           if (response.status===200) {
+               console.log('Jobs Fetchedd successfully');
+               setJobdata(response.data.results);
+           }
+       }
+       catch (error) {
+         console.error('Error occurred:', error);
+     }
+    }
+    getjobs();
+ },[])
+// const jobData = [
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Posted',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Posted',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Posted',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Completed',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Completed',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Completed',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Ongoing',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Ongoing',
+//     applicantcount:1
+//   },
+//   {
+//     workdesc: 'UI/UX Designer',
+//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
+//     postedDate: '9/5/2023',
+//     status: 'Ongoing',
+//     applicantcount:1
+//   },
+// ];
   return (
     <Box sx={{padding:'50px 90px'}} className='managejobs-page'>
          <Box>
@@ -138,24 +129,28 @@ const jobData = [
                {selectedSection==='posted' && (
                   <Box>
                     <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                        <Typography sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}} className='jobs-category'>Post Jobs</Typography>
+                        <Typography sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}} className='jobs-category'>Posted Jobs</Typography>
                         <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/employerprofile'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData
-                      .filter((job) => ['Posted'].includes(job.status))
-                        .map((job, index) => (
-                          <Job
+                    {jobData.filter((job) => ['PENDING'].includes(job.status)).length === 0 ? (
+                        <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No pending jobs found.</Typography>
+                      ) : (
+                        jobData
+                          .filter((job) => ['PENDING'].includes(job.status))
+                          .map((job, index) => (
+                            <ClientJob
                             key={index}
-                            position={job.position}
-                            companyName={job.companyName}
+                            id={job.id}
+                            title={job.title}
                             companyLogoUrl={job.companyLogoUrl}
-                            location={job.location}
-                            startDate={job.startDate}
+                            postedDate={job.created_at}
                             isLast={index === jobData.length - 1}
+                            applicantcount={job.job_applicants_count}
                             status={job.status}
                           />
-                        ))}
+                          ))
+                      )} 
                     </Box>
                   </Box>
                )
@@ -167,21 +162,24 @@ const jobData = [
                         <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/employerprofile'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData
-                      .filter((job) => ['Completed'].includes(job.status))
-                      .map((job, index) => (
-                        <Job
-                          key={index}
-                          position={job.position}
-                          companyName={job.companyName}
-                          companyLogoUrl={job.companyLogoUrl}
-                          location={job.location}
-                          startDate={job.startDate}
-                          isLast={index === jobData.length - 1}
-                          status={job.status}
-                        />
-                      ))}
-                      
+                    {jobData.filter((job) => ['Completed'].includes(job.status)).length === 0 ? (
+                        <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No completed jobs found.</Typography>
+                      ) : (
+                        jobData
+                          .filter((job) => ['Completed'].includes(job.status))
+                          .map((job, index) => (
+                            <ClientJob
+                              key={index}
+                              id={job.id}
+                              workdesc={job.workdesc}
+                              companyLogoUrl={job.companyLogoUrl}
+                              postedDate={job.postedDate}
+                              isLast={index === jobData.length - 1}
+                              applicantcount={job.applicants}
+                              status={job.status}
+                            />
+                          ))
+                      )}           
                     </Box>
                   </Box>
                )
@@ -190,49 +188,27 @@ const jobData = [
                   <Box>
                     <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography  className='jobs-category' sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}}>Ongoing Jobs</Typography>
-                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/employerprofile'>Manage Profile</Link>
+                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' >Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData
-                      .filter((job) => ['Ongoing'].includes(job.status))
-                      .map((job, index) => (
-                        <Job
-                          key={index}
-                          position={job.position}
-                          companyName={job.companyName}
-                          companyLogoUrl={job.companyLogoUrl}
-                          location={job.location}
-                          startDate={job.startDate}
-                          isLast={index === jobData.length - 1}
-                          status={job.status}
-                        />
-                      ))}
-                      
-                    </Box>
-                  </Box>
-               )
-               }
-               {selectedSection==='saved' && (
-                  <Box>
-                    <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                        <Typography className='jobs-category' sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}}>Saved Jobs</Typography>
-                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/employerprofile'>Manage Profile</Link>
-                    </Box>
-                    <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData
-                      .filter((job) => ['Saved'].includes(job.status))
-                      .map((job, index) => (
-                        <Job
-                          key={index}
-                          position={job.position}
-                          companyName={job.companyName}
-                          companyLogoUrl={job.companyLogoUrl}
-                          location={job.location}
-                          startDate={job.startDate}
-                          isLast={index === jobData.length - 1}
-                          status={job.status}
-                        />
-                      ))}
+                    {jobData.filter((job) => ['Ongoing'].includes(job.status)).length === 0 ? (
+                        <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No ongoing jobs found.</Typography>
+                      ) : (
+                        jobData
+                          .filter((job) => ['Ongoing'].includes(job.status))
+                          .map((job, index) => (
+                            <ClientJob
+                              key={index}
+                              id={job.id}
+                              workdesc={job.workdesc}
+                              companyLogoUrl={job.companyLogoUrl}
+                              postedDate={job.postedDate}
+                              isLast={index === jobData.length - 1}
+                              applicantcount={job.applicants}
+                              status={job.status}
+                            />
+                          ))
+                      )}    
                       
                     </Box>
                   </Box>

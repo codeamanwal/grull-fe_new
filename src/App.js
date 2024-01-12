@@ -15,26 +15,28 @@ import FreelancerDashboard from './components/FreelancerDashboard';
 import FreelancerManagerJobs from './components/FreelancerManageJobs';
 import ClientDashboard from './components/ClientDashboard';
 import ClientManageJobs from './components/ClientManageJobs';
+import JobApplications from './components/EmployerjobApplication';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/start" element={<Start />} />
+        <Route path="/" element={<Start />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup/:userType" element={<SignUp />} />
         <Route path="/freelancerprofile" element={<FreelancerProfile/>}/>
         <Route path="/employerprofile" element={<EmployerProfile/>}/>
         <Route path="/postjob" element={<PostJob/>}/>
-        <Route path="/applyproposal" element={<ApplyProposal/>}/>
+        <Route path="/applyproposal/:jobid" element={<ApplyProposal/>}/>
         <Route path="/browsefreelancer" element={<BrowseFreelancer/>}/>
         <Route path="/browsejobs" element={<BrowseJobs/>}/>
-        <Route path="/jobdetails" element={<JobDetails/>}/>
+        <Route path="/jobdetails/:jobid" element={<JobDetails/>}/>
         <Route path="/paymentbyclient" element={<PaymentByClient/>}/>
-        <Route path="/" element={<FreelancerDashboard/>}/>
+        <Route path="/freelancer" element={<FreelancerDashboard/>}/>
         <Route path="/managejobs/:section" element={<FreelancerManagerJobs/>}/>
         <Route path="/client" element={<ClientDashboard />} />
         <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
+        <Route path="/jobapplications/:jobid" element={<JobApplications />} />
       </Routes>
     </Router>
   );

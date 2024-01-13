@@ -1,0 +1,81 @@
+.rectangle{
+    height:280px;
+    width:1180px;
+    border:none;
+    background-color: #D9D9D9;
+    margin-top: 50px;
+    margin-left:120px;
+    margin-right:150px;
+}
+
+.search-bar{
+    background-color:#ED8335;
+    height:180px;
+    border:none;
+    margin-top: 30px;
+}
+
+.projects{
+    color: #D9D9D9;
+    margin-right: 40px;
+    text-decoration: none;
+}
+
+.contest{
+    color: #D9D9D9;
+    text-decoration: none;
+}
+.projects:hover{
+   font-weight: bold;
+   color: white;
+   text-decoration: underline;
+}
+.contest:hover{
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+ }
+ 
+.browseJobs-left-box{
+    margin-right: 30px;
+    margin-left: 150px;
+    width: 300px;
+    border: 1px solid #D9D9D9;
+    border-radius: 20px;
+    height: 1200px;
+}
+.browseJobs-right-box{
+    width:900px;
+    height: 1200px;
+    overflow-y: scroll;
+    margin-right: 100px;
+}
+
+.container {
+    display: inline-block;
+    width:120px;
+ }
+ .button {
+    padding: 0;
+    width: 100px;
+    border: 0;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    outline: 0;
+    font-size: 20px;
+ }
+
+ ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+   }
+   li {
+    padding: 8px 12px;
+   }
+   
+   li:hover {
+    background-color: rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+   }

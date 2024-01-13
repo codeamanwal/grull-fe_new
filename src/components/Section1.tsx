@@ -8,6 +8,7 @@ import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section1CircleAnimation.json";
 import "animate.css";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
+import { useNavigate } from "react-router-dom";
 
 function Section1() {
   const { dustyOrange, lavender, black, white, silverTree, racingGreen } =
@@ -21,6 +22,7 @@ function Section1() {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  const navigate=useNavigate();
 
   return (
     <Grid
@@ -113,7 +115,7 @@ function Section1() {
               //     border: `1px solid ${white}`,
               //   },
             }}
-            onClick={scrollToSection}
+            onClick={()=>{navigate('/client')}}
           >
             Post a Project
           </Button>
@@ -134,7 +136,7 @@ function Section1() {
               //     color:black
               //   },
             }}
-            onClick={scrollToSection}
+            onClick={()=>{navigate('/freelancer')}}
           >
             Find Work
           </Button>

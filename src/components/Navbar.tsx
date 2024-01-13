@@ -101,7 +101,7 @@ function Navbar() {
                 typography: "font_18_800",
                 cursor:'pointer'
               }}
-              onClick={() => scrollToSection()}
+              onClick={()=>{navigate('/freelancer')}}
             >
               I’m a Freelancer
               <img
@@ -126,7 +126,7 @@ function Navbar() {
                 typography: "font_18_800",
                 cursor:'pointer'
               }}
-              onClick={() => scrollToSection()}
+              onClick={()=>{navigate('/client')}}
             >
               Hire a Designer
               <img

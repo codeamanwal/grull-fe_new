@@ -1,0 +1,92 @@
+.post-project-button {
+    background-color: black;
+    color: white;
+    margin-left: 60px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.browse-freelancer-button {
+    background-color: black;
+    color: white;
+    margin-left: 80px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.about-postJobs {
+    margin-top: 100px;
+    display: flex;
+    margin-bottom: 300px;
+    margin-left: 100px;
+    width: 1600px;
+    height:auto;
+}
+
+.first-box {
+    width: 82%;
+    height: 1200px;
+    border: 1px solid #9c9b9b;
+    padding: 10px;
+    margin-right: 100px;
+    border-radius: 20px;
+}
+
+.first-box-one {
+    height: 200px;
+    width: 1000px;
+    border-radius: 20px;
+    border: 1px solid #9c9b9b;
+    margin-top: 5px;
+    margin-left: 45px;
+}
+
+.first-box-two {
+    height: 100px;
+    border-radius: 20px;
+    margin-top: 50px;
+    border: 1px solid #9c9b9b;
+    width: 1000px;
+    margin-left: 45px;
+}
+
+.review-box-employer {
+    margin-top: -180px;
+    width: 82%;
+    height: 500px;
+    border: 1px solid #9c9b9b;
+    margin-left: 100px;
+    margin-bottom: 70px;
+    border-radius: 20px;
+}
+
+.inside-posted-jobs {
+    width: 1000px;
+    height: 400px;
+    border-radius: 20px;
+    /* border: 1px solid #9c9b9b; */
+    margin-left: 45px;
+}
+
+.container {
+    position: relative;
+}
+
+.dropdown {
+    height: 300px;
+    width: 300px;
+    margin-top: 20px;
+    border: 1px solid #9c9b9b;
+    position: absolute;
+    top: 60%;
+    /* Position the dropdown below the button */
+    margin-left: -300px;
+    /* Adjust the width as needed */
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 2;
+    border-radius: 20px;
+}

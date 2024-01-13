@@ -22,7 +22,7 @@ export default function PageRoute() {
      return (
        <BrowserRouter>
          <Routes>
-             <Route path="/" element={<Start />} />
+             <Route path="/home" element={<Start />} />
              <Route path="/login" element={<Login />} />
             <Route path="/signup/:userType" element={<SignUp />} />
             <Route path="/freelancerprofile" element={<FreelancerProfile/>}/>
@@ -38,7 +38,7 @@ export default function PageRoute() {
             <Route path="/client" element={<ClientDashboard />} />
             <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
             <Route path="/jobapplications/:jobid" element={<JobApplications />} />
-             <Route path="/home" element={<App />} ></Route>
+             <Route path="/" element={<App />} ></Route>
              <Route path="/coming-soon" element={<ComingSoon />} ></Route>
          </Routes>
        </BrowserRouter>

@@ -101,7 +101,7 @@ function Navbar() {
                 typography: "font_18_800",
                 cursor:'pointer'
               }}
-              onClick={()=>{navigate('/freelancer')}}
+              onClick={()=>{navigate('/home')}}
             >
               I’m a Freelancer
               <img
@@ -126,7 +126,7 @@ function Navbar() {
                 typography: "font_18_800",
                 cursor:'pointer'
               }}
-              onClick={()=>{navigate('/client')}}
+              onClick={()=>{navigate('/home')}}
             >
               Hire a Designer
               <img

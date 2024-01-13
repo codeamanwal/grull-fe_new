@@ -115,7 +115,7 @@ function Section1() {
               //     border: `1px solid ${white}`,
               //   },
             }}
-            onClick={()=>{navigate('/client')}}
+            onClick={()=>{navigate('/home')}}
           >
             Post a Project
           </Button>
@@ -136,7 +136,7 @@ function Section1() {
               //     color:black
               //   },
             }}
-            onClick={()=>{navigate('/freelancer')}}
+            onClick={()=>{navigate('/home')}}
           >
             Find Work
           </Button>

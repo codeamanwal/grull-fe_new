@@ -44,7 +44,7 @@ const Login = () => {
             const accessToken = responseData.access_token;
             console.log(accessToken);
             localStorage.setItem('accessToken', accessToken);
-            navigate('/home');
+            navigate('/freelancer');
           } else {
             // Show an alert for unexpected response format
             alert('Unexpected response from the server');

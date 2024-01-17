@@ -98,25 +98,20 @@
 }
 
 .skills-about{
-    margin-top: 50px;
+    margin-top: 20px;
     display: flex;
+    gap:50px
     /* margin-bottom: 300px; */
 }
 .left-box{
     width: 300px;
-    height: 600px;
     border: 1px solid #9c9b9b; 
     padding: 10px; 
-    /* margin-left: 100px; */
-    margin-right: 70px;
     border-radius: 20px;
 }
 
 .right-box{
-    /* width: auto;  
-     */
      flex: 1;
-    height: 600px;
     border: 1px solid #9c9b9b; 
     padding: 10px; 
     /* margin-right: 100px; */
@@ -147,12 +142,16 @@
 
 .portfolio-buttons{
     border-radius: 20px;
-    width: 140px;
     height: 30px;
     margin-left: 10px;
     border: 1px solid #9c9b9b;
     background-color: white;
     color: black;
+    font-weight: bold;
+    min-width: 100px;  /* Adjust the minimum width as needed */
+    padding: 0 10px; 
+    text-align: center; /* Center the text horizontally */
+    line-height: 30px; /* Center the text vertically by setting line-height equal to the height */
 }
 .portfolio-buttons:hover{
     background-color: #ED8335;
@@ -161,7 +160,8 @@
 
 .box-container{
     display: flex;
-    margin-top: 20px;
+    margin-top: 35px;
+    margin-left: 10px;
 }
 .rectangular-box {
     width: 200px;

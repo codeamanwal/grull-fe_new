@@ -8,23 +8,23 @@ import axios from 'axios';
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import Avatar from '@mui/material/Avatar';
-import { Button} from '@mui/material';
+import { Button } from '@mui/material';
 import { MdArrowOutward } from "react-icons/md";
 import { CiCamera } from "react-icons/ci";
 
 const Employerprofile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
-    const avatarBackgroundColor = 'Grey'; 
+    const avatarBackgroundColor = 'Grey';
     const getInitials = (name) => {
         // Check if name is defined before splitting
         if (name) {
-          const names = name.split(' ');
-          return names[0][0].toUpperCase();
+            const names = name.split(' ');
+            return names[0][0].toUpperCase();
         } else {
-          return ''; // Handle the case where name is undefined
+            return ''; // Handle the case where name is undefined
         }
-      };
+    };
     const handlePostJobClick = () => {
         navigate('/postjob');
     }
@@ -80,14 +80,6 @@ const Employerprofile = () => {
         }
     }
 
-    const [inputAboutValue, setInputAboutValue] = useState('');
-    const handleAboutChange = (event) => {
-        setInputAboutValue(event.target.value);
-    };
-
-    const [newProject, setNewProject] = useState('');
-    const [projects, setProjects] = useState([]);
-    const [tempProjects, setTempProjects] = useState([]);
 
     const [rightBoxEditMode, setRightBoxEditMode] = useState(false);
     const [topBoxEditMode, setTopBoxEditMode] = useState(false);
@@ -106,35 +98,16 @@ const Employerprofile = () => {
     const [jobsPostedCount, setJobsPostedCount] = useState('');
     const [avgRateOffered, setAvgRateOffered] = useState('');
 
-    //giving initial values to the variables
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-          try {
-            
-            const response = await axios.get('http://35.154.4.80/api/v0/users/me', {
-              headers: {
-                'Authorization':`Bearer ${accessToken}`,
-              },
-            });
-    
-            if (response.status === 200) {
-              const { first_name, description, location } = response.data;
-    
-              setSavedName(first_name);
-              setSavedJobCategory(description);
-              setSavedLocation(location.country);
-            } else {
-              console.error('Error fetching user profile:', response.data.error);
-            }
-          } catch (error) {
-            console.error('Network error:', error);
-          }
-        };
-    
-        fetchUserProfile();
-      }, []); // Empty dependency array ensures the effect runs once when the component mounts
+    const [inputAboutEmployer, setInputAboutEmployer] = useState('');
+    const handleAboutChange = (event) => {
+        setInputAboutEmployer(event.target.value);
+    };
 
-
+    const [inputAboutCompany, setInputAboutCompany] = useState('');
+    const handleAboutCompanyChange = (event) => {
+        setInputAboutCompany(event.target.value);
+    }
+ 
     const handleEditClick = (box) => {
         if (box === 'right') {
             setRightBoxEditMode(true);
@@ -150,12 +123,50 @@ const Employerprofile = () => {
         }
     };
 
-    const handleAddProject = () => {
-        if (newProject) {
-            setTempProjects([...tempProjects, newProject]);
-            setNewProject('');
-        }
-    };
+
+    //fetching initial values for the variables
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+
+                const response = await axios.get('http://35.154.4.80/api/v0/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+
+                if (response.status === 200) {
+                    const responseData = response.data;
+                    console.log(response)
+
+                    setSavedName(responseData.full_name);
+                    setNewName(responseData.full_name);
+                    setSavedLocation(responseData.location.country);
+                    setNewLocation(responseData.location.country);
+                    setNewJobCategory(responseData.role);
+                    setSavedJobCategory(responseData.role);
+
+                    setInputAboutEmployer(responseData.description);
+
+                    setTopBoxEditMode(false);
+                    setRightBoxEditMode(false);
+
+                } else if (response.status === 400) {
+                    // Handle error (e.g., show error message)
+                    alert('A user with this email already exists');
+                    console.error('Failed to update user profile');
+                }
+                else if (response.status === 401) {
+                    alert('Missing token or inactive value');
+                }
+            } catch (error) {
+                // Handle network error or other issues
+                console.error('Network error:', error);
+            }
+        };
+
+        fetchUserProfile();
+    }, []); // Empty dependency array ensures the effect runs once when the component mounts
 
 
     // change user details
@@ -185,6 +196,7 @@ const Employerprofile = () => {
                 setSavedLocation(newLocation);
                 setJobsPostedCount(jobs_posted_count);
                 setAvgRateOffered(average_rate_offered);
+
                 setTopBoxEditMode(false); // Exit edit mode
 
             } else if (response.status === 400) {
@@ -201,12 +213,40 @@ const Employerprofile = () => {
         }
     };
 
+    // updating about value
+    const updateAbout = async () => {
+        try {
+            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+                description: inputAboutEmployer,
+            },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                const responseData = response.data;
+                console.log(response)
+                // Update the state with the response from the backend
+                setInputAboutEmployer(responseData.description);
+                setRightBoxEditMode(false);
+
+            } else {
+                // Handle error
+                console.error('Failed to update skills and languages');
+            }
+        } catch (error) {
+            // Handle network error or other issues
+            console.error('Network error:', error);
+        }
+    };
+
 
     const handleSaveTop = async () => {
         setTopBoxEditMode(false);
-        // setSavedName(newName);
-        // setSavedJobCategory(newJobCategory);
-        // setSavedLocation(newLocation);
         await updateUserProfile();
         setTopButtonImage(require('../assets/edit.jpg'));
     }
@@ -219,19 +259,14 @@ const Employerprofile = () => {
         setTopButtonImage(require('../assets/edit.jpg'));
     }
 
-    const handleCancelAbout = () => {
+    const handleSaveAbout = async () => {
         setRightBoxEditMode(false);
-        setNewProject('');
-        setTempProjects([]);
-        setInputAboutValue('');
+        await updateAbout();
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
-    const handleSaveAbout = () => {
+    const handleCancelAbout = () => {
         setRightBoxEditMode(false);
-        setProjects([...projects, ...tempProjects, newProject]); // Add the new project
-        setNewProject('');
-        setTempProjects([]);   //Reset temp projects
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
@@ -280,8 +315,8 @@ const Employerprofile = () => {
         { value: 'VIDEO_EDITOR', label: 'Video Editor' },
         { value: 'THREE_D_ARTIST', label: '3D Artist' },
         { value: 'PRODUCT_DESIGNER', label: 'Product Designer' },
-      ];
-      
+    ];
+
 
     const LocationOptions = [
         { value: 'INDIA', label: 'India' },
@@ -305,75 +340,75 @@ const Employerprofile = () => {
                         <Button className='postProjectButton' endIcon={<MdArrowOutward />} onClick={handlePostJobClick}>Post Job</Button>
                     </div>
                 </div>
-                
+
                 <div>
                     <div className='imageContainer' style={{ display: 'flex', alignItems: 'center' }}>
-                        <FiMessageSquare style={{color:'#fff',fontSize:'30px'}} />
-                        <IoMdNotificationsOutline style={{color:'#fff',fontSize:'35px'}}/>
-<div ref={container} className='container'>
+                        <FiMessageSquare style={{ color: '#fff', fontSize: '30px' }} />
+                        <IoMdNotificationsOutline style={{ color: '#fff', fontSize: '35px' }} />
+                        <div ref={container} className='container'>
                             <Avatar
                                 alt={savedName}
                                 style={{ backgroundColor: avatarBackgroundColor }}
                                 className='dashboardavatar profile'
                                 onClick={clickProfileImage}
-                                >
+                            >
                                 {getInitials(savedName)}
-                                </Avatar>
-                                 {showDropdown.open && (
-                                    <div className='dropdown'>
-                                        <div className="user-info" style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginLeft: '10px' }}>
-                                            <img src={require('../assets/FreelancerProfileHeaderProfile.jpg')} style={{ height: '80px', width: '80px', borderRadius: '50%' }} alt="User Profile" className="profile-image" />
-                                            <div style={{ marginLeft: '30px' }}>
-                                                <p style={{ margin: '0', fontSize: '18px', marginBottom: '2px', color: 'black', fontWeight: 'bold' }}>Name</p>
-                                                <p style={{ margin: '0', fontSize: '16px', marginTop: '-2px', color: 'black' }}>Job Category</p>
-                                            </div>
+                            </Avatar>
+                            {showDropdown.open && (
+                                <div className='dropdown'>
+                                    <div className="user-info" style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginLeft: '10px' }}>
+                                        <img src={require('../assets/FreelancerProfileHeaderProfile.jpg')} style={{ height: '80px', width: '80px', borderRadius: '50%' }} alt="User Profile" className="profile-image" />
+                                        <div style={{ marginLeft: '30px' }}>
+                                            <p style={{ margin: '0', fontSize: '18px', marginBottom: '2px', color: 'black', fontWeight: 'bold' }}>Name</p>
+                                            <p style={{ margin: '0', fontSize: '16px', marginTop: '-2px', color: 'black' }}>Job Category</p>
                                         </div>
-                                        <button style={{ backgroundColor: 'white', cursor: 'pointer', height: '45px', borderRadius: '20px', border: '1px solid #B27EE3', width: '280px', color: '#B27EE3', marginTop: '10px', marginLeft: '10px' }}
-                                            onClick={viewProfileClick}>View Profile</button>
-                                        <div >
-                                            <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/client">Dashboard</NavLink>
-                                        </div>
-                                        <div>
-                                            <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/client">Wallet</NavLink>
-                                        </div>
-                                        <div >
-                                            <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/">Settings</NavLink>
-                                        </div>
-                                        <hr  />
-                                        <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/" onClick={clickLogout}>Logout</NavLink>
-
                                     </div>
-                                )}
-                            </div>
+                                    <button style={{ backgroundColor: 'white', cursor: 'pointer', height: '45px', borderRadius: '20px', border: '1px solid #B27EE3', width: '280px', color: '#B27EE3', marginTop: '10px', marginLeft: '10px' }}
+                                        onClick={viewProfileClick}>View Profile</button>
+                                    <div >
+                                        <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/client">Dashboard</NavLink>
+                                    </div>
+                                    <div>
+                                        <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/client">Wallet</NavLink>
+                                    </div>
+                                    <div >
+                                        <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/">Settings</NavLink>
+                                    </div>
+                                    <hr />
+                                    <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/" onClick={clickLogout}>Logout</NavLink>
+
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* second div for profile bg */}
             <div className='profilepage'>
-               <div className='firstcompprofile'>
-                <button className='switch-to-employer-button' onClick={handleFreelancerClick}>SWITCH TO FREELANCER</button>
+                <div className='firstcompprofile'>
+                    <button className='switch-to-employer-button' onClick={handleFreelancerClick}>SWITCH TO FREELANCER</button>
 
-                <div style={{ position: 'relative' }}>
-                    <img src={require('../assets/profileBg.png')} alt="" className='profile-background-image'></img>
+                    <div style={{ position: 'relative' }}>
+                        <img src={require('../assets/profileBg.png')} alt="" className='profile-background-image'></img>
 
-                     <div style={{
-                        position: 'absolute',
-                        top:'5%',
-                        display:'flex',
-                        flexDirection:'column',
-                        width:'94%',
-                        left:'3%',
-                        gap:'100px'
-                     }}>
-                           <div>
-                               <button className='edit-button'
+                        <div style={{
+                            position: 'absolute',
+                            top: '5%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '94%',
+                            left: '3%',
+                            gap: '100px'
+                        }}>
+                            <div>
+                                <button className='edit-button'
                                     style={{ backgroundImage: `url('${topButtonImage}')` }}
                                     onClick={() => handleEditClick('top')}>
                                 </button>
-                           </div>
-                           <div style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                               <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}}>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }}>
                                     <div className='user-picture'>
                                         <Avatar
                                             className='user-picture-img'
@@ -382,108 +417,108 @@ const Employerprofile = () => {
                                         >
                                             {getInitials(savedName)}
                                         </Avatar>
-                                            <label htmlFor="fileInput" className='camera-icon-label'>
-                                                <CiCamera className='camera-icon' />
-                                            </label>
-                                            {topBoxEditMode && (
-                                                <input
-                                                    type="file"
-                                                    id="fileInput"
-                                                    accept="image/*"
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleFileChange}
-                                                />
-                                            )}
+                                        <label htmlFor="fileInput" className='camera-icon-label'>
+                                            <CiCamera className='camera-icon' />
+                                        </label>
+                                        {topBoxEditMode && (
+                                            <input
+                                                type="file"
+                                                id="fileInput"
+                                                accept="image/*"
+                                                style={{ display: 'none' }}
+                                                onChange={handleFileChange}
+                                            />
+                                        )}
                                     </div>
-                                <>
-                                    {!topBoxEditMode && (
-                                        <div >
-                                            <div style={{ fontSize: '24px',fontWeight:'700' }}>{savedName}</div>
-                                            <div style={{ fontSize: '16px' }}>{savedJobCategory}</div>
-                                            <div style={{ fontSize: '16px' }}>{savedLocation}</div>
-                                        </div>
-                                    )}
-                                    {topBoxEditMode && (
-                                        <div style={{
-                                            display:'flex',
-                                            flexDirection:'column',
-                                            gap:'5px'
-                                        }}>
-                                            <div>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter your name"
-                                                    value={newName}
-                                                    onChange={(e) => setNewName(e.target.value)}
-                                                    style={{padding:'10px', width: '170px', borderRadius: '16px', border: '1px solid #DDD' }}
-                                                />
-                                            </div>
-                                            <div>
-                                                <select
-                                                    value={newJobCategory}
-                                                    onChange={(e) => setNewJobCategory(e.target.value)}
-                                                    style={{padding:'10px',  width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
-                                                >
-                                                    <option value="" disabled>Select Job Category</option>
-                                                    {JobCategoryOptions.map((option) => (
-                                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <select
-                                                    value={newLocation}
-                                                    onChange={(e) => setNewLocation(e.target.value)}
-                                                    style={{padding:'10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
-                                                >
-                                                    <option value="" disabled>Select Location</option>
-                                                    {LocationOptions.map((option) => (
-                                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                                </div>
-                                <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}}>
-                                    {!topBoxEditMode && (
-                                            <div style={{
-                                                display: 'flex',gap:'10px',flexDirection:'row'
-                                            }}>
-                                                <div style={{
-                                                    marginRight: '20px', padding: '5px', background: 'white',
-                                                    width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black',
-                                                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                                                }}>
-                                                    <span style={{ color: '#ED8336', fontSize: '20px' }}>{jobsPostedCount}</span>
-                                                    <span>Jobs Posted</span>
-                                                </div>
-                                                <div style={{
-                                                    marginRight: '10px', padding: '5px', background: 'white',
-                                                    width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black', textAlign: 'center',
-                                                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                                                }}>
-                                                    <span style={{ color: '#ED8336', fontSize: '20px' }}>${avgRateOffered}</span>
-                                                    <span>Avg. Budget</span>
-                                                </div>
+                                    <>
+                                        {!topBoxEditMode && (
+                                            <div >
+                                                <div style={{ fontSize: '24px', fontWeight: '700' }}>{savedName}</div>
+                                                <div style={{ fontSize: '16px' }}>{savedJobCategory}</div>
+                                                <div style={{ fontSize: '16px' }}>{savedLocation}</div>
                                             </div>
                                         )}
                                         {topBoxEditMode && (
-                                            <div style={{display: 'flex',gap:'10px',flexDirection:'row'}} className='edit-buttons-container'>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '5px'
+                                            }}>
                                                 <div>
-                                                    <button className='cancel-button' onClick={handleCancelTop}>Cancel</button>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter your name"
+                                                        value={newName}
+                                                        onChange={(e) => setNewName(e.target.value)}
+                                                        style={{ padding: '10px', width: '170px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                    />
                                                 </div>
                                                 <div>
-                                                    <button className='save-button' onClick={handleSaveTop}>Save</button>
+                                                    <select
+                                                        value={newJobCategory}
+                                                        onChange={(e) => setNewJobCategory(e.target.value)}
+                                                        style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                    >
+                                                        <option value="" disabled>Select Job Category</option>
+                                                        {JobCategoryOptions.map((option) => (
+                                                            <option key={option.value} value={option.value}>{option.label}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <select
+                                                        value={newLocation}
+                                                        onChange={(e) => setNewLocation(e.target.value)}
+                                                        style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                    >
+                                                        <option value="" disabled>Select Location</option>
+                                                        {LocationOptions.map((option) => (
+                                                            <option key={option.value} value={option.value}>{option.label}</option>
+                                                        ))}
+                                                    </select>
                                                 </div>
                                             </div>
                                         )}
+                                    </>
                                 </div>
-                           </div>
-                     </div>
-            </div>
-            </div>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }}>
+                                    {!topBoxEditMode && (
+                                        <div style={{
+                                            display: 'flex', gap: '10px', flexDirection: 'row'
+                                        }}>
+                                            <div style={{
+                                                marginRight: '20px', padding: '5px', background: 'white',
+                                                width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black',
+                                                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                                            }}>
+                                                <span style={{ color: '#ED8336', fontSize: '20px' }}>{jobsPostedCount}</span>
+                                                <span>Jobs Posted</span>
+                                            </div>
+                                            <div style={{
+                                                marginRight: '10px', padding: '5px', background: 'white',
+                                                width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black', textAlign: 'center',
+                                                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                                            }}>
+                                                <span style={{ color: '#ED8336', fontSize: '20px' }}>${avgRateOffered}</span>
+                                                <span>Avg. Budget</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {topBoxEditMode && (
+                                        <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' }} className='edit-buttons-container'>
+                                            <div>
+                                                <button className='cancel-button' onClick={handleCancelTop}>Cancel</button>
+                                            </div>
+                                            <div>
+                                                <button className='save-button' onClick={handleSaveTop}>Save</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             {/* third div for about and posted jobs */}
             <div className='about-postJobs'>
@@ -501,7 +536,7 @@ const Employerprofile = () => {
                     <input
                         type="text"
                         placeholder="Write something about you....."
-                        value={inputAboutValue}
+                        value={inputAboutEmployer}
                         onChange={handleAboutChange}
                         className={`first-box-one ${rightBoxEditMode ? 'editable' : ''}`}
                         readOnly={!rightBoxEditMode}
@@ -509,11 +544,24 @@ const Employerprofile = () => {
                     <input
                         type="text"
                         placeholder=""
-                        value={inputAboutValue}
-                        onChange={handleAboutChange}
+                        value={inputAboutCompany}
+                        onChange={handleAboutCompanyChange}
                         className={`first-box-two ${rightBoxEditMode ? 'editable' : ''}`}
                         readOnly={!rightBoxEditMode}
                     />
+
+                    {rightBoxEditMode && (
+                        <div>
+                            <div className="buttons-container">
+                                <div style={{ marginLeft: '730px' }}>
+                                    <button className='cancel-button' onClick={handleCancelAbout}>Cancel</button>
+                                </div>
+                                <div style={{ marginLeft: '20px' }}>
+                                    <button className='save-button' onClick={handleSaveAbout}>Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 30px' }}>
                         <h2 style={{ marginLeft: '15px', marginTop: '60px' }}>Posted Jobs</h2>
@@ -539,7 +587,6 @@ const Employerprofile = () => {
                                     </div>
 
                                     <div style={{ marginBottom: '18px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-                                        {/* <p> {job.required_skills.join(', ')}</p> */}
                                         {job.required_skills.map((skill, index) => (
                                             <div key={index} style={{ backgroundColor: 'orange', color: 'white', borderRadius: '5px', padding: '5px', marginRight: '5px' }}>
                                                 {skill}
@@ -565,41 +612,7 @@ const Employerprofile = () => {
                             ))}
                         </div>
                     )}
-                    {rightBoxEditMode && (
-                        <div className="box-container">
-                            <input
-                                type="text"
-                                placeholder="Add ongoing work/project"
-                                value={newProject}
-                                onChange={(e) => setNewProject(e.target.value)}
-                            />
-                            <button onClick={handleAddProject}>+</button>
-                        </div>
-                    )}
 
-
-                    {projects.concat(tempProjects).map((project, index) => (
-                        <div key={index} style={{ display: 'inline-block', margin: '10px' }}>
-                            <div style={{ border: '1px solid #8A2BE2', borderRadius: '5px', overflow: 'hidden' }}>
-                                <div style={{ background: '#8A2BE2', padding: '10px', borderRadius: '5px', color: '#FFFFFF' }}>
-                                    {project}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-
-                    {rightBoxEditMode && (
-                        <div>
-                            <div className="buttons-container">
-                                <div>
-                                    <button className='save-button' onClick={handleSaveAbout}>Save</button>
-                                </div>
-                                <div>
-                                    <button className='cancel-button' onClick={handleCancelAbout}>Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
 

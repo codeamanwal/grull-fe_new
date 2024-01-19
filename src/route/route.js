@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "../App";
-import ComingSoon from "../comingSoonPage/ComingSoon";
 import Start from "../components/Start";
 import Login from '../components/Login';
 import SignUp from '../components/SignUp';
@@ -22,8 +21,9 @@ export default function PageRoute() {
      return (
        <BrowserRouter>
          <Routes>
-             <Route path="/home" element={<Start />} />
-             <Route path="/login" element={<Login />} />
+            <Route path="/" element={<App />} />
+            <Route path="/home" element={<Start />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/signup/:userType" element={<SignUp />} />
             <Route path="/freelancerprofile" element={<FreelancerProfile/>}/>
             <Route path="/employerprofile" element={<EmployerProfile/>}/>
@@ -38,8 +38,6 @@ export default function PageRoute() {
             <Route path="/client" element={<ClientDashboard />} />
             <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
             <Route path="/jobapplications/:jobid" element={<JobApplications />} />
-             <Route path="/" element={<App />} ></Route>
-             <Route path="/coming-soon" element={<ComingSoon />} ></Route>
          </Routes>
        </BrowserRouter>
      )

@@ -64,7 +64,7 @@ function Section3() {
             return (
               <Box
                 sx={{
-                  height: { xs: "160px", md: "300px" },
+                  height: { xs: "160px", md: "340px" },
                   width: { xs: "140px", md: "280px" },
                   border: `1px solid ${black}`,
                   borderRadius: "16px",

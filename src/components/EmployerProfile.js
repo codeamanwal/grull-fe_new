@@ -11,6 +11,8 @@ import Avatar from '@mui/material/Avatar';
 import { Button} from '@mui/material';
 import { MdArrowOutward } from "react-icons/md";
 import { CiCamera } from "react-icons/ci";
+import { CiLocationOn } from "react-icons/ci";
+import { MdWorkOutline } from "react-icons/md";
 
 const Employerprofile = () => {
     const navigate = useNavigate();
@@ -81,9 +83,21 @@ const Employerprofile = () => {
     }
 
     const [inputAboutValue, setInputAboutValue] = useState('');
+    const [inputcompdesc,setInputCompDesc]=useState('');
+    const [newinputval,setnewinputval]= useState('');
+
     const handleAboutChange = (event) => {
-        setInputAboutValue(event.target.value);
+        setnewinputval(event.target.value);
+        updateTextareaHeight(event.target);
     };
+    const handlecompdesc= (event) => {
+        setInputCompDesc(event.target.value);
+        updateTextareaHeight(event.target);
+    };
+    const updateTextareaHeight = (element) => {
+        element.style.height = 'auto';
+        element.style.height = `${element.scrollHeight}px`;
+      };
 
     const [newProject, setNewProject] = useState('');
     const [projects, setProjects] = useState([]);
@@ -118,11 +132,15 @@ const Employerprofile = () => {
             });
     
             if (response.status === 200) {
-              const { first_name, description, location } = response.data;
+              const { full_name, role, location,jobs_posted_count,average_rate_offered,description } = response.data;
     
-              setSavedName(first_name);
-              setSavedJobCategory(description);
+              setSavedName(full_name);
+              setSavedJobCategory(role);
               setSavedLocation(location.country);
+              setJobsPostedCount(jobs_posted_count);
+              setAvgRateOffered(average_rate_offered);
+              setInputAboutValue(description);
+              setnewinputval(description);
             } else {
               console.error('Error fetching user profile:', response.data.error);
             }
@@ -132,9 +150,7 @@ const Employerprofile = () => {
         };
     
         fetchUserProfile();
-      }, []); // Empty dependency array ensures the effect runs once when the component mounts
-
-
+      }, []);
     const handleEditClick = (box) => {
         if (box === 'right') {
             setRightBoxEditMode(true);
@@ -181,6 +197,9 @@ const Employerprofile = () => {
                 const { jobs_posted_count, average_rate_offered } = response.data;
 
                 setSavedName(newName);
+                setNewJobCategory(newJobCategory);
+                setNewLocation(newLocation);
+                setNewName(newName);
                 setSavedJobCategory(newJobCategory);
                 setSavedLocation(newLocation);
                 setJobsPostedCount(jobs_posted_count);
@@ -200,7 +219,36 @@ const Employerprofile = () => {
             console.error('Network error:', error);
         }
     };
+    const updateAbout = async () => {
+        try {
+            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+                description: newinputval,
+            },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
+            if (response.status === 200) {
+                const responseData = response.data;
+                console.log(response)
+                // Update the state with the response from the backend
+                setInputAboutValue(responseData.description);
+                setnewinputval(responseData.description);
+                setRightBoxEditMode(false);
+
+            } else {
+                // Handle error
+                console.error('Failed to update skills and languages');
+            }
+        } catch (error) {
+            // Handle network error or other issues
+            console.error('Network error:', error);
+        }
+    };
 
     const handleSaveTop = async () => {
         setTopBoxEditMode(false);
@@ -221,17 +269,13 @@ const Employerprofile = () => {
 
     const handleCancelAbout = () => {
         setRightBoxEditMode(false);
-        setNewProject('');
-        setTempProjects([]);
-        setInputAboutValue('');
+        setInputAboutValue(inputAboutValue);
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
-    const handleSaveAbout = () => {
+    const handleSaveAbout = async() => {
         setRightBoxEditMode(false);
-        setProjects([...projects, ...tempProjects, newProject]); // Add the new project
-        setNewProject('');
-        setTempProjects([]);   //Reset temp projects
+        await updateAbout();
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
@@ -365,15 +409,15 @@ const Employerprofile = () => {
                         width:'94%',
                         left:'3%',
                         gap:'100px'
-                     }}>
+                     }} className='profiletosec-2' >
                            <div>
                                <button className='edit-button'
                                     style={{ backgroundImage: `url('${topButtonImage}')` }}
                                     onClick={() => handleEditClick('top')}>
                                 </button>
                            </div>
-                           <div style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                               <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}}>
+                           <div style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}} className='profilesec-1'>
+                               <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}} className='profilesec-4'>
                                     <div className='user-picture'>
                                         <Avatar
                                             className='user-picture-img'
@@ -397,10 +441,10 @@ const Employerprofile = () => {
                                     </div>
                                 <>
                                     {!topBoxEditMode && (
-                                        <div >
-                                            <div style={{ fontSize: '24px',fontWeight:'700' }}>{savedName}</div>
-                                            <div style={{ fontSize: '16px' }}>{savedJobCategory}</div>
-                                            <div style={{ fontSize: '16px' }}>{savedLocation}</div>
+                                        <div>
+                                            <p style={{ fontSize: '32px', fontWeight: '700' }} className='text-1'>{savedName}</p>
+                                            <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><MdWorkOutline style={{marginRight:'5px'}}/>{savedJobCategory}</p>
+                                            <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><CiLocationOn style={{marginRight:'5px'}}/>{savedLocation}</p>
                                         </div>
                                     )}
                                     {topBoxEditMode && (
@@ -414,6 +458,7 @@ const Employerprofile = () => {
                                                     type="text"
                                                     placeholder="Enter your name"
                                                     value={newName}
+                                                    className='profilesecinputs'
                                                     onChange={(e) => setNewName(e.target.value)}
                                                     style={{padding:'10px', width: '170px', borderRadius: '16px', border: '1px solid #DDD' }}
                                                 />
@@ -421,6 +466,7 @@ const Employerprofile = () => {
                                             <div>
                                                 <select
                                                     value={newJobCategory}
+                                                    className='profilesecinputs'
                                                     onChange={(e) => setNewJobCategory(e.target.value)}
                                                     style={{padding:'10px',  width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
                                                 >
@@ -433,6 +479,7 @@ const Employerprofile = () => {
                                             <div>
                                                 <select
                                                     value={newLocation}
+                                                    className='profilesecinputs'
                                                     onChange={(e) => setNewLocation(e.target.value)}
                                                     style={{padding:'10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
                                                 >
@@ -451,19 +498,19 @@ const Employerprofile = () => {
                                             <div style={{
                                                 display: 'flex',gap:'10px',flexDirection:'row'
                                             }}>
-                                                <div style={{
-                                                    marginRight: '20px', padding: '5px', background: 'white',
-                                                    width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black',
-                                                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                                                }}>
+                                                <div className='profiletopinfo' style={{
+                                                padding: '5px', background: 'white',
+                                                width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black',
+                                                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                                            }}>
                                                     <span style={{ color: '#ED8336', fontSize: '20px' }}>{jobsPostedCount}</span>
                                                     <span>Jobs Posted</span>
                                                 </div>
-                                                <div style={{
-                                                    marginRight: '10px', padding: '5px', background: 'white',
-                                                    width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black', textAlign: 'center',
-                                                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                                                }}>
+                                                <div className='profiletopinfo' style={{
+                                                padding: '5px', background: 'white',
+                                                width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black',
+                                                display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                                            }}>
                                                     <span style={{ color: '#ED8336', fontSize: '20px' }}>${avgRateOffered}</span>
                                                     <span>Avg. Budget</span>
                                                 </div>
@@ -489,8 +536,9 @@ const Employerprofile = () => {
             <div className='about-postJobs'>
 
                 <div className='first-box'>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <h2 style={{ marginLeft: '50px', flex: '1' }}>About</h2>
+
+                    <div style={{ display: 'flex', alignItems: 'center',justifyContent:'space-between' }}>
+                        <h2 style={{fontSize:'28px',marginLeft:'20px' }} className='profilesec-subheading'>About</h2>
                         <button
                             className='edit-button-three'
                             style={{ backgroundImage: `url('${rightButtonImage}')` }}
@@ -498,64 +546,67 @@ const Employerprofile = () => {
                         ></button>
                     </div>
 
-                    <input
-                        type="text"
-                        placeholder="Write something about you....."
-                        value={inputAboutValue}
-                        onChange={handleAboutChange}
-                        className={`first-box-one ${rightBoxEditMode ? 'editable' : ''}`}
-                        readOnly={!rightBoxEditMode}
-                    />
-                    <input
+                    <textarea
+                            type="text"
+                            placeholder="Write something about you....."
+                            value={newinputval}
+                            onChange={handleAboutChange}
+                            className={`first-box-one ${rightBoxEditMode ? 'editable' : ''}`}
+                            readOnly={!rightBoxEditMode}
+                            rows="3"
+                            ref={(textarea) => textarea && updateTextareaHeight(textarea)}
+                        />
+                        
+                    <textarea
                         type="text"
                         placeholder=""
-                        value={inputAboutValue}
-                        onChange={handleAboutChange}
+                        value={inputcompdesc}
+                        onChange={handlecompdesc}
                         className={`first-box-two ${rightBoxEditMode ? 'editable' : ''}`}
                         readOnly={!rightBoxEditMode}
+                        rows="2"
+                        ref={(textarea) => textarea && updateTextareaHeight(textarea)}
                     />
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 30px' }}>
-                        <h2 style={{ marginLeft: '15px', marginTop: '60px' }}>Posted Jobs</h2>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginTop:'40px'}}>
+                        <h2 style={{fontSize:'28px' }} className='profilesec-subheading'>Posted Jobs</h2>
 
                         {!rightBoxEditMode && (
-                            <a href="" style={{ marginRight: '80px', color: '#b27ee3', fontWeight: 'bold' }}>Edit Jobs</a>
+                            <a href="#" style={{ marginRight: '80px', color: '#b27ee3', fontWeight: 'bold' }} className='profileseclink'>Edit Jobs</a>
                         )}
                     </div>
 
-                    {!rightBoxEditMode && (
+                    { (
                         <div className='inside-posted-jobs'>
                             {postedJobs.map((job) => (
-                                <div key={job.job_id} style={{ borderRadius: '20px', border: '1px solid #9c9b9b', marginBottom: '30px', padding: '10px' }}>
-
-                                    <div style={{ marginBottom: '-15px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-                                        <h3>{job.title}</h3>
-                                        <p style={{ fontSize: '12px', color: '#B27EE3', marginLeft: '150px' }}>{job.job_applicants_count} FREELANCERS APPLIED</p>
+                                <div key={job.job_id} style={{ borderRadius: '16px', border: 'none',  padding: '16px 20px',boxShadow: '0px 0px 4px 0px #00000040',display:'flex',flexDirection:'column',gap:'10px'  }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <h3 style={{ fontSize: '24px', fontWeight: '700', flex: '70%', margin: '0' }}>{job.title}</h3>
+                                        <p style={{ fontSize: '15px', color: '#B27EE3', flex: '30%', margin: '0' }}>{job.job_applicants_count} FREELANCERS APPLIED</p>
                                     </div>
 
-                                    <div style={{ marginBottom: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-                                        <p>Budget: $ {job.rate_per_hour}</p>
-                                        <p style={{ fontSize: '12px', color: '#9c9b9b', marginLeft: '50px' }}>Posted {weeksAgoMap[job.job_id] !== undefined ? `${weeksAgoMap[job.job_id]} weeks` : 'loading...'} ago</p>
+                                    <div style={{  display: 'flex', alignItems: 'center',marginTop:'2px' }}>
+                                        <p style={{ fontSize: '18px',}}>Budget: $ {job.rate_per_hour}</p>
+                                        <p style={{ fontSize: '14px', color: '#00000080', marginLeft: '50px' }}>Posted {weeksAgoMap[job.job_id] !== undefined ? `${weeksAgoMap[job.job_id]} weeks` : 'loading...'} ago</p>
                                     </div>
 
-                                    <div style={{ marginBottom: '18px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center',gap:'7px',marginTop:'5px' }}>
                                         {/* <p> {job.required_skills.join(', ')}</p> */}
                                         {job.required_skills.map((skill, index) => (
-                                            <div key={index} style={{ backgroundColor: 'orange', color: 'white', borderRadius: '5px', padding: '5px', marginRight: '5px' }}>
+                                            <div key={index} style={{ backgroundColor: '#ED8335', color: 'white', borderRadius: '16px', padding: '10px 15px', }}>
                                                 {skill}
                                             </div>
                                         ))}
                                     </div>
-
-                                    <div style={{ borderRadius: '10px', border: '1px solid #d2d1d1', height: '30px', width: '150px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ borderRadius: '12px',boxShadow: '0px 0px 4px 0px #00000040', border: 'none',display: 'flex', alignItems: 'center',width:'fit-content',padding:'10px 20px',marginTop:'3px'}}>
                                         {job.status === 'PENDING' && (
-                                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'orange', marginLeft: '10px', marginRight: '15px' }}></div>
+                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'orange', marginRight: '15px' }}></div>
                                         )}
                                         {job.status === 'COMPLETED' && (
-                                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'red', marginLeft: '10px', marginRight: '15px' }}></div>
+                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#DA000D',marginRight: '15px' }}></div>
                                         )}
                                         {job.status === 'ACTIVE' && (
-                                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'green', marginLeft: '10px', marginRight: '15px' }}></div>
+                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#2CAA00', marginRight: '15px' }}></div>
                                         )}
                                         <p style={{ color: '#4301A2' }}>{job.status}</p>
                                     </div>
@@ -566,47 +617,33 @@ const Employerprofile = () => {
                         </div>
                     )}
                     {rightBoxEditMode && (
-                        <div className="box-container">
-                            <input
-                                type="text"
-                                placeholder="Add ongoing work/project"
-                                value={newProject}
-                                onChange={(e) => setNewProject(e.target.value)}
-                            />
-                            <button onClick={handleAddProject}>+</button>
+                        <div className="postjob-profile" onClick={()=>{navigate('/postjob')}}>
+                            <p style={{fontSize:'30px'}}>+</p>
+                            <p>Post a Job</p>
                         </div>
                     )}
-
-
-                    {projects.concat(tempProjects).map((project, index) => (
-                        <div key={index} style={{ display: 'inline-block', margin: '10px' }}>
-                            <div style={{ border: '1px solid #8A2BE2', borderRadius: '5px', overflow: 'hidden' }}>
-                                <div style={{ background: '#8A2BE2', padding: '10px', borderRadius: '5px', color: '#FFFFFF' }}>
-                                    {project}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-
                     {rightBoxEditMode && (
                         <div>
                             <div className="buttons-container">
-                                <div>
-                                    <button className='save-button' onClick={handleSaveAbout}>Save</button>
-                                </div>
+                                
                                 <div>
                                     <button className='cancel-button' onClick={handleCancelAbout}>Cancel</button>
+                                </div>
+                                <div>
+                                    <button className='save-button' onClick={handleSaveAbout}>Save</button>
                                 </div>
                             </div>
                         </div>
                     )}
+                    
+                </div>
+                <div className='review-box'>
+                    <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
                 </div>
             </div>
 
             {/* foruth div for reviews */}
-            <div className='review-box-employer'>
-                <h2 style={{ marginLeft: '30px', flex: '1' }}>Reviews</h2>
-            </div>
+            
         </div>
     )
 };

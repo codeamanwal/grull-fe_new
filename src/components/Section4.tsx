@@ -122,7 +122,7 @@ function Section4() {
               height: "140px",
               justifyContent: "space-between",
               alignItems: "flex-end",
-              borderBottom:'1px solid black'
+              borderBottom:'1px solid black',
             }}
           >
             <Typography

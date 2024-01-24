@@ -8,11 +8,12 @@ import axios from 'axios';
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import Avatar from '@mui/material/Avatar';
-import { Button} from '@mui/material';
+import { Box, Button, Typography} from '@mui/material';
 import { MdArrowOutward } from "react-icons/md";
 import { CiCamera } from "react-icons/ci";
 import { CiLocationOn } from "react-icons/ci";
 import { MdWorkOutline } from "react-icons/md";
+import Header2 from './Header2';
 
 const Employerprofile = () => {
     const navigate = useNavigate();
@@ -339,59 +340,7 @@ const Employerprofile = () => {
         <div style={{ overflowX: 'hidden' }}>
 
             {/* first div for header */}
-            <div className='headerStyle-freelancer' style={{ display: 'flex', alignItems: 'center' }}>
-                <div>
-                    <h2 >Grull</h2>
-                    <div >
-                        <Button >Find Work</Button>
-                    </div>
-                    <div>
-                        <Button className='postProjectButton' endIcon={<MdArrowOutward />} onClick={handlePostJobClick}>Post Job</Button>
-                    </div>
-                </div>
-                
-                <div>
-                    <div className='imageContainer' style={{ display: 'flex', alignItems: 'center' }}>
-                        <FiMessageSquare style={{color:'#fff',fontSize:'30px'}} />
-                        <IoMdNotificationsOutline style={{color:'#fff',fontSize:'35px'}}/>
-<div ref={container} className='container'>
-                            <Avatar
-                                alt={savedName}
-                                style={{ backgroundColor: avatarBackgroundColor }}
-                                className='dashboardavatar profile'
-                                onClick={clickProfileImage}
-                                >
-                                {getInitials(savedName)}
-                                </Avatar>
-                                 {showDropdown.open && (
-                                    <div className='dropdown'>
-                                        <div className="user-info" style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginLeft: '10px' }}>
-                                            <img src={require('../assets/FreelancerProfileHeaderProfile.jpg')} style={{ height: '80px', width: '80px', borderRadius: '50%' }} alt="User Profile" className="profile-image" />
-                                            <div style={{ marginLeft: '30px' }}>
-                                                <p style={{ margin: '0', fontSize: '18px', marginBottom: '2px', color: 'black', fontWeight: 'bold' }}>Name</p>
-                                                <p style={{ margin: '0', fontSize: '16px', marginTop: '-2px', color: 'black' }}>Job Category</p>
-                                            </div>
-                                        </div>
-                                        <button style={{ backgroundColor: 'white', cursor: 'pointer', height: '45px', borderRadius: '20px', border: '1px solid #B27EE3', width: '280px', color: '#B27EE3', marginTop: '10px', marginLeft: '10px' }}
-                                            onClick={viewProfileClick}>View Profile</button>
-                                        <div >
-                                            <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/client">Dashboard</NavLink>
-                                        </div>
-                                        <div>
-                                            <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/client">Wallet</NavLink>
-                                        </div>
-                                        <div >
-                                            <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/">Settings</NavLink>
-                                        </div>
-                                        <hr  />
-                                        <NavLink style={{ textDecoration: 'none', color: 'black' }} to="/" onClick={clickLogout}>Logout</NavLink>
-
-                                    </div>
-                                )}
-                            </div>
-                    </div>
-                </div>
-            </div>
+            <Header2 />
 
             {/* second div for profile bg */}
             <div className='profilepage'>
@@ -579,40 +528,40 @@ const Employerprofile = () => {
                     { (
                         <div className='inside-posted-jobs'>
                             {postedJobs.map((job) => (
-                                <div key={job.job_id} style={{ borderRadius: '16px', border: 'none',  padding: '16px 20px',boxShadow: '0px 0px 4px 0px #00000040',display:'flex',flexDirection:'column',gap:'10px'  }}>
+                                <Box key={job.job_id} sx={{ borderRadius: '16px', border: 'none',  padding: '16px 20px',boxShadow: '0px 0px 4px 0px #00000040',display:'flex',flexDirection:'column',gap:{xs:'6px',sm:'10px'}  }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <h3 style={{ fontSize: '24px', fontWeight: '700', flex: '70%', margin: '0' }}>{job.title}</h3>
-                                        <p style={{ fontSize: '15px', color: '#B27EE3', flex: '30%', margin: '0' }}>{job.job_applicants_count} FREELANCERS APPLIED</p>
+                                        <Typography sx={{ fontSize:{ xs:'18px',sm:'24px'}, fontWeight: '700', flex: '70%', margin: '0' }}>{job.title}</Typography>
+                                        <Typography sx={{ fontSize: '15px', color: '#B27EE3', flex: '30%', margin: '0',display:{xs:'none',md:'block'} }}>{job.job_applicants_count} FREELANCERS APPLIED</Typography>
                                     </div>
 
                                     <div style={{  display: 'flex', alignItems: 'center',marginTop:'2px' }}>
-                                        <p style={{ fontSize: '18px',}}>Budget: $ {job.rate_per_hour}</p>
-                                        <p style={{ fontSize: '14px', color: '#00000080', marginLeft: '50px' }}>Posted {weeksAgoMap[job.job_id] !== undefined ? `${weeksAgoMap[job.job_id]} weeks` : 'loading...'} ago</p>
+                                        <Typography sx={{ fontSize:{ xs:'15px',sm:'19px'} ,fontWeight:'500'}}>Budget: $ {job.rate_per_hour}</Typography>
+                                        <Typography sx={{ fontSize: '14px', color: '#00000080', marginLeft: '20px' }}>Posted {weeksAgoMap[job.job_id] !== undefined ? `${weeksAgoMap[job.job_id]} weeks` : 'loading...'} ago</Typography>
                                     </div>
-
-                                    <div style={{ display: 'flex', alignItems: 'center',gap:'7px',marginTop:'5px' }}>
+                                    <Typography sx={{ fontSize:{xs:'12px',sm:'15px'}, color: '#B27EE3', flex: '30%', margin: '2px 0 0 0',display:{xs:'block',md:'none'} }}>{job.job_applicants_count} FREELANCERS APPLIED</Typography>
+                                    <div style={{ display: 'flex', alignItems: 'center',gap:'7px',marginTop:'5px',flexWrap:'wrap' }}>
                                         {/* <p> {job.required_skills.join(', ')}</p> */}
                                         {job.required_skills.map((skill, index) => (
-                                            <div key={index} style={{ backgroundColor: '#ED8335', color: 'white', borderRadius: '16px', padding: '10px 15px', }}>
+                                            <Box key={index} sx={{ backgroundColor: '#ED8335', color: 'white', borderRadius: '16px', padding:{ xs:'8px 12px',sm:'10px 15px'},fontSize:{xs:'13px',sm:'16px'} }}>
                                                 {skill}
-                                            </div>
+                                            </Box>
                                         ))}
                                     </div>
-                                    <div style={{ borderRadius: '12px',boxShadow: '0px 0px 4px 0px #00000040', border: 'none',display: 'flex', alignItems: 'center',width:'fit-content',padding:'10px 20px',marginTop:'3px'}}>
+                                    <Box sx={{ borderRadius: '12px',boxShadow: '0px 0px 4px 0px #00000040', border: 'none',display: 'flex', alignItems: 'center',width:'fit-content',padding:{ xs:'9px 11px',sm:'10px 20px'},marginTop:{xs:'5px',sm:'3px'}}}>
                                         {job.status === 'PENDING' && (
-                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'orange', marginRight: '15px' }}></div>
+                                            <Box sx={{ width:{xs:'9px',sm:'7px'}, height: {xs:'9px',sm:'7px'}, borderRadius: '50%', backgroundColor: 'orange', marginRight:{xs:'11px',sm:'15px'}}}></Box>
                                         )}
                                         {job.status === 'COMPLETED' && (
-                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#DA000D',marginRight: '15px' }}></div>
+                                            <Box sx={{ width:{xs:'9px',sm:'7px'}, height: {xs:'9px',sm:'7px'}, borderRadius: '50%', backgroundColor: '#DA000D',marginRight:{xs:'11px',sm:'15px'}}}></Box>
                                         )}
                                         {job.status === 'ACTIVE' && (
-                                            <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#2CAA00', marginRight: '15px' }}></div>
+                                            <Box sx={{ width:{xs:'9px',sm:'7px'}, height: {xs:'9px',sm:'7px'}, borderRadius: '50%', backgroundColor: '#2CAA00', marginRight:{xs:'11px',sm:'15px'}}}></Box>
                                         )}
-                                        <p style={{ color: '#4301A2' }}>{job.status}</p>
-                                    </div>
+                                        <Typography sx={{ fontSize:{ xs:'12px',sm:'16px',},color: '#4301A2'}}>{job.status}</Typography>
+                                    </Box>
 
                                     {/* Display other job details as needed */}
-                                </div>
+                                </Box>
                             ))}
                         </div>
                     )}

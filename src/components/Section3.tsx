@@ -53,11 +53,11 @@ function Section3() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: { xs: 'space-between', xl: 'center' },
             alignItems: "center",
             margin: { xs: "24px 0", md: "60px 0" },
             flexWrap: { xs: "wrap", md: "" },
-            gap: "12px",
+            gap: {xs:"12px",xl:'25px'},
           }}
         >
           {section3CardsArr.map((card, i) => {

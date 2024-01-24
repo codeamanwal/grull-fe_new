@@ -73,11 +73,11 @@ function Section7() {
       <Box
         sx={{
           width: { xs: "90%", md: "80%" },
-          margin: { xs: "24px auto", md: "auto" },
+          margin: { xs: "24px 0px", md: "auto 10px auto 50px" },
         }}
       >
         {/* <Lottie options={defaultOptions} height={"100%"} width={"110%"} /> */}
-        <img src={section7HeroImage} alt="section7HeroImage" style={{width:"100%",display:'block',objectFit:'contain',margin:'24px auto'}} />
+        <img src={section7HeroImage} alt="section7HeroImage" style={{width:"100%",display:'block',objectFit:'contain',margin:'24px 0 24px 0px '}} />
       </Box>
     </Grid>
   );

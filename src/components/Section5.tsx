@@ -75,7 +75,7 @@ function Section5() {
               borderRadius: "36px",
               padding:{xs:"8px 0", md:"12px 36px"},
               zIndex: 2,
-              background: "black",color: "white",typography:{xs:"font_12_500", md:"font_20_500"},
+              background: "#111717",color: "white",typography:{xs:"font_12_500", md:"font_20_500"},
               textAlign:{xs:"center",md:""},
               margin:{xs:"12px 0",md:0}
             }}

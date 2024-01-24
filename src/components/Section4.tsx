@@ -122,7 +122,7 @@ function Section4() {
               height: "140px",
               justifyContent: "space-between",
               alignItems: "flex-end",
-              borderBottom:'1px solid black',
+              
             }}
           >
             <Typography
@@ -143,6 +143,7 @@ function Section4() {
             >
               Explore Now
             </Typography>
+            <Box style={{borderBottom:'1px solid black',flex:1,marginLeft:'270px'}}></Box>
           </Box>
         </Box>
         <Box

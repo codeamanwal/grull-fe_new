@@ -53,8 +53,8 @@ function Section1() {
         
               height: "120px",
               width: "220px",
-              left: "-10%",
-              top: "-16%",
+              left: {xs:"-10%",xl:'0px'},
+              top: "-10%",
               right: "0",
               margin: "auto",
               rotate: "-10deg",
@@ -66,10 +66,11 @@ function Section1() {
             <Typography
               sx={{
                 typography: {xs:"font_24_800", md: "font_64_800" },
-                lineHeight: { xs: "", md: "72px" },
+                lineHeight: { xs: "", md: "82px" },
                 margin: "auto",
                 zIndex: 4,
                 position:'relative',
+                
               }}
             >
               Be the pioneer

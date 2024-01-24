@@ -54,6 +54,7 @@ export const section3CardsArr = [
     text: "Graphic Design",
     logo: section3GraphicDesign,
   },
+  
 ];
 
 export const section6Counts = [

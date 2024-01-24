@@ -3,14 +3,11 @@ import '../styles/Freelancerprofile.css';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { FiMessageSquare } from "react-icons/fi";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import Avatar from '@mui/material/Avatar';
-import { Button } from '@mui/material';
-import { MdArrowOutward } from "react-icons/md";
 import { CiLocationOn } from "react-icons/ci";
 import { MdWorkOutline } from "react-icons/md";
 import { CiCamera } from "react-icons/ci";
+import Header1 from './Header1';
+import Avatar from '@mui/material/Avatar';
 
 const FreelancerProfile = () => {
     const navigate = useNavigate();
@@ -33,29 +30,7 @@ const FreelancerProfile = () => {
         // logic for what will happen when clicked on notifications image
     }
 
-    const viewProfileClick = () => {
-        navigate('/freelancerprofile');
-    }
-
-    const container = useRef();
-    const [showDropdown, setShowDropdown] = useState(false);
-    const clickProfileImage = () => {
-        // setShowDropdown(!showDropdown);
-        setShowDropdown((prevState) => ({ open: !prevState.open }));
-    }
-    const handleClickOutside = (e) => {
-        if (container.current && !container.current.contains(e.target)) {
-            setShowDropdown({ open: false });
-        }
-    };
-    // attaches an eventListener to listen when componentDidMount
-    useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        // optionally returning a func in useEffect runs like componentWillUnmount to cleanup
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-
+   
 
     const switchToEmployerClick = () => {
         navigate('/employerprofile');
@@ -410,9 +385,7 @@ const FreelancerProfile = () => {
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
-    const clickLogout = () => {
-        navigate('/')
-    }
+    
 
     const JobCategoryOptions = [
         { value: 'GRAPHIC_DESIGNER', label: 'Graphic Designer' },
@@ -438,65 +411,7 @@ const FreelancerProfile = () => {
         <div>
 
             {/* first div for header */}
-            <div className='headerStyle-freelancer' style={{ display: 'flex', alignItems: 'center' }}>
-                <div>
-                    <h2 >Grull</h2>
-                    <div >
-                        <Button >Find Work</Button>
-                    </div>
-                    <div>
-                        <Button className='postProjectButton' endIcon={<MdArrowOutward />}>Post a Project</Button>
-                    </div>
-                </div>
-
-                <div>
-                    <div>
-                        <Button>Learn</Button>
-                    </div>
-                    <div>
-                        <Button>Collaborate</Button>
-                    </div>
-                    <div className='imageContainer' style={{ display: 'flex', alignItems: 'center' }}>
-                        <FiMessageSquare style={{ color: '#fff', fontSize: '30px' }} />
-                        <IoMdNotificationsOutline style={{ color: '#fff', fontSize: '35px' }} />
-                        <div ref={container} className='container'>
-                            <Avatar
-                                alt={savedName}
-                                style={{ backgroundColor: avatarBackgroundColor }}
-                                className='dashboardavatar profile'
-                                onClick={clickProfileImage}
-                            >
-                                {getInitials(savedName)}
-                            </Avatar>
-                            {showDropdown.open && (
-                                <div className='dropdown'>
-                                    <div className="user-info" style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginLeft: '10px' }}>
-                                        <img src={require('../assets/FreelancerProfileHeaderProfile.jpg')} style={{ height: '80px', width: '80px', borderRadius: '50%' }} alt="User Profile" className="profile-image" />
-                                        <div style={{ marginRight: '50px', display: 'flex', flexDirection: 'column' }}>
-                                            <p style={{ margin: '0', fontSize: '18px', color: 'black', fontWeight: 'bold', marginBottom: '-40px' }}>Name</p>
-                                            <p style={{ margin: '0', fontSize: '16px', color: 'black', marginBottom: '1 px' }}>Job Category</p>
-                                        </div>
-                                    </div>
-                                    <button style={{ backgroundColor: 'white', cursor: 'pointer', height: '38px', borderRadius: '20px', border: '1px solid #B27EE3', width: '280px', color: '#B27EE3', marginTop: '10px', marginLeft: '10px' }}
-                                        onClick={viewProfileClick}>View Profile</button>
-                                    <div >
-                                        <NavLink style={{ marginLeft: '-130px', textDecoration: 'none', color: 'black' }} to="/">Dashboard</NavLink>
-                                    </div>
-                                    <div>
-                                        <NavLink style={{ marginLeft: '-130px', textDecoration: 'none', color: 'black' }} to="/page2">Wallet</NavLink>
-                                    </div>
-                                    <div >
-                                        <NavLink style={{ marginLeft: '-130px', textDecoration: 'none', color: 'black' }} to="/page3">Settings</NavLink>
-                                    </div>
-                                    <hr style={{ color: 'black', width: '280px' }} />
-                                    <NavLink style={{ marginLeft: '-210px', textDecoration: 'none', color: 'black' }} to="/start" onClick={clickLogout}>Logout</NavLink>
-
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Header1 />
 
             {/* second div for profile bg */}
             <div className='profilepage'>

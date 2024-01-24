@@ -14,7 +14,7 @@ function Section10() {
     <Grid
       sx={{
         backgroundImage: `url(${section10Bg})`,
-        backgroundSize:{xs:"contain", md:"cover"},
+        backgroundSize:{xs:"cover", md:"cover"},
         backgroundRepeat: "no-repeat",
         minHeight:{xs:"fit-content", md:"100vh"},
         width: "100vw",
@@ -33,20 +33,21 @@ function Section10() {
             sx={{
               color: black,
               display: "grid",
-              gridTemplateColumns: "7fr 3fr",
+              // gridTemplateColumns: "7fr 3fr",
+              position:'relative'
             }}
           >
             <Box
               sx={{
                 position: "relative",
                 display: "flex",
-                justifyContent: "right",
+                justifyContent: "center",
               }}
             >
               <Box
                 sx={{
                   height: { xs: "58px", md: "154px" },
-                  marginTop: { xs: "50px", md: "200px" },
+                  marginTop: { xs: "50px", md: "120px" },
                 }}
               >
                 <img
@@ -64,7 +65,7 @@ function Section10() {
                   height: { xs: "12px", md: "24px" },
                   position: "absolute",
                   bottom: 0,
-                  right: 0,
+                  left:'50%'
                 }}
               >
                 <img
@@ -77,7 +78,7 @@ function Section10() {
                 />
               </Box>
             </Box>
-            <Box sx={{ height: { xs: "108px", md: "264px" } }}>
+            <Box sx={{ height: { xs: "108px", md: "264px" },position:'absolute',right:{xs:"2%",sm:'10%'} }}>
               <img
                 src={section10Sparkle}
                 alt="section10Sparkle"

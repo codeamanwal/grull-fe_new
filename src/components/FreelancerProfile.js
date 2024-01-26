@@ -152,6 +152,7 @@ const FreelancerProfile = () => {
     const handleAddProject = () => {
         if (newProject) {
             setTempProjects([...tempProjects, newProject]);
+            console.log(tempProjects);
             setNewProject('');
         }
     };
@@ -159,6 +160,7 @@ const FreelancerProfile = () => {
     const handleAddPortfolio = () => {
         if (newPortfolio) {
             setTempPortfolios([...tempPortfolios, newPortfolio]);
+            console.log(tempPortfolios)
             setNewPortfolio('');
         }
     };
@@ -673,6 +675,7 @@ const FreelancerProfile = () => {
                             <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Ongoing Work/Portfolio</h2>
                             <a href="#" style={{ marginLeft: 'auto', color: '#ED8335', fontWeight: 'bold' }}>Manage Projects</a>
                         </div>
+
                         {rightBoxEditMode && (
                             <div className="box-container">
                                 <input
@@ -689,7 +692,7 @@ const FreelancerProfile = () => {
 
                         <div style={{ marginTop: '20px', marginBottom: '30px' }}>
                             {/* Displaying the projects */}
-                            <div style={{ marginLeft: '18px', display: 'flex', flexWrap: 'wrap', margin: '-10px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px', marginLeft:'-5px'}}>
                                 {projects.map((project, index) => (
                                     <div key={index} style={{ margin: '10px' }}>
                                         <div className="portfolio-buttons">
@@ -719,10 +722,10 @@ const FreelancerProfile = () => {
                             <div style={{ marginLeft: '15px', display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
                                 {portfolios.map((portfolio, index) => (
                                     <div style={{
-                                        minWidth: '120px', height: '130px', border: '1px solid #9c9b9b',
-                                        borderRadius: '20px'
+                                        marginLeft: '5px', minWidth: '150px', height: '150px', border: '1px solid #9c9b9b',
+                                        borderRadius: '20px',margin: '10px'
                                     }}>
-                                        <div key={index} style={{ margin: '10px' }}>
+                                        <div key={index} style={{ marginLeft:'10px',marginRight:'10px',marginTop: '110px' }}>
                                             <div className="portfolio" style={{
                                                 textAlign: 'center',
                                                 lineHeight: '30px',

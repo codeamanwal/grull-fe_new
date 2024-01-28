@@ -65,21 +65,6 @@ function Section13() {
               rotate: "-10%",
             }}
           >
-            {/* <img
-            src={section13InnovationCircle}
-            alt="section13QuoteText"
-            style={{
-              width: "300px",
-              objectFit: "contain",
-              display: "block",
-              marginLeft: "24px",
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              margin: "auto",
-              left: "12%",
-            }}
-          /> */}
             <Lottie options={defaultOptions} height={"100%"} width="100%" />
           </Box>
           <Typography

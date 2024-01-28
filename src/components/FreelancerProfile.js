@@ -160,7 +160,6 @@ const FreelancerProfile = () => {
     const handleAddPortfolio = () => {
         if (newPortfolio) {
             setTempPortfolios([...tempPortfolios, newPortfolio]);
-            console.log(tempPortfolios)
             setNewPortfolio('');
         }
     };
@@ -694,9 +693,19 @@ const FreelancerProfile = () => {
                             {/* Displaying the projects */}
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px', marginLeft:'-5px'}}>
                                 {projects.map((project, index) => (
-                                    <div key={index} style={{ margin: '10px' }}>
-                                        <div className="portfolio-buttons">
-                                            {project}
+                                    <div style={{
+                                        marginLeft: '5px', minWidth: '150px', height: '150px', border: '1px solid #9c9b9b',
+                                        borderRadius: '16px',margin: '10px'
+                                    }}>
+                                        <div key={index} style={{ margin:'105px 12px 12px' }}>
+                                            <div className="portfolio" style={{
+                                                textAlign: 'center',
+                                                lineHeight: '30px',
+                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px'
+                                                , fontWeight: 'bold', padding:'0 12px'
+                                            }}>
+                                                {project}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -708,7 +717,7 @@ const FreelancerProfile = () => {
                             {rightBoxEditMode && (
                                 <div className="box-container">
                                     <input
-                                        style={{height:'40px',borderRadius:'15px',border:'1px solid #9c9b9b'}}
+                                        style={{height:'40px',borderRadius:'16px',border:'1px solid #9c9b9b'}}
                                         type="text"
                                         placeholder="Add ongoing portfolio"
                                         value={newPortfolio}
@@ -723,14 +732,14 @@ const FreelancerProfile = () => {
                                 {portfolios.map((portfolio, index) => (
                                     <div style={{
                                         marginLeft: '5px', minWidth: '150px', height: '150px', border: '1px solid #9c9b9b',
-                                        borderRadius: '20px',margin: '10px'
+                                        borderRadius: '16px',margin: '10px'
                                     }}>
-                                        <div key={index} style={{ marginLeft:'10px',marginRight:'10px',marginTop: '110px' }}>
+                                        <div key={index} style={{ margin:'105px 12px 12px' }}>
                                             <div className="portfolio" style={{
                                                 textAlign: 'center',
                                                 lineHeight: '30px',
-                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '20px'
-                                                , fontWeight: 'bold', marginBottom: 'px'
+                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px'
+                                                , fontWeight: 'bold', padding:'0 12px'
                                             }}>
                                                 {portfolio}
                                             </div>

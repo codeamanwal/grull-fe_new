@@ -39,30 +39,13 @@ function Section1() {
       <Box className="animate__animated animate__fadeInLeft">
         <Box
           sx={{
-            position: "relative",
             padding: { xs: "0", md: "auto" },
             width: "90%",
-            margin: { md: "auto" },
+            margin: { md: "auto",xl:"auto" },
           }}
         >
           <Box sx={{  margin: "auto" }}>
-          <Box
-            sx={{
-              display: { xs: "none", md: "block" },
-              position: "absolute",
-        
-              height: "120px",
-              width: "220px",
-              left: {xs:"-10%",xl:'0px'},
-              top: "-10%",
-              right: "0",
-              margin: "auto",
-              rotate: "-10deg",
-              zIndex: 2,
-            }}
-          >
-            <Lottie options={defaultOptions} height={"100%"} width="100%" />
-          </Box>
+          
             <Typography
               sx={{
                 typography: {xs:"font_24_800", md: "font_64_800" },
@@ -73,7 +56,23 @@ function Section1() {
                 
               }}
             >
-              Be the pioneer
+              Be the <span style={{position:"relative"}}><Box
+              sx={{
+                display: { xs: "none", md: "block" },
+                position: "absolute",
+          
+                height: "120px",
+                width: "220px",
+                left: {xs:"-20%",xl:'0px'},
+                top: "-40%",
+                right: "0",
+                margin: "auto",
+                rotate: "-10deg",
+                zIndex: -1,
+              }}
+            >
+            <Lottie options={defaultOptions} height={"100%"} width="100%" />
+          </Box>pioneer</span>
               <br /> in navigating your <br /> <span style={{color:white}}>freelance</span>  journey
             </Typography>
           </Box>

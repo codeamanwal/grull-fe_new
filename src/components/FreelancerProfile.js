@@ -8,6 +8,7 @@ import { MdWorkOutline } from "react-icons/md";
 import { CiCamera } from "react-icons/ci";
 import Header1 from './Header1';
 import Avatar from '@mui/material/Avatar';
+import { Box, Chip } from '@mui/material';
 
 const FreelancerProfile = () => {
     const navigate = useNavigate();
@@ -88,6 +89,8 @@ const FreelancerProfile = () => {
 
     const [inputAboutValue, setInputAboutValue] = useState('');
     const [newinputval,setnewinputval]= useState('');
+
+    const filters=['All','UI/UX','3d Visualization','Graphic Design','Video Editing']
 
     const handleAboutChange = (event) => {
         setnewinputval(event.target.value);
@@ -675,10 +678,16 @@ const FreelancerProfile = () => {
                             <a href="#" style={{ marginLeft: 'auto', color: '#ED8335', fontWeight: 'bold' }}>Manage Projects</a>
                         </div>
 
+                        <Box sx={{ marginTop:'25px',marginBottom:'45px',display:'flex',flexDirection:'row',gap:'15px',flexWrap:'wrap'}}>
+                            {filters.map((filter, index) => (
+                                <Chip key={index} label={filter} variant="outlined" sx={{width:'150px',border: '0.8px solid #000000',color:'#000',padding:'5.6px 13.6px 5.6px 13.6px',borderRadius:'12.8px'}}/>
+                            ))}
+                        </Box>
+
                         {rightBoxEditMode && (
                             <div className="box-container">
                                 <input
-                                    style={{height:'40px',borderRadius:'15px',border:'1px solid #9c9b9b'}}
+                                    style={{padding:'12px 18px',borderRadius:'15px',border:'1px solid #9c9b9b'}}
                                     type="text"
                                     placeholder="Add ongoing work"
                                     value={newProject}
@@ -691,11 +700,11 @@ const FreelancerProfile = () => {
 
                         <div style={{ marginTop: '20px', marginBottom: '30px' }}>
                             {/* Displaying the projects */}
-                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px', marginLeft:'-5px'}}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px',gap:'20px'}}>
                                 {projects.map((project, index) => (
                                     <div style={{
-                                        marginLeft: '5px', minWidth: '150px', height: '150px', border: '1px solid #9c9b9b',
-                                        borderRadius: '16px',margin: '10px'
+                                         minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
+                                        borderRadius: '16px'
                                     }}>
                                         <div key={index} style={{ margin:'105px 12px 12px' }}>
                                             <div className="portfolio" style={{
@@ -717,7 +726,7 @@ const FreelancerProfile = () => {
                             {rightBoxEditMode && (
                                 <div className="box-container">
                                     <input
-                                        style={{height:'40px',borderRadius:'16px',border:'1px solid #9c9b9b'}}
+                                        style={{padding:'12px 18px',borderRadius:'16px',border:'1px solid #9c9b9b'}}
                                         type="text"
                                         placeholder="Add ongoing portfolio"
                                         value={newPortfolio}
@@ -728,11 +737,11 @@ const FreelancerProfile = () => {
                             )}
 
                             {/* Displaying the portfolio values */}
-                            <div style={{ marginLeft: '15px', display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px',gap:'20px' }}>
                                 {portfolios.map((portfolio, index) => (
                                     <div style={{
-                                        marginLeft: '5px', minWidth: '150px', height: '150px', border: '1px solid #9c9b9b',
-                                        borderRadius: '16px',margin: '10px'
+                                        minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
+                                        borderRadius: '16px',margin: '10px 0'
                                     }}>
                                         <div key={index} style={{ margin:'105px 12px 12px' }}>
                                             <div className="portfolio" style={{

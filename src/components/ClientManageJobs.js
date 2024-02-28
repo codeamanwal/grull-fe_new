@@ -1,10 +1,11 @@
 // ManageJobsPage.js
 import { Box, Button, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link,useNavigate, useParams } from 'react-router-dom';
 import '../styles/freelancermanagejobs.css';
 import ClientJob from './ClientJob';
 import axios from 'axios';
+import Header3 from './Header3';
 
 const ClientManageJobs = () => {
   const { section } = useParams();
@@ -109,7 +110,9 @@ const ClientManageJobs = () => {
 //   },
 // ];
   return (
-    <Box sx={{padding:'50px 90px'}} className='managejobs-page'>
+    <Box>
+      <Header3 />
+<Box sx={{padding:'50px 90px'}} className='managejobs-page'>
          <Box>
            <Typography sx={{fontSize: '32px', fontWeight: 700, lineHeight: '38px', letterSpacing: '-1px',textAlign: 'left',  }} className='managejobs-title'>
               Manage Jobs
@@ -117,7 +120,7 @@ const ClientManageJobs = () => {
          </Box>
 
          <Box sx={{marginTop:'50px',display:'flex',flexDirection:'row',width:'100%' }} className='managejobs'>
-            <Box className='managejobs-opts' sx={{boxShadow: '0px 0px 4px 1px #00000040',borderRadius:'16px',padding:'22px',display:'flex',flexDirection:'column',gap:'10px',alignSelf:'flex-start',marginTop:'160px'}}>
+            <Box className='managejobs-opts managejobs-opts-client' sx={{boxShadow: '0px 0px 4px 1px #00000040',borderRadius:'16px',padding:'22px',display:'flex',flexDirection:'column',gap:'10px',alignSelf:'flex-start',marginTop:'160px'}}>
                <Button sx={{fontSize:'17px',backgroundColor:section==='posted'?'#d7d7d7':'#e3e3e3',color:section!=='posted'?'rgba(0,0,0,0.5)':'#000',borderRadius:'16px',padding:'9px 12px',textTransform:'none',':hover':{backgroundColor:section==='posted'?'#d7d7d7':'#e3e3e3',color:section!=='posted'?'rgba(0,0,0,0.5)':'#000',}}}
                onClick={()=>{handleButtonClick('posted')}}>Posted Jobs</Button>
                <Button sx={{fontSize:'17px',backgroundColor:section==='ongoing'?'#d7d7d7':'#e3e3e3',color:section!=='ongoing'?'rgba(0,0,0,0.5)':'#000',borderRadius:'16px',padding:'9px 12px',textTransform:'none',':hover':{backgroundColor:section==='ongoing'?'#d7d7d7':'#e3e3e3',color:section!=='ongoing'?'rgba(0,0,0,0.5)':'#000',}}}
@@ -217,6 +220,8 @@ const ClientManageJobs = () => {
             </Box>
          </Box>
     </Box>
+    </Box>
+    
   );
 };
 

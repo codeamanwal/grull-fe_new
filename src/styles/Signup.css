@@ -111,6 +111,7 @@ body {
     margin: 0 !important;
     text-transform: none !important;
     padding: 8px 0 !important;
+    cursor: pointer;
     font-size:16px;
 }
 

@@ -46,29 +46,17 @@
     width: 100% !important;
     flex: 1 !important;
 }
-.browseFreelancers{
-    display: flex;
-    flex-direction: row;
+.browseFreelancer{
     gap:30px;
     width: 86%;
     margin: auto;
-    height: 1060px;
-}
-
-.browseFreelancers-left-box{
-    width: 300px;
-    border: 1px solid #D9D9D9;
-    border-radius: 20px;
-    height: auto;
-    box-shadow: 0px 0px 4px 0px #00000040;
-    padding:30px 20px;
-}
-.browseFreelancers-right-box{
-    flex:1 !important;
-    width: auto !important;
-    overflow-y: auto;
+    height:auto !important;
     box-shadow: 0px 0px 4px 0px #00000040;
     border-radius: 16px;
+}
+
+.browseFreelancer-box{
+    width:100% !important;
 }
 .browseFreelancers-right-box::-webkit-scrollbar {
     width:3px;

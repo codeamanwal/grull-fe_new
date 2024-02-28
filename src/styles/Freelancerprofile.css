@@ -103,7 +103,7 @@
  .box-container{
     display: flex;
     margin-top: 35px;
-    margin-left: 35px;
+    /* margin-left: 35px; */
 }
 .buttons-container {
     

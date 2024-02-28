@@ -19,6 +19,7 @@ import mobilelogo from "../assets/grullPurpuleMobileLogo.svg"
 import { LuMenu } from "react-icons/lu";
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function Header1() {
     const container = useRef();
@@ -36,16 +37,21 @@ export default function Header1() {
     const navigate =useNavigate()
     const [showDropdown, setShowDropdown] = useState(false);
     const avatarBackgroundColor = 'Grey';
+
     const clickProfileImage = () => {
-        // setShowDropdown(!showDropdown);
-        setShowDropdown((prevState) => ({ open: !prevState.open }));
+        console.log(showDropdown)
+        setShowDropdown(!showDropdown);
+        // if(showDropdown) setShowDropdown(false)
+        // else setShowDropdown(true)
+        console.log(showDropdown)
     }
     const clickLogout = () => {
-        navigate('/')
+        console.log("Logging out..."); // Add this line for debugging
     }
+    
     const handleClickOutside = (e) => {
         if (container.current && !container.current.contains(e.target)) {
-            setShowDropdown({ open: false });
+            setShowDropdown(false);
         }
     };
     // attaches an eventListener to listen when componentDidMount
@@ -69,7 +75,7 @@ export default function Header1() {
                             <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px' }} />
                         )}
                         <Box sx={{display:{xs:'none',md:'block'}}}>
-                            <Button  sx={{color:'#fff'}}>Find Work</Button>
+                            <Button  sx={{color:'#fff'}} onClick={()=>{navigate('/browsejobs')}}>Find Work</Button>
                         </Box>
                         <Box sx={{display:{xs:'none',md:'block'}}}>
                             <Button endIcon={<MdArrowOutward />}  sx={{color:'#fff',border: '1px solid #FFFFFF', borderRadius: '16px',padding: '7px 14px'}}>
@@ -87,7 +93,7 @@ export default function Header1() {
                             <Box sx={{display:{xs:'none',md:'block'}}}>
                                 <Button sx={{color:'#fff'}}>Collaborate</Button>
                             </Box>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap:{xs:'8px',sm:'30px', md:'25px',lg:'40px'}, alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap:{xs:'5px',sm:'15px', md:'25px',lg:'40px'}, alignItems: 'center' }}>
                                 <IconButton sx={{fontSize:{ xs:'24px',sm:'30px'}}}>
                                    <FiMessageSquare style={{ color: '#fff'}} />
                                 </IconButton>
@@ -97,29 +103,35 @@ export default function Header1() {
                                 <Box ref={container} sx={{position:'relative'}}>
                                     <Avatar
                                         alt={savedName}
-                                        sx={{ backgroundColor: avatarBackgroundColor }}
+                                        sx={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
                                         // className='dashboardavatar profile'
                                         onClick={clickProfileImage}
                                     >
                                         {getInitials(savedName)}
                                     </Avatar>
-                                    {showDropdown.open && (
-                                        <Menu
-                                        anchorEl={container.current}
-                                        open={showDropdown.open}
-                                        onClose={() => setShowDropdown({ open: false })}
-                                        MenuListProps={{
-                                            style: {
+                                    {showDropdown && (
+                                        <Box
+                                        sx={{
                                               padding:'15px 30px 20px 20px',
-                                            },
-                                          }}
+                                              display: showDropdown?'block':'none',
+                                              position:'absolute',
+                                              backgroundColor:'#fff',
+                                              zIndex:'1',
+                                              top:{xs:'58px',sm:'65px'},
+                                              right:{xs:'-55px',sm:'-80px',md:'-20px'},
+                                              boxShadow: '0px 0px 4px 1px #00000040',
+                                              borderRadius:{xs:'10px',sm:'40px'},
+                                              width:{xs:'250px',sm:'280px'},
+                                              display:'flex',
+                                              flexDirection:'column',
+                                              gap:'5px'
+                                            }}
                                         >
-                                        <MenuItem sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
-                                            <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                                        <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <Avatar
                                                     alt={savedName}
                                                     style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
-                                                    onClick={clickProfileImage}
                                                 >
                                                     {getInitials(savedName)}
                                                 </Avatar>
@@ -128,20 +140,26 @@ export default function Header1() {
                                                     <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>Job Category</Typography>
                                                 </div>
                                             </div>
-                                        </MenuItem>
-                                        <MenuItem sx={{padding:'2px 0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                        </Box>
+                                        <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
                                             <Button onClick={viewProfileClick} sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
-                                        </MenuItem>
-                                        <MenuItem component={NavLink} to="/" sx={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</MenuItem>
-                                        <MenuItem component={NavLink} to="/page2" sx={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</MenuItem>
-                                        <MenuItem component={NavLink} to="/page3" sx={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</MenuItem>
+                                        </Link>
+                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
+                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                        <Link component={NavLink} to="/page3" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
                                         <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
-                                        <MenuItem onClick={clickLogout} sx={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'4px 0',':hover':{backgroundColor:'transparent'},minHeight:'0'}}>Logout</MenuItem>
-                                        </Menu>
+                                        <Link
+                                            to='/'
+                                            onClick={clickLogout}
+                                            style={{ backgroundColor: '#fff', textDecoration: 'none', color: 'black', fontWeight: '500', padding: '4px 0', ':hover': { backgroundColor: 'transparent' }, minHeight: '0' }}
+                                        >
+                                            Logout
+                                        </Link>
+                                        </Box>
                                     )}
                                 </Box>
-                                <IconButton sx={{display:{xs:'block',md:'none'}, fontSize:{ xs:'24px',sm:'30px'}}}>
-                                   <LuMenu style={{ color: '#fff', }} onClick={clickProfileImage}/>
+                                <IconButton sx={{display:{xs:'block',md:'none'}, fontSize:{ xs:'24px',sm:'30px'}}} >
+                                   <LuMenu style={{ color: '#fff', }} onClick={clickProfileImage}  />
                                 </IconButton>
                             </Box>
                         </Box>

@@ -6,6 +6,7 @@ import Select from 'react-select';
 import Button from '@mui/material/Button';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import grullLogo from "../assets/grullLogoPurple.svg"
 
 const Login = () => {
     const navigate = useNavigate();
@@ -71,7 +72,8 @@ const Login = () => {
     return (
       <div>
       <div className='headerStyle'>
-          <h2 className='header-logo'>Grull</h2>
+          {/* <h2 >Grull</h2> */}
+          <img src={grullLogo} alt="Grull" className='header-logo'/>
       </div>
       <div>
       <div className='res-content'>

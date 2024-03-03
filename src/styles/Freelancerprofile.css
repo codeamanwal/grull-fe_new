@@ -1,0 +1,326 @@
+.profilepage{
+    display: flex;
+    flex-direction: column;
+    gap:50px;
+    width: 88%;
+    margin: auto;
+}
+
+.switch-to-employer-button{
+    color: white;
+    background-color: #b27ee3;
+    width: fit-content;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 15px;
+    margin-left: auto;
+}
+.firstcompprofile{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0;
+}
+.profile-background-image{
+    width:100%;
+    height:320px;
+}
+.user-picture{
+    position: relative;
+}
+.user-picture-img{
+    width: 200px !important;
+    height: 200px !important;
+    border: 1px solid black;
+}
+.camera-icon {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    font-size: 35px;
+}
+
+.skills-about{
+    margin-top: 10px;
+    display: flex;
+    gap:50px
+    /* margin-bottom: 300px; */
+}
+.left-box{
+    min-width: 250px;
+    width: auto;
+    max-width: 350px;
+    border: 1px solid none; 
+    padding: 20px 25px 25px; 
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap:30px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+}
+
+.edit-button-two{
+    border-radius: 50%;
+    height:40px;
+    width:40px;
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.right-box{
+    flex: 1;
+    border: none; 
+    padding: 20px; 
+    /* margin-right: 100px; */
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+}
+
+.edit-button-three{
+    border-radius: 50%;
+    height:40px;
+    width:40px;
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.about-box{
+    width: 92%;
+    padding: 15px 20px 30px;
+    font-weight: 400;
+    font-size: 18px;
+    margin-top: 7px;
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    border: none;
+    resize: none;
+    overflow: hidden;
+    min-height: 100px; 
+    outline: none;
+ }
+ .box-container{
+    display: flex;
+    margin-top: 35px;
+    /* margin-left: 35px; */
+}
+.buttons-container {
+    
+    display: flex;
+    margin-top: 20px; 
+    margin-bottom: 10px;
+    gap:10px
+}
+
+.review-box{
+    width: 100%;  
+    box-shadow: 0px 0px 4px 0px #00000040;
+    border: none;
+    padding: 20px; 
+    border-radius: 16px;
+    margin-bottom: 50px;
+}
+
+.portfolio-buttons{
+    border-radius: 20px;
+    height: 30px;
+    margin-left: 10px;
+    border: 1px solid #9c9b9b;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    min-width: 100px;  /* Adjust the minimum width as needed */
+    padding: 0 10px; 
+    text-align: center; /* Center the text horizontally */
+    line-height: 30px; /* Center the text vertically by setting line-height equal to the height */
+}
+.portfolio-buttons:hover{
+    background-color: #ED8335;
+    color: white;
+}
+
+
+.rectangular-box {
+    width: 200px;
+    height: 180px;
+    border: 1px solid #9c9b9b ;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    margin-left: 50px;
+}
+
+.edit-button {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+    float: right !important;
+}
+
+.edit-buttons-container {
+    display: flex;
+}
+
+/* .edit-buttons-container > div {
+    margin-right: 10px; 
+} */
+
+
+
+.save-button{
+    width: 150px !important;
+    border-radius: 16px !important;
+    color: white;
+    background-color: #b27ee3;
+    border: none;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.cancel-button{
+    width: 150px !important;
+    border-radius: 16px !important;
+    border-radius: 16px;
+    background-color: white;
+    color: #b27ee3;
+    border: 1px solid #b27ee3;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+  .overlay {
+    position: relative;
+    top: 100%; /* Position just below the header */
+    background: #fff; /* White background for the content */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Optional: Add a shadow for a pop-up effect */
+    border-radius: 8px;
+    z-index: 999;
+  }
+  
+  .overlay-content {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .overlay-content > div {
+    margin-bottom: 10px;
+  }
+  
+  .overlay-content button {
+    margin: 5px;
+    padding: 8px 16px;
+    background-color: #4caf50; /* Green background color */
+    color: #fff; /* White text color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .overlay-content button:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  @media only screen and (max-width:900px){
+       .profilesec-1{
+          flex-direction: column !important;
+          align-items: start !important;
+          gap:30px !important
+       }
+       .skills-about{
+        flex-direction: column-reverse !important;
+        margin-top: 90px !important;
+        gap:30px !important
+       }
+       .profilepage{
+        width: 92%;
+       }
+       .left-box{
+        flex: 1;
+        max-width:100% 
+        }
+  }
+  @media only screen and (max-width:600px){
+    .user-picture-img{
+        width: 140px !important;
+        height: 140px !important;
+    }
+    .profile-background-image{
+        height: 230px !important;
+    }
+    .profiletosec-2{
+       gap:50px !important
+    } 
+    .skills-about{
+        margin-top: 70px !important;
+       }
+    .profilesec-1{
+        gap: 20px !important;
+    }
+    .text-1{
+        font-size: 24px !important;
+    }
+    .text-2{
+        font-size: 16px !important;
+    }
+    .profilesec-4{
+        gap: 20px !important;
+    }
+    .profilesecinputs{
+        width: 160px !important;
+        padding: 8px 10px !important;
+    }
+    .save-button{
+        width: 120px !important;
+    }
+    .cancel-button{
+        width: 120px !important;
+    }
+    .profilesec-subheading{
+        font-size: 24px !important;
+        padding-top: 0 !important;
+    }
+    .edit-button-three{
+        height:35px;
+        width:35px;
+    }
+    .about-box{
+        width: 98%;
+        margin: 0 auto;
+        margin-top: 10px !important;
+     }
+     .li-li{
+        font-size: 15px !important;
+        padding: 7px 30px 7px 12px !important;
+     }
+     .left-box-butcont{
+        flex-direction: row-reverse !important;
+        margin-right: auto !important;
+     }
+     .left-box-butcont button{
+         width: 120px !important;
+     }
+     .li-li1{
+        font-size: 15px !important;
+        gap:30px !important
+     }
+     .li-li1 button{
+           font-size: 18px !important;
+     }
+     
+     
+  }
+  @media only screen and (max-width:360px){
+    .profiletopinfo{
+        width: fit-content !important;
+        padding: 10px !important;
+     }
+     .profiletopinfo span{
+        font-size: 14px !important;
+     }
+  }

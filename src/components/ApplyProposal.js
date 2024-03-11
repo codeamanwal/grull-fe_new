@@ -10,7 +10,7 @@ import { FaArrowUp } from "react-icons/fa6";
 
 const ApplyProposal = () => {
     const navigate = useNavigate();
-    const accessToken = localStorage.getItem('accessTokenFreelancer');
+    const accessToken = localStorage.getItem('accessToken');
 
     const CurrencyOptions = [
         { value: 'INDIA', label: 'INR' },

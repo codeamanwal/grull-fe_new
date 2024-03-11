@@ -1,11 +1,11 @@
-import React,{useEffect, useState} from 'react';
+import React,{useEffect, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Button,Grid } from '@mui/material';
+import { Button,Divider,Grid } from '@mui/material';
 import { FiHome } from "react-icons/fi";
 import { IoWalletOutline } from "react-icons/io5";
 import { FiShoppingBag } from "react-icons/fi"
@@ -15,63 +15,45 @@ import FreelancerHome from './FreelancerHome';
 import Freelancerwallet from './Freelancerwallet';
 import '../styles/freelancerdashboard.css';
 import { CiShare2 } from "react-icons/ci";
+import Logo from "../assets/Logo1.png";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import Header1 from './Header1';
+import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { MdArrowOutward } from "react-icons/md";
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   window?: () => Window;
 }
 
 export default function FreelancerDashboard(props: Props) {
+
+  const { windows } = props;
   const [fullname,setFullname]=useState('');
   const [role,setRole]=useState('');
   const [activeButton, setActiveButton] = useState('home');
-  const navigate = useNavigate();
-  const avatarBackgroundColor = 'Grey'; 
-  const getInitials = (name) => {
-    const names = name.split(' ');
-    return names.map((word) => word[0]).join('').toUpperCase();
-  };
-  const handleButtonClick = (button) => {
-    setActiveButton(button);
-    if (button === 'manageJobs') {
-      navigate('/managejobs/applied');
-    }
-  };
-
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [changeopts,setChangeopts]=useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-  const { windows } = props;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const accessToken = localStorage.getItem('accessToken');
+  const avatarBackgroundColor = 'Grey';
   const container = windows !== undefined ? () => windows().document.body : undefined;
+  const container1 = useRef();
+  const navigate = useNavigate(); 
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+      window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  const getDrawerWidth = () => {
-    if (windowWidth <1075) {
-      return 0;
-    }if (windowWidth <1150) {
-      return 260;
-    }if (windowWidth<1350) {
-      return 300;
-    }
-    else{
-      return 340;
-    }
-  };
-  const accessToken = localStorage.getItem('accessToken');
+
   useEffect(()=>{
        const infofetch=async()=>{
         try {
@@ -93,11 +75,68 @@ export default function FreelancerDashboard(props: Props) {
         }
        }
        infofetch();
-  },[])
+  },[]);
+
+  const getInitials = (name) => {
+    return name[0]?.toUpperCase();
+  };
+
+  const handleButtonClick = (button) => {
+    setActiveButton(button);
+    if (button === 'manageJobs') {
+      navigate('/managejobs/applied');
+    }
+  };
+
+  const clickProfileImage = () => {
+    setShowDropdown(!showDropdown);
+  }
+
+  const clickLogout = () => {
+      console.log("Logging out...");
+  }
+
+  const handleClickOutside = (e) => {
+      if (container1.current && !container1.current.contains(e.target)) {
+          setShowDropdown(false);
+      }
+  };
+
+  const handlesettings =()=>{
+        setChangeopts((prev)=>!prev);
+  }
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const getDrawerWidth = () => {
+    if (windowWidth <1075) {
+      return 0;
+    }if (windowWidth <1150) {
+      return 260;
+    }if (windowWidth<1350) {
+      return 300;
+    }
+    else{
+      return 340;
+    }
+  };
+
   const drawer = (
     <div style={{backgroundColor:'#000',paddingLeft:'80px',paddingRight:'40px',height:'100vh'}} className='dashboard-drawer'>
-      <Box sx={{display:'flex',padding:'18px 0'}} >
-        <Typography sx={{color: '#B27EE3',fontSize:'25px',fontWeight:'700'}}>GRULL</Typography>
+      <Box sx={{display:'flex',padding:'22px 0'}} >
+        <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px' }} />
       </Box>
       <Box sx={{marginTop:'100px'}}>
          <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
@@ -138,24 +177,32 @@ export default function FreelancerDashboard(props: Props) {
   return (
     <Box sx={{ display: 'flex', }}>
       <CssBaseline />
+      <Box sx={{display:'flex',flexDirection:'column'}}>
       <AppBar
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${getDrawerWidth()}px)` },
-          ml: { sm: `${getDrawerWidth()}px` },
-          backgroundColor:'#EDEDED',
-          boxShadow:" 0px 0px 4px 0.5px #00000040",
-          height:"80px",
-          display:'flex',
-          justifyContent:'center',
-          padding:'0px 80px 0 60px ',
+          ml: { sm: `${getDrawerWidth()}px` }
         }}
-        className='dashboard-navbar'
       >
         <Toolbar sx={{
+          width:'100%',
+          padding:"0",
+          display:{xs:'block',md:'none'}
+        }} >
+           <Header1 />
+        </Toolbar>
+        <Toolbar sx={{
+            height:{sm:'80px',xs:'90px'},
+            backgroundColor:'#EDEDED',
+            boxShadow:" 0px 0px 4px 0.5px #00000040",
+        }}>
+          <Box sx={{
             display:'flex',
-            justifyContent:'space-between'
-        }} className='dashboard-navbar-con'>
+            justifyContent:'space-between',
+            width:'100%',
+            padding:'0 70px 0 60px'
+          }}  className='dashboard-navbar-con'>
             <Box >
                 <Typography style={{
                     // fontFamily: 'Urbanist',
@@ -187,17 +234,83 @@ export default function FreelancerDashboard(props: Props) {
                 </Button>
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',':hover':{}}} className='resdash' />
                 <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
+                <Box ref={container1} sx={{position:'relative'}}>
                 <Avatar
-                  alt={fullname}
-                  style={{ backgroundColor: avatarBackgroundColor }}
+                  alt={fullname[0]}
+                  style={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
                   className='dashboardavatar'
-                  onClick={()=>{navigate('/freelancerprofile')}}
+                  onClick={clickProfileImage}
                 >
                   {getInitials(fullname)}
                 </Avatar>
+                {showDropdown && (
+                                        <Box
+                                        sx={{
+                                              padding:'15px 30px 20px 20px',
+                                              display: showDropdown?'block':'none',
+                                              position:'absolute',
+                                              backgroundColor:'#fff',
+                                              zIndex:'1',
+                                              top:{xs:'58px',sm:'65px'},
+                                              right:{xs:'-55px',sm:'-80px',md:'-20px'},
+                                              boxShadow: '0px 0px 4px 1px #00000040',
+                                              borderRadius:{xs:'10px',sm:'40px'},
+                                              width:{xs:'250px',sm:'280px'},
+                                              display:'flex',
+                                              flexDirection:'column',
+                                              gap:'5px'
+                                            }}
+                                        >
+                                        <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Avatar
+                                                    alt={fullname[0]}
+                                                    style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
+                                                >
+                                                    {getInitials(fullname)}
+                                                </Avatar>
+                                                <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
+                                                    <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px',color:'#000000'}}>{fullname}</Typography>
+                                                    <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{role}</Typography>
+                                                </div>
+                                            </div>
+                                        </Box>
+                                        <Link to="/freelancerprofile" style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                            <Button sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
+                                        </Link>
+                                        {
+                                          !changeopts? 
+                                          (<>
+                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
+                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                        <Link onClick={handlesettings} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
+                                        <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
+                                        <Link
+                                            to='/'
+                                            onClick={clickLogout}
+                                            style={{ backgroundColor: '#fff', textDecoration: 'none', color: 'black', fontWeight: '500', padding: '4px 0', ':hover': { backgroundColor: 'transparent' }, minHeight: '0' }}
+                                        >
+                                            Logout
+                                        </Link>
+                                          </>) : 
+                                          (<>
+                                        <Link component={NavLink} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Find Work</Link>
+                                        <Link component={NavLink} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
+                                        <Link component={NavLink} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
+                                        <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                            <Button endIcon={<MdArrowOutward />} sx={{border: '1px solid #000000',fontWeight:'600',color:'#000000',borderRadius:'16px',padding:'7px 25px'}}>Post a project</Button>
+                                        </Link>
+                                          </>)
+                                        }
+                                        </Box>
+                                    )}
+
+                                    </Box>
+            </Box>
             </Box>
         </Toolbar>
       </AppBar>
+      </Box>
       <Box
         component="nav"
         sx={{ width: { sm: getDrawerWidth() }, flexShrink: { sm: 0 }, backgroundColor:'#000' }}

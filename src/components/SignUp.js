@@ -9,6 +9,7 @@ import { FaApple } from "react-icons/fa";
 import grullLogo from "../assets/grullLogoPurple.svg"
 
 const SignUp = () => {
+    
     const navigate = useNavigate();
     const [isReceiveEmailsChecked, setReceiveEmailsChecked] = useState(false);
     const [isAgreeToTermsChecked, setAgreeToTermsChecked] = useState(false);

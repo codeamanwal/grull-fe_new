@@ -9,8 +9,14 @@ import { CiCamera } from "react-icons/ci";
 import Header1 from './Header1';
 import Avatar from '@mui/material/Avatar';
 import { Box, Chip } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 const FreelancerProfile = () => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const avatarBackgroundColor = 'Grey';

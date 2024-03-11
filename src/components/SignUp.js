@@ -6,8 +6,10 @@ import Select from 'react-select';
 import Button from '@mui/material/Button';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import grullLogo from "../assets/grullLogoPurple.svg"
 
 const SignUp = () => {
+    
     const navigate = useNavigate();
     const [isReceiveEmailsChecked, setReceiveEmailsChecked] = useState(false);
     const [isAgreeToTermsChecked, setAgreeToTermsChecked] = useState(false);
@@ -75,7 +77,7 @@ const SignUp = () => {
     return (
         <div>
             <div className='headerStyle'>
-                <h2 className='header-logo'>Grull</h2>
+        <img src={grullLogo} alt="Grull" className='header-logo'/>
             </div>
             <div>
             <div className='res-content'>

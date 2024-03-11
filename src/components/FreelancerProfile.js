@@ -3,14 +3,20 @@ import '../styles/Freelancerprofile.css';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { FiMessageSquare } from "react-icons/fi";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import Avatar from '@mui/material/Avatar';
-import { Button } from '@mui/material';
-import { MdArrowOutward } from "react-icons/md";
+import { CiLocationOn } from "react-icons/ci";
+import { MdWorkOutline } from "react-icons/md";
 import { CiCamera } from "react-icons/ci";
+import Header1 from './Header1';
+import Avatar from '@mui/material/Avatar';
+import { Box, Chip } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 const FreelancerProfile = () => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const avatarBackgroundColor = 'Grey';
@@ -31,29 +37,7 @@ const FreelancerProfile = () => {
         // logic for what will happen when clicked on notifications image
     }
 
-    const viewProfileClick = () => {
-        navigate('/freelancerprofile');
-    }
-
-    const container = useRef();
-    const [showDropdown, setShowDropdown] = useState(false);
-    const clickProfileImage = () => {
-        // setShowDropdown(!showDropdown);
-        setShowDropdown((prevState) => ({ open: !prevState.open }));
-    }
-    const handleClickOutside = (e) => {
-        if (container.current && !container.current.contains(e.target)) {
-            setShowDropdown({ open: false });
-        }
-    };
-    // attaches an eventListener to listen when componentDidMount
-    useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        // optionally returning a func in useEffect runs like componentWillUnmount to cleanup
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-
+   
 
     const switchToEmployerClick = () => {
         navigate('/employerprofile');
@@ -110,10 +94,18 @@ const FreelancerProfile = () => {
     const [ratePerHour, setRatePerHour] = useState('');
 
     const [inputAboutValue, setInputAboutValue] = useState('');
-    const handleAboutChange = (event) => {
-        setInputAboutValue(event.target.value);
-    };
+    const [newinputval,setnewinputval]= useState('');
 
+    const filters=['All','UI/UX','3d Visualization','Graphic Design','Video Editing']
+
+    const handleAboutChange = (event) => {
+        setnewinputval(event.target.value);
+        updateTextareaHeight(event.target);
+    };
+    const updateTextareaHeight = (element) => {
+        element.style.height = 'auto';
+        element.style.height = `${element.scrollHeight}px`;
+      };
     const handleEditClick = (box) => {
         if (box === 'left') {
             setLeftBoxEditMode(true);
@@ -146,6 +138,12 @@ const FreelancerProfile = () => {
             setNewSkill('');
         }
     };
+    
+    const handleDeleteSkill = (index) => {
+        const updatedSkills = [...tempSkills];
+        updatedSkills.splice(index, 1);
+        setTempSkills(updatedSkills);
+      };
 
     const handleAddLanguage = () => {
         if (newLanguage) {
@@ -154,9 +152,16 @@ const FreelancerProfile = () => {
         }
     };
 
+    const handleDeleteLanguage = (index) => {
+        const updatedLanguages = [...tempLanguages];
+        updatedLanguages.splice(index, 1);
+        setTempLanguages(updatedLanguages);
+    };
+
     const handleAddProject = () => {
         if (newProject) {
             setTempProjects([...tempProjects, newProject]);
+            console.log(tempProjects);
             setNewProject('');
         }
     };
@@ -192,18 +197,17 @@ const FreelancerProfile = () => {
                     setSavedLocation(responseData.location.country);
                     setJobsCompletedCount(responseData.jobs_completed_count);
                     setRatePerHour(responseData.rate_per_hour);
-
                     setSkills(responseData.skills);
                     setLanguages(responseData.languages);
-
+                    setTempSkills(responseData.skills);
+                    setTempLanguages(responseData.languages);
                     setInputAboutValue(responseData.description);
-                    setProjects(responseData.work_sample_urls);
-                    setPortfolios(responseData.portfolio_urls);
-
+                    setnewinputval(responseData.description);
+                    setProjects(responseData.work_sample_urls ? responseData.work_sample_urls : []);
+                    setPortfolios(responseData.portfolio_urls ? responseData.portfolio_urls : []);
                     setTopBoxEditMode(false);
                     setLeftBoxEditMode(false);
                     setRightBoxEditMode(false);
-
 
                 } else if (response.status === 400) {
                     // Handle error (e.g., show error message)
@@ -269,8 +273,8 @@ const FreelancerProfile = () => {
     const updateSkillsAndLanguages = async () => {
         try {
             const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
-                skills: [...skills, ...tempSkills],
-                languages: [...languages, ...tempLanguages],
+                skills: [...tempSkills],
+                languages: [...tempLanguages],
             },
                 {
                     headers: {
@@ -286,8 +290,9 @@ const FreelancerProfile = () => {
                 // Update the state with the response from the backend
                 setSkills(responseData.skills || []);
                 setLanguages(responseData.languages || []);
+                setTempSkills(responseData.skills || []);
+                setTempLanguages(responseData.languages || []);
                 setLeftBoxEditMode(false);
-
             } else {
                 // Handle error
                 console.error('Failed to update skills and languages');
@@ -302,7 +307,7 @@ const FreelancerProfile = () => {
     const updateProjectsAndAbout = async () => {
         try {
             const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
-                description: inputAboutValue,
+                description: newinputval,
                 work_sample_urls: [...projects, ...tempProjects],
                 portfolio_urls: [...portfolios, ...tempPortfolios],
             },
@@ -319,6 +324,7 @@ const FreelancerProfile = () => {
                 console.log(response)
                 // Update the state with the response from the backend
                 setInputAboutValue(responseData.description);
+                setnewinputval(responseData.description);
                 setProjects(responseData.work_sample_urls || []);
                 setPortfolios(responseData.portfolio_urls || []);
                 setRightBoxEditMode(false);
@@ -332,6 +338,7 @@ const FreelancerProfile = () => {
             console.error('Network error:', error);
         }
     };
+   
 
 
     const handleSaveTop = async () => {
@@ -352,12 +359,8 @@ const FreelancerProfile = () => {
     const handleSaveLeft = async () => {
         setLeftBoxEditMode(false);
         await updateSkillsAndLanguages();
-        // setSkills([...skills, ...tempSkills]); // Add temporary skills to main skills
-        // setLanguages([...languages, ...tempLanguages]); // Add temporary languages to main languages
         setNewSkill('');
         setNewLanguage('');
-        setTempSkills([]);
-        setTempLanguages([]);
         setLeftButtonImage(require('../assets/edit.jpg'));
     };
 
@@ -365,8 +368,8 @@ const FreelancerProfile = () => {
         setLeftBoxEditMode(false);
         setNewSkill('');
         setNewLanguage('');
-        setTempSkills([]); // Discard temporary skills
-        setTempLanguages([]); // Discard temporary languages
+        setTempSkills(skills);
+        setTempLanguages(languages);
         setLeftButtonImage(require('../assets/edit.jpg'));
     };
 
@@ -376,7 +379,7 @@ const FreelancerProfile = () => {
         await updateProjectsAndAbout();
         // setProjects([...projects, ...tempProjects, newProject]); // Add the new project
         setNewProject('');
-        setTempProjects([]);   //Discard temporary projects
+        setTempProjects([]); 
         setNewPortfolio('');
         setTempPortfolios([]);
         setRightButtonImage(require('../assets/edit.jpg'));
@@ -384,17 +387,15 @@ const FreelancerProfile = () => {
 
     const handleCancelRight = () => {
         setRightBoxEditMode(false);
-        setNewProject('');
-        setTempProjects([]);
-        setNewPortfolio('');
-        setTempPortfolios([]);
-        setInputAboutValue('');
+        // setNewProject('');
+        // setTempProjects([]);
+        // setNewPortfolio('');
+        // setTempPortfolios([]);
+        setnewinputval(inputAboutValue)
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
-    const clickLogout = () => {
-        navigate('/')
-    }
+    
 
     const JobCategoryOptions = [
         { value: 'GRAPHIC_DESIGNER', label: 'Graphic Designer' },
@@ -420,65 +421,7 @@ const FreelancerProfile = () => {
         <div>
 
             {/* first div for header */}
-            <div className='headerStyle-freelancer' style={{ display: 'flex', alignItems: 'center' }}>
-                <div>
-                    <h2 >Grull</h2>
-                    <div >
-                        <Button >Find Work</Button>
-                    </div>
-                    <div>
-                        <Button className='postProjectButton' endIcon={<MdArrowOutward />}>Post a Project</Button>
-                    </div>
-                </div>
-
-                <div>
-                    <div>
-                        <Button>Learn</Button>
-                    </div>
-                    <div>
-                        <Button>Collaborate</Button>
-                    </div>
-                    <div className='imageContainer' style={{ display: 'flex', alignItems: 'center' }}>
-                        <FiMessageSquare style={{ color: '#fff', fontSize: '30px' }} />
-                        <IoMdNotificationsOutline style={{ color: '#fff', fontSize: '35px' }} />
-                        <div ref={container} className='container'>
-                            <Avatar
-                                alt={savedName}
-                                style={{ backgroundColor: avatarBackgroundColor }}
-                                className='dashboardavatar profile'
-                                onClick={clickProfileImage}
-                            >
-                                {getInitials(savedName)}
-                            </Avatar>
-                            {showDropdown.open && (
-                                <div className='dropdown'>
-                                    <div className="user-info" style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginLeft: '10px' }}>
-                                        <img src={require('../assets/FreelancerProfileHeaderProfile.jpg')} style={{ height: '80px', width: '80px', borderRadius: '50%' }} alt="User Profile" className="profile-image" />
-                                        <div style={{ marginRight: '50px', display: 'flex', flexDirection: 'column' }}>
-                                            <p style={{ margin: '0', fontSize: '18px', color: 'black', fontWeight: 'bold', marginBottom: '-40px' }}>Name</p>
-                                            <p style={{ margin: '0', fontSize: '16px', color: 'black', marginBottom: '1 px' }}>Job Category</p>
-                                        </div>
-                                    </div>
-                                    <button style={{ backgroundColor: 'white', cursor: 'pointer', height: '38px', borderRadius: '20px', border: '1px solid #B27EE3', width: '280px', color: '#B27EE3', marginTop: '10px', marginLeft: '10px' }}
-                                        onClick={viewProfileClick}>View Profile</button>
-                                    <div >
-                                        <NavLink style={{ marginLeft: '-130px', textDecoration: 'none', color: 'black' }} to="/">Dashboard</NavLink>
-                                    </div>
-                                    <div>
-                                        <NavLink style={{ marginLeft: '-130px', textDecoration: 'none', color: 'black' }} to="/page2">Wallet</NavLink>
-                                    </div>
-                                    <div >
-                                        <NavLink style={{ marginLeft: '-130px', textDecoration: 'none', color: 'black' }} to="/page3">Settings</NavLink>
-                                    </div>
-                                    <hr style={{ color: 'black', width: '280px' }} />
-                                    <NavLink style={{ marginLeft: '-210px', textDecoration: 'none', color: 'black' }} to="/start" onClick={clickLogout}>Logout</NavLink>
-
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Header1 />
 
             {/* second div for profile bg */}
             <div className='profilepage'>
@@ -486,8 +429,7 @@ const FreelancerProfile = () => {
                     <button className='switch-to-employer-button' onClick={switchToEmployerClick}>SWITCH TO AN EMPLOYER</button>
 
                     <div style={{ position: 'relative' }}>
-                        <img src={require('../assets/profileBg.png')} alt="" className='profile-background-image'></img>
-
+                        <img src={require('../assets/profileBg.png')} alt="" className='profile-background-image' />
                         <div style={{
                             position: 'absolute',
                             top: '5%',
@@ -496,15 +438,15 @@ const FreelancerProfile = () => {
                             width: '94%',
                             left: '3%',
                             gap: '100px'
-                        }}>
+                        }} className='profiletosec-2' >
                             <div>
                                 <button className='edit-button'
                                     style={{ backgroundImage: `url('${topButtonImage}')` }}
                                     onClick={() => handleEditClick('top')}>
                                 </button>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} className='profilesec-1'>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }} className='profilesec-4'>
                                     <div className='user-picture'>
                                         <Avatar
                                             className='user-picture-img'
@@ -528,17 +470,18 @@ const FreelancerProfile = () => {
                                     </div>
                                     <>
                                         {!topBoxEditMode && (
-                                            <div >
-                                                <div style={{ fontSize: '24px', fontWeight: '700' }}>{savedName}</div>
-                                                <div style={{ fontSize: '16px' }}>{savedJobCategory}</div>
-                                                <div style={{ fontSize: '16px' }}>{savedLocation}</div>
+                                            <div>
+                                                <p style={{ fontSize: '32px', fontWeight: '700' }} className='text-1'>{savedName}</p>
+                                                <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><MdWorkOutline style={{marginRight:'5px'}}/>{savedJobCategory}</p>
+                                                <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><CiLocationOn style={{marginRight:'5px'}}/>{savedLocation}</p>
                                             </div>
                                         )}
                                         {topBoxEditMode && (
                                             <div style={{
                                                 display: 'flex',
                                                 flexDirection: 'column',
-                                                gap: '5px'
+                                                gap: '5px',
+                                                marginBottom:'10px'
                                             }}>
                                                 <div>
                                                     <input
@@ -546,11 +489,13 @@ const FreelancerProfile = () => {
                                                         placeholder="Enter your name"
                                                         value={newName}
                                                         onChange={(e) => setNewName(e.target.value)}
-                                                        style={{ padding: '10px', width: '170px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                        className='profilesecinputs'
+                                                        style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
                                                     />
                                                 </div>
                                                 <div>
                                                     <select
+                                                        className='profilesecinputs'
                                                         value={newJobCategory}
                                                         onChange={(e) => setNewJobCategory(e.target.value)}
                                                         style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
@@ -563,6 +508,7 @@ const FreelancerProfile = () => {
                                                 </div>
                                                 <div>
                                                     <select
+                                                        className='profilesecinputs'
                                                         value={newLocation}
                                                         onChange={(e) => setNewLocation(e.target.value)}
                                                         style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
@@ -582,7 +528,7 @@ const FreelancerProfile = () => {
                                         <div style={{
                                             display: 'flex', gap: '10px', flexDirection: 'row'
                                         }}>
-                                            <div style={{
+                                            <div className='profiletopinfo' style={{
                                                 padding: '5px', background: 'white',
                                                 width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black',
                                                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
@@ -590,7 +536,7 @@ const FreelancerProfile = () => {
                                                 <span style={{ color: '#ED8336', fontSize: '20px' }}> {jobsCompletedCount}</span>
                                                 <span>Projects Completed</span>
                                             </div>
-                                            <div style={{
+                                            <div className='profiletopinfo' style={{
                                                 padding: '5px', background: 'white',
                                                 width: '150px', height: '70px', borderRadius: '15px', border: '1px solid black', textAlign: 'center',
                                                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
@@ -620,73 +566,91 @@ const FreelancerProfile = () => {
                 <div className='skills-about'>
 
                     <div className='left-box'>
-                        <div className='skills' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <h2 style={{ marginLeft: '20px', flex: '1' }}>Skills</h2>
+                        <div className='skills' style={{ display: 'flex', flexDirection: 'column'}}>
+                            <div style={{ display: 'flex', justifyContent:'space-between',alignItems:'center',gap:'10px' }}>
+                                <h2 style={{paddingTop:'20px',fontSize:'28px'}} className='profilesec-subheading'>Skills</h2>
                                 <button
-                                    className='edit-button-two'
+                                    className='edit-button-three'
                                     style={{ backgroundImage: `url('${leftButtonImage}')` }}
                                     onClick={() => handleEditClick('left')}
                                 ></button>
                             </div>
 
+                            {/* Display newly added skills */}
+                            {!leftBoxEditMode && (
+                            <ul style={{listStyle: 'none',gap:'7px',display:'flex' ,flexDirection:'column',marginTop:'12px'}}>
+                                {skills.map((skill, index) => (
+                                        <li key={index} className='li-li' style={{ textTransform:'capitalize',color: 'black',backgroundColor:'#E9E9E9', padding: '7px 40px 7px 12px',borderRadius:'16px',fontSize:'18px',width:'fit-content',fontWeight:'500',cursor:'default' }}>{skill}</li>
+                                ))}
+                            </ul>
+                            )}
+
                             {leftBoxEditMode && (
-                                <div style={{ marginLeft: '20px', marginTop: '30px' }}>
+                                <div style={{ marginTop: '12px' }}>
+                                    <div style={{gap:'7px',display:'flex' ,flexDirection:'column',marginBottom:'7px'}}>
+                                            {tempSkills.map((skill, index) => (
+                                                    <div key={index} className='li-li1' style={{ textTransform:'capitalize',color: 'black',backgroundColor:'#E9E9E9', padding: '7px 12px 7px 12px',borderRadius:'16px',fontSize:'18px',width:'fit-content',fontWeight:'500',cursor:'default',display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:'50px' }}>
+                                                        <p>{skill}</p>
+                                                        <button onClick={() => handleDeleteSkill(index)} 
+                                                        style={{color:'#000',cursor:'pointer',fontSize:'22px',backgroundColor:'transparent',border:'none',outline:'none'}}>×</button>
+                                                    </div>
+                                            ))}
+                                    </div>
                                     <input
-                                        style={{ height: '40px', borderRadius: '15px', border: '1px solid #9c9b9b' }}
+                                        style={{borderRadius:'16px',border:'1px solid #9c9b9b',padding:'10px'}}
                                         type="text"
                                         placeholder="Add new skill"
                                         value={newSkill}
                                         onChange={(e) => setNewSkill(e.target.value)}
                                     />
-                                    <button style={{ height: '20px', width: '20px', marginLeft: '10px' }} onClick={handleAddSkill}>+</button>
+                                    <button style={{marginLeft:'10px',padding:'5px 10px',borderRadius:'5px',border:'none',fontSize:'22px',cursor:'pointer'}} onClick={handleAddSkill}>+</button>
                                 </div>
                             )}
-
-                            {/* Display newly added skills */}
-                            <ul style={{ marginLeft: '15px', listStyle: 'none', padding: 0 }}>
-                                {skills.map((skill, index) => (
-                                    <div key={index} style={{ marginTop: '15px', backgroundColor: '#E9E9E9', height: '30px', borderRadius: '10px', width: '200px', overflow: 'hidden' }}>
-                                        <li style={{ color: 'black', margin: 0, padding: '5px', cursor: 'pointer' }}>{skill}</li>
-                                    </div>
-                                ))}
-                            </ul>
 
 
                         </div>
 
                         <div className='languages'>
-                            <h2 style={{ marginLeft: '20px', marginTop: '40px' }}>Languages</h2>
+                            <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Languages</h2>
+                            
+                            {/* Display newly added languages */}
+                            {!leftBoxEditMode && (
+                            <ul style={{listStyle: 'none',gap:'7px',display:'flex' ,flexDirection:'column',marginTop:'12px'}}>
+                                {languages.map((language, index) => (
+                                        <li key={index} className='li-li' style={{textTransform:'capitalize', color: 'black',backgroundColor:'#E9E9E9', padding: '7px 40px 7px 12px',borderRadius:'16px',fontSize:'18px',width:'fit-content',fontWeight:'500' }}>{language}</li>
+                                ))}
+                            </ul>
+                             )}
                             {leftBoxEditMode && (
-                                <div style={{ marginLeft: '20px', marginTop: '30px' }}>
+                                <div style={{ marginTop: '7px' }}>
+                                    <div style={{gap:'7px',display:'flex' ,flexDirection:'column',marginBottom:'7px'}}>
+                                            {tempLanguages.map((language, index) => (
+                                                    <div key={index} className='li-li1' style={{ textTransform:'capitalize',color: 'black',backgroundColor:'#E9E9E9', padding: '7px 12px 7px 12px',borderRadius:'16px',fontSize:'18px',width:'fit-content',fontWeight:'500',cursor:'default',display:'flex',flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:'50px' }}>
+                                                        <p>{language}</p>
+                                                        <button onClick={() => handleDeleteLanguage(index)} 
+                                                        style={{color:'#000',cursor:'pointer',fontSize:'22px',backgroundColor:'transparent',border:'none',outline:'none'}}>×</button>
+                                                    </div>
+                                            ))}
+                                    </div>
                                     <input
-                                        style={{ height: '40px', borderRadius: '15px', border: '1px solid #9c9b9b' }}
+                                        style={{borderRadius:'16px',border:'1px solid #9c9b9b',padding:'10px'}}
                                         type="text"
                                         placeholder="Add new language"
                                         value={newLanguage}
                                         onChange={(e) => setNewLanguage(e.target.value)}
                                     />
-                                    <button style={{ height: '20px', width: '20px', marginLeft: '10px' }} onClick={handleAddLanguage}>+</button>
+                                    <button style={{marginLeft:'10px',padding:'5px 10px',borderRadius:'5px',border:'none',fontSize:'22px',cursor:'pointer'}} onClick={handleAddLanguage}>+</button>
                                 </div>
                             )}
-
-                            {/* Display newly added languages */}
-                            <ul style={{ marginLeft: '15px', listStyle: 'none', padding: 0 }}>
-                                {languages.map((language, index) => (
-                                    <div key={index} style={{ marginTop: '15px', backgroundColor: '#E9E9E9', height: '30px', borderRadius: '10px', width: '200px', overflow: 'hidden' }}>
-                                        <li style={{ color: 'black', margin: 0, padding: '5px', cursor: 'pointer' }}>{language}</li>
-                                    </div>
-                                ))}
-                            </ul>
 
                         </div>
 
                         {leftBoxEditMode && (
-                            <div style={{ marginTop: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <div style={{ marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',gap:'8px' }} className='left-box-butcont'>
+                                <div >
                                     <button className='save-button' onClick={handleSaveLeft}>Save</button>
                                 </div>
-                                <div style={{ marginBottom: '20px' }}>
+                                <div >
                                     <button className='cancel-button' onClick={handleCancelLeft}>Cancel</button>
                                 </div>
                             </div>
@@ -696,85 +660,101 @@ const FreelancerProfile = () => {
 
                     {/* div for about and projects */}
                     <div className='right-box'>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <h2 style={{ marginLeft: '30px', flex: '1' }}>About</h2>
+                        <div style={{ display: 'flex', alignItems: 'center',justifyContent:'space-between' }}>
+                            <h2 style={{paddingTop:'20px',fontSize:'28px',marginLeft:'20px'}} className='profilesec-subheading'>About</h2>
                             <button
                                 className='edit-button-three'
                                 style={{ backgroundImage: `url('${rightButtonImage}') ` }}
                                 onClick={() => handleEditClick('right')}
                             ></button>
                         </div>
-                        <input
+                        <textarea
                             type="text"
                             placeholder="Write something about you....."
-                            value={inputAboutValue}
+                            value={newinputval}
                             onChange={handleAboutChange}
                             className={`about-box ${rightBoxEditMode ? 'editable' : ''}`}
                             readOnly={!rightBoxEditMode}
+                            rows="3"
+                            ref={(textarea) => textarea && updateTextareaHeight(textarea)}
                         />
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 30px' }}>
-                            <h2 style={{ marginLeft: '-5px', marginTop: '30px' }}>Ongoing Work/Portfolio</h2>
-                            <a href="" style={{ marginLeft: 'auto', color: '#ED8335', fontWeight: 'bold' }}>Manage Projects</a>
+                        <div style={{width:'90%',marginLeft:'20px'}}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginTop:'30px'}} >
+                            <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Ongoing Work/Portfolio</h2>
+                            <a href="#" style={{ marginLeft: 'auto', color: '#ED8335', fontWeight: 'bold' }}>Manage Projects</a>
                         </div>
 
+                        <Box sx={{ marginTop:'25px',marginBottom:'45px',display:'flex',flexDirection:'row',gap:'15px',flexWrap:'wrap'}}>
+                            {filters.map((filter, index) => (
+                                <Chip key={index} label={filter} variant="outlined" sx={{width:'150px',border: '0.8px solid #000000',color:'#000',padding:'5.6px 13.6px 5.6px 13.6px',borderRadius:'12.8px'}}/>
+                            ))}
+                        </Box>
 
-                        {/* div for adding and displaying projects and portfolio */}
-                        <div style={{ marginTop: '20px', marginBottom: '30px', marginLeft: '19px' }}>
+                        {rightBoxEditMode && (
+                            <div className="box-container">
+                                <input
+                                    style={{padding:'12px 18px',borderRadius:'15px',border:'1px solid #9c9b9b'}}
+                                    type="text"
+                                    placeholder="Add ongoing work"
+                                    value={newProject}
+                                    onChange={(e) => setNewProject(e.target.value)}
+                                />
+                                <button style={{height:'20px',width:'20px',marginLeft:'10px',marginTop:'10px'}} onClick={handleAddProject}>+</button>
+                            </div>
+                        )}
 
-                            {rightBoxEditMode && (
-                                <div className="box-container">
-                                    <input
-                                        style={{ height: '40px', borderRadius: '15px', border: '1px solid #9c9b9b' }}
-                                        type="text"
-                                        placeholder="Add ongoing work"
-                                        value={newProject}
-                                        onChange={(e) => setNewProject(e.target.value)}
-                                    />
-                                    <button style={{ height: '20px', width: '20px', marginLeft: '10px', marginTop: '10px' }} onClick={handleAddProject}>+</button>
-                                </div>
-                            )}
 
+                        <div style={{ marginTop: '20px', marginBottom: '30px' }}>
                             {/* Displaying the projects */}
-                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px', marginLeft:'-5px'}}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px',gap:'20px'}}>
                                 {projects.map((project, index) => (
-                                    <div key={index} style={{ margin: '10px' }}>
-                                        <div className="portfolio-buttons">
-                                            {project}
+                                    <div style={{
+                                         minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
+                                        borderRadius: '16px'
+                                    }}>
+                                        <div key={index} style={{ margin:'105px 12px 12px' }}>
+                                            <div className="portfolio" style={{
+                                                textAlign: 'center',
+                                                lineHeight: '30px',
+                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px'
+                                                , fontWeight: 'bold', padding:'0 12px'
+                                            }}>
+                                                {project}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
                             {/* Margin between projects and portfolios */}
-                            <div style={{ margin: '20px' }} />
+                            <div />
 
                             {rightBoxEditMode && (
                                 <div className="box-container">
                                     <input
-                                        style={{ height: '40px', borderRadius: '15px', border: '1px solid #9c9b9b' }}
+                                        style={{padding:'12px 18px',borderRadius:'16px',border:'1px solid #9c9b9b'}}
                                         type="text"
                                         placeholder="Add ongoing portfolio"
                                         value={newPortfolio}
                                         onChange={(e) => setNewPortfolio(e.target.value)}
                                     />
-                                    <button style={{ height: '20px', width: '20px', marginLeft: '10px', marginTop: '10px' }} onClick={handleAddPortfolio}>+</button>
+                                    <button style={{height:'20px',width:'20px',marginLeft:'10px',marginTop:'10px'}} onClick={handleAddPortfolio}>+</button>
                                 </div>
                             )}
 
                             {/* Displaying the portfolio values */}
-                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px',gap:'20px' }}>
                                 {portfolios.map((portfolio, index) => (
                                     <div style={{
-                                        marginLeft: '5px', minWidth: '150px', height: '150px', border: '1px solid #9c9b9b',
-                                        borderRadius: '20px',margin: '10px'
+                                        minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
+                                        borderRadius: '16px',margin: '10px 0'
                                     }}>
-                                        <div key={index} style={{ marginLeft:'10px',marginRight:'10px',marginTop: '110px' }}>
+                                        <div key={index} style={{ margin:'105px 12px 12px' }}>
                                             <div className="portfolio" style={{
                                                 textAlign: 'center',
                                                 lineHeight: '30px',
-                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '20px'
-                                                , fontWeight: 'bold', marginBottom: 'px'
+                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px'
+                                                , fontWeight: 'bold', padding:'0 12px'
                                             }}>
                                                 {portfolio}
                                             </div>
@@ -789,21 +769,22 @@ const FreelancerProfile = () => {
                         {rightBoxEditMode && (
                             <div>
                                 <div className="buttons-container">
-                                    <div style={{ marginLeft: '540px' }}>
+                                    <div >
                                         <button className='cancel-button' onClick={handleCancelRight}>Cancel </button>
                                     </div>
-                                    <div style={{ marginLeft: '20px' }}>
+                                    <div >
                                         <button className='save-button' onClick={handleSaveRight}>Save</button>
                                     </div>
                                 </div>
                             </div>
                         )}
                     </div>
+                    </div>
                 </div>
 
                 {/* foruth div for reviews */}
                 <div className='review-box'>
-                    <h2 style={{ marginLeft: '30px', flex: '1' }}>Reviews</h2>
+                    <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
                 </div>
             </div>
         </div>

@@ -99,9 +99,9 @@ export default function Freelancerwallet() {
     p: 4 ,
   };
   return (
-    <>
+  <>
     {setuppaymethod===0 && 
-    <Box sx={{padding:'0 70px',display:'flex',flexDirection:'row',marginTop:'140px',gap:'30px',marginBottom:'40px'}} className='walletsetuptpage'>
+    <Box sx={{padding:'0 70px',display:'flex',flexDirection:'row',marginTop:'120px',gap:'30px',marginBottom:'40px'}} className='walletsetuptpage'>
       <Box sx={{flex:'1',display:'flex',flexDirection:'column',gap:'60px',padding:'0 20px'}} className='walletsetuptsection'>
         <Box sx={{boxShadow:' 0px 0px 4px 0.5px #00000040',borderRadius:'16px',padding:'30px',display:'flex',flexDirection:'column',gap:'25px'}} className='walletcon2'>
            <Box sx={{backgroundColor:'#E8E8E8',width:'100%',padding:'26px',borderRadius:'16px'}}>

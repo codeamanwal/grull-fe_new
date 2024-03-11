@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/StartPageHeader.css';
+import grullLogo from "../assets/grullLogoPurple.svg"
 
 const Start = () => {
   const [usertype,setUsertype]=useState('');
@@ -25,7 +26,7 @@ const Start = () => {
   return (
     <div >
       <div className='headerStyle'>
-        <h2 className='header-logo'>Grull</h2>
+        <img src={grullLogo} alt="Grull" className='header-logo'/>
       </div>
       <div className='startpage'>
         <div className='one'>

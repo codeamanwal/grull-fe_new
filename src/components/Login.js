@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Signup.css';
-import Select from 'react-select';
 import Button from '@mui/material/Button';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import grullLogo from "../assets/grullLogoPurple.svg"
+import { useLocation } from 'react-router-dom';
 
 const Login = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
     const navigate = useNavigate();
 
     const handleSignupClick = () => {
@@ -19,7 +25,6 @@ const Login = () => {
         const email = document.querySelector('[name="email"]').value;
         const password = document.querySelector('[name="password"]').value;
     
-        // Check if email and password are not empty
         if (!email.trim() || !password.trim()) {
           alert('Email and password cannot be empty');
           return;
@@ -46,32 +51,25 @@ const Login = () => {
             localStorage.setItem('accessToken', accessToken);
             navigate('/freelancer');
           } else {
-            // Show an alert for unexpected response format
             alert('Unexpected response from the server');
           }
         } else if (response.status === 400) {
-          // Show an alert for incorrect credentials
           alert('Wrong credentials or invalid user');
         } else if (response.status === 422) {
           const errorData = await response.json();
           console.error('Validation Error:', errorData);
-          // Handle validation errors, display error messages to the user
-          // Example: alert(errorData.message);
         } else {
-          // Show an alert for unexpected response format
           alert('Unexpected response from the server');
         }
       } catch (error) {
-        // Handle any error that occurs during the API request
         console.error('Error during login:', error);
-        // You can show an appropriate error message or alert here
       }
     };
     
     return (
       <div>
       <div className='headerStyle'>
-          <h2 className='header-logo'>Grull</h2>
+          <img src={grullLogo} alt="Grull" className='header-logo'/>
       </div>
       <div>
       <div className='res-content'>

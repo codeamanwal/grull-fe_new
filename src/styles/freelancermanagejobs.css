@@ -9,7 +9,10 @@
         display: grid !important;
         grid-template-columns: repeat(4,1fr) !important;
         margin: auto !important;
-        width:90% ;
+        width:100% ;
+    }
+    .managejobs-opts-client{
+        grid-template-columns: repeat(3,1fr) !important;
     }
     .managejobs-display{
         padding: 0 !important;
@@ -38,13 +41,17 @@
     .managejobs-opts{
         grid-template-columns: repeat(2,1fr) !important;
     }
+    .managejobs-opts-client{
+        grid-template-columns: repeat(1,1fr) !important;
+    }
  }
  @media only screen and (max-width:600px){
     .managejobs-page{
         padding:30px !important;
     }
-    .managejobs-opts{
-        width:auto !important;
+    .managejobs-opts-client{
+        margin: 0 !important;
+        width: auto !important;
     }
     .ongoingjobslider{
         width: 220px !important;

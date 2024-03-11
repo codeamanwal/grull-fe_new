@@ -74,7 +74,7 @@ export default function ClientDashboard(props: Props) {
       </Box>
       <Box sx={{marginTop:'100px'}}>
          <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
-             <Avatar alt="Remy Sharp" src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
+             <Avatar alt="Remy Sharp" onClick={()=>{navigate('/employerprofile')}} src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
                <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>Astle Benjamin</Typography>
                <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>UI UX Designer</Typography>
@@ -154,7 +154,7 @@ export default function ClientDashboard(props: Props) {
                 </Button>
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',':hover':{}}}/>
                 <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}}/>
-                <Avatar alt="Remy Sharp" src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
+                <Avatar alt="Remy Sharp" onClick={()=>{navigate('/employerprofile')}} src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
             </Box>
         </Toolbar>
       </AppBar>

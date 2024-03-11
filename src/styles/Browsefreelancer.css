@@ -1,53 +1,171 @@
 .rectangle{
     height:280px;
-    width:1180px;
+    width:86%;
     border:none;
     background-color: #D9D9D9;
-    margin-top: 50px;
-    margin-left:120px;
-    margin-right:150px;
+    margin: 50px auto;
 }
 
 .search-bar{
     background-color:#ED8335;
-    height:180px;
-    border:none;
-    margin-top: 30px;
+    padding: 20px 7% 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: auto;
+}
+.search-bar h1{
+    font-size: 32px !important;
+    font-weight: 800;
+}
+.sortingjobs{
+    width: 86% !important;
+    margin: 30px auto !important;
+    display: block;
+}
+.sortingjobs button{
+    visibility: hidden;
+}
+.sortingjobs form{
+    float: right !important;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    border-radius: 16px;
+    padding-left: 20px;
+    padding-bottom: 0 !important;
 }
 
-.freelancer{
-    color: #D9D9D9;
-    margin-right: 40px;
-    text-decoration: none;
+.sortingjobs .form-group{
+    width: 185px !important;
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-bottom: 0 !important;
+}
+.sortingjobs .css-b62m3t-container{
+    width: 100% !important;
+    flex: 1 !important;
+}
+.browseFreelancers{
+    display: flex;
+    flex-direction: row;
+    gap:30px;
+    width: 86%;
+    margin: auto;
+    height: 1060px;
 }
 
-.projects{
-    color: #D9D9D9;
-    text-decoration: none;
-}
-.projects:hover{
-   font-weight: bold;
-   color: white;
-   text-decoration: underline;
-}
-.freelancer:hover{
-    font-weight: bold;
-    color: white;
-    text-decoration: underline;
- }
- 
-.browseJobs-left-box{
-    margin-right: 30px;
-    margin-left: 150px;
+.browseFreelancers-left-box{
     width: 300px;
     border: 1px solid #D9D9D9;
     border-radius: 20px;
+    height: auto;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    padding:30px 20px;
 }
-.browseFreelancer-right-box{
-    flex: 1;
-    height:1200px;
-    overflow-y: scroll;
-    margin: 0 100px;
-    border: 1px solid #D9D9D9;
-    border-radius: 20px;
+.browseFreelancers-right-box{
+    flex:1 !important;
+    width: auto !important;
+    overflow-y: auto;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    border-radius: 16px;
 }
+.browseFreelancers-right-box::-webkit-scrollbar {
+    width:3px;
+    cursor: pointer;
+}
+
+.browseFreelancers-right-box::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+.browseFreelancers-right-box::-webkit-scrollbar-thumb {
+    background: #cecbcb;
+}
+
+.browseFreelancers-right-box::-webkit-scrollbar-thumb:hover {
+    background: #bbbaba; 
+}
+.css-1syuaju-control{
+    border-color: none !important;
+    box-shadow: none !important;
+    
+}
+.css-1nmdiq5-menu{
+    width: 200px !important;
+    /* float:  left !important; */
+    right: 0 !important;
+}
+.css-1fdsijx-ValueContainer{
+    padding: 0 !important;
+}
+@media only screen and (max-width:1250px){
+    .browseFreelancers-left-box{
+        display: none;
+        width: 100%;
+        margin-bottom: 30px !important;
+    }
+    .blb{
+        display: block !important;
+    }
+    .sortingjobs button{
+        visibility:visible;
+    }
+    .browseFreelancers-right-box{
+        box-shadow: 0px 0px 4px 0px #00000040;
+        border-radius: 16px;
+    }
+    .browseFreelancers{
+        height: auto;
+        margin-top: 10px !important;
+    }
+    .sortingjobs{
+        margin-bottom: 0px !important;
+    }
+   }
+   @media only screen and (max-width:800px){
+    .rectangle{
+        width:90%;
+    }
+    .search-bar{
+        padding: 20px 5% 6px;
+    }
+    .browseFreelancers{
+        width: 90%;
+    }
+   }
+   @media only screen and (max-width:600px){
+    .rectangle{
+        margin: 23px auto;
+        height: 220px;
+    }
+    .search-bar{
+        padding: 20px 5% 6px;
+        gap:8px
+    }
+    .search-bar input{
+        padding:7px 35px;
+        font-size:12px;
+    }
+    .search-bar button{
+        font-size: 14px !important;
+    }
+    .browseFreelancers{
+        width: 90%;
+    }
+    .search-bar h1{
+        font-size: 25px !important;
+    }
+    .sortingjobs button{
+        font-size: 14px !important;
+    }
+    .sortingjobs .form-group{
+        font-size: 14px !important;
+    }
+    .css-1nmdiq5-menu{
+        width: 180px !important;
+    }
+    .sortingjobs .form-group{
+        width: 165px !important;
+    }
+   }

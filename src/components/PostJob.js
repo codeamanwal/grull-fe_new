@@ -3,6 +3,7 @@ import '../styles/Postjob.css';
 import { useNavigate, NavLink } from 'react-router-dom';
 import Select from 'react-select';
 import Form from 'react-bootstrap/Form';
+import BAPI from '../helper/variable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -47,7 +48,7 @@ const PostJob = () => {
                 "title": title,
             };
             console.log(requestData)
-            const response = await axios.post('http://35.154.4.80/api/v0/jobs', requestData, {
+            const response = await axios.post(`${BAPI}/api/v0/jobs`, requestData, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${accessToken}`,

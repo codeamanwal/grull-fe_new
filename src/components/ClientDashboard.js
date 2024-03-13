@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { Button,Grid } from '@mui/material';
 import { FiHome } from "react-icons/fi";
 import { IoWalletOutline } from "react-icons/io5";
+import BAPI from '../helper/variable';
 import { FiShoppingBag } from "react-icons/fi"
 import Avatar from '@mui/material/Avatar';
 import {useNavigate } from 'react-router-dom';
@@ -17,7 +18,6 @@ import ClientHome from './ClientHome';
 import { CiShare2 } from "react-icons/ci";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io"
-
 interface Props {
   window?: () => Window;
 }

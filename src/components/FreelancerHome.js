@@ -6,6 +6,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { HiDotsVertical } from "react-icons/hi";
 import Slider from '@mui/material/Slider';
 import '../styles/freelancerhome.css';
+import BAPI from '../helper/variable';
 
 export default function FreelancerHome() {
     
@@ -41,7 +42,7 @@ export default function FreelancerHome() {
         const infofetch=async()=>{
          try {
            const response = await fetch(
-             'http://35.154.4.80/api/v0/users/me', 
+             `${BAPI}/api/v0/users/me`, 
              {
                method: 'GET',
                headers: {

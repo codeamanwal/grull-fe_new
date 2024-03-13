@@ -9,7 +9,7 @@ import { FaHeart } from "react-icons/fa";
 import '../styles/freelancermanagejobs.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
+import BAPI from '../helper/variable'
 const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,companyName,applicantcount }) => {
     const accessToken='Bss8MEl8WatvSk5SlA-YIRAZDiIk2MOkBlpgwOxGrYU';
     const formatDate = (isoDate) => {
@@ -23,7 +23,7 @@ const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,company
    const Clickwithdraw=async(job_id)=>{
     console.log(job_id)
     try{
-        const response = await axios.delete(`http://35.154.4.80/api/v0/jobs/${job_id}`, {
+        const response = await axios.delete(`${BAPI}/api/v0/jobs/${job_id}`, {
               headers: {
                   'Content-Type': 'application/json',
                   'Authorization': `Bearer ${accessToken}`,

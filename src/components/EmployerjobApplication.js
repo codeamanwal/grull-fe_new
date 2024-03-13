@@ -11,7 +11,7 @@ import axios from 'axios';
 import { Avatar, Box, Button, Divider, Typography } from "@mui/material";
 import Header2 from "./Header2";
 import { LiaFilterSolid } from "react-icons/lia";
-
+import BAPI from '../helper/variable'
 const JobApplications = () => {
 
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const JobApplications = () => {
   useEffect(() => {
     const getFreelancers = async () => {
       try {
-        const response = await axios.get(`http://35.154.4.80/api/v0/jobs/${jobid}/applications?`, {
+        const response = await axios.get(`${BAPI}/api/v0/jobs/${jobid}/applications?`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
@@ -85,6 +85,24 @@ const JobApplications = () => {
     // updaterefs();
   }, [allFreelancers]);
   
+  const handleAccept=async(applicationId)=>{
+      try{
+        const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/accept`, {
+          
+        },{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          }
+        });
+         console.log(response)
+        
+      }
+      catch (error) {
+        console.error('Error occurred:', error);
+      }
+  }
+
 
   const createrefs = (Freelancers) => {
     // console.log("Freelancers:", Freelancers);
@@ -259,7 +277,7 @@ const JobApplications = () => {
                   </ul>
                 </Box>
                 <Box sx={{marginTop:'15px',display:'flex',gap:'12px'}}>
-                  <Button sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}}>Accept</Button>
+                  <Button sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}} onClick={()=>handleAccept(freelancer.id)}>Accept</Button>
                   <Button sx={{color: '#B27EE3',backgroundColor: 'white',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',boxShadow: '0px 0px 4px 0.5px #00000040',':hover':{color: '#B27EE3',backgroundColor: 'white'}}}>Reject</Button>
                 </Box>
               </Box>

@@ -13,6 +13,7 @@ import { Box, Button, Divider, Typography } from "@mui/material";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { VscChromeClose } from "react-icons/vsc";
 import { LiaFilterSolid } from "react-icons/lia";
+import BAPI from '../helper/variable'
 
 import Avatar from '@mui/material/Avatar';
 
@@ -45,7 +46,7 @@ const BrowseFreelancer = () => {
   useEffect(() => {
     const getFreelancers = async () => {
       try {
-        const response = await axios.get('http://35.154.4.80/api/v0/freelancers', {
+        const response = await axios.get(`${BAPI}/api/v0/freelancers`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,

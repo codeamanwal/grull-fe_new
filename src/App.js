@@ -1,6 +1,6 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Start from './components/Start';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import App from "../App";
+import Start from "./components/Start";
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import FreelancerProfile from './components/FreelancerProfile';
@@ -16,30 +16,36 @@ import FreelancerManagerJobs from './components/FreelancerManageJobs';
 import ClientDashboard from './components/ClientDashboard';
 import ClientManageJobs from './components/ClientManageJobs';
 import JobApplications from './components/EmployerjobApplication';
+import Transactions from "./components/Transactions";
+import CommonWallet from "./components/CommonWallet";
+import Freelancerchat from "./components/Freelancerchat"
+import Clientchat from "./components/ClientChat"
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Start />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup/:userType" element={<SignUp />} />
-        <Route path="/freelancerprofile" element={<FreelancerProfile/>}/>
-        <Route path="/employerprofile" element={<EmployerProfile/>}/>
-        <Route path="/postjob" element={<PostJob/>}/>
-        <Route path="/applyproposal/:jobid" element={<ApplyProposal/>}/>
-        <Route path="/browsefreelancer" element={<BrowseFreelancer/>}/>
-        <Route path="/browsejobs" element={<BrowseJobs/>}/>
-        <Route path="/jobdetails/:jobid" element={<JobDetails/>}/>
-        <Route path="/paymentbyclient" element={<PaymentByClient/>}/>
-        <Route path="/freelancer" element={<FreelancerDashboard/>}/>
-        <Route path="/managejobs/:section" element={<FreelancerManagerJobs/>}/>
-        <Route path="/client" element={<ClientDashboard />} />
-        <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
-        <Route path="/jobapplications/:jobid" element={<JobApplications />} />
-      </Routes>
-    </Router>
-  );
+export default function App() {
+     return (
+       <BrowserRouter>
+         <Routes>
+            <Route path="/home" element={<Start />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup/:userType" element={<SignUp />} />
+            <Route path="/freelancerprofile" element={<FreelancerProfile/>}/>
+            <Route path="/employerprofile" element={<EmployerProfile/>}/>
+            <Route path="/postjob" element={<PostJob/>}/>
+            <Route path="/applyproposal/:jobid" element={<ApplyProposal/>}/>
+            <Route path="/browsefreelancer" element={<BrowseFreelancer/>}/>
+            <Route path="/browsejobs" element={<BrowseJobs/>}/>
+            <Route path="/jobdetails/:jobid" element={<JobDetails/>}/>
+            <Route path="/paymentbyclient" element={<PaymentByClient/>}/>
+            <Route path="/freelancer" element={<FreelancerDashboard/>}/>
+            <Route path="/managejobs/:section" element={<FreelancerManagerJobs/>}/>
+            <Route path="/client" element={<ClientDashboard />} />
+            <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
+            <Route path="/jobapplications/:jobid" element={<JobApplications />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/freelancerchat" element ={<Freelancerchat />} />
+            <Route path="/commonwallet" element={<CommonWallet />} /> 
+            <Route path="/clientchat" element={<Clientchat />} />
+         </Routes>
+       </BrowserRouter>
+     )
 }
-
-export default App;

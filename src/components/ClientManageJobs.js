@@ -6,7 +6,7 @@ import '../styles/freelancermanagejobs.css';
 import ClientJob from './ClientJob';
 import axios from 'axios';
 import Header3 from './Header3';
-
+import BAPI from '../helper/variable'
 const ClientManageJobs = () => {
   const { section } = useParams();
   const [selectedSection, setSection] = useState(section || 'applied');
@@ -26,7 +26,7 @@ const ClientManageJobs = () => {
   useEffect (()=>{
     const getjobs=async()=>{
        try{
-         const response = await axios.get('http://35.154.4.80/api/v0/users/me/jobs', {
+         const response = await axios.get(`${BAPI}/api/v0/users/me/jobs`, {
                headers: {
                    'Content-Type': 'application/json',
                    'Authorization': `Bearer ${accessToken}`,

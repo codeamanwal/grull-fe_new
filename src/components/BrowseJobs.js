@@ -13,7 +13,7 @@ import Header3 from "./Header3";
 import { LiaFilterSolid } from "react-icons/lia";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { VscChromeClose } from "react-icons/vsc";
-
+import BAPI from '../helper/variable'
 const BrowseJobs = () => {
   const accessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ const BrowseJobs = () => {
   useEffect(() => {
     const getJobs = async (page = 1) => {
       try {
-        const response = await axios.get('http://35.154.4.80/api/v0/jobs', {
+        const response = await axios.get(`${BAPI}/api/v0/jobs`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,

@@ -5,6 +5,7 @@ import axios from 'axios';
 import Header3 from "./Header3";
 import { SlCalender } from "react-icons/sl";
 import { LuClock4 } from "react-icons/lu";
+import BAPI from '../helper/variable';
 import { GoHeart } from "react-icons/go";
 import { GiReceiveMoney } from "react-icons/gi";
 import { MdOutlineSettingsSuggest } from "react-icons/md"
@@ -58,7 +59,7 @@ const JobDetails = () => {
     useEffect(() => {
         const fetchJobDetails = async () => {
             try {
-                const response = await axios.get(`http://35.154.4.80/api/v0/jobs/${jobid}`, {
+                const response = await axios.get(`${BAPI}/api/v0/jobs/${jobid}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },

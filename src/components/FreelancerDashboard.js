@@ -23,6 +23,7 @@ import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { MdArrowOutward } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
+import BAPI from '../helper/variable'
 
 interface Props {
   window?: () => Window;
@@ -58,7 +59,7 @@ export default function FreelancerDashboard(props: Props) {
        const infofetch=async()=>{
         try {
           const response = await fetch(
-            'http://35.154.4.80/api/v0/users/me', 
+            `${BAPI}/api/v0/users/me`,
             {
               method: 'GET',
               headers: {
@@ -70,6 +71,8 @@ export default function FreelancerDashboard(props: Props) {
           const responseData = await response.json();
           setFullname(responseData.full_name);
           setRole(responseData.role);
+          localStorage.setItem("user",JSON.stringify(responseData));
+          console.log(localStorage.getItem("user"));
         } catch (error) {
           console.error('Error during fetching data:', error);
         }
@@ -78,7 +81,7 @@ export default function FreelancerDashboard(props: Props) {
   },[]);
 
   const getInitials = (name) => {
-    return name[0]?.toUpperCase();
+    return 'A';
   };
 
   const handleButtonClick = (button) => {

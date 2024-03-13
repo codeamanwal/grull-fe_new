@@ -13,15 +13,15 @@ import { Grid} from '@mui/material';
 import toast, { Toaster } from 'react-hot-toast';
 import { IoSend } from "react-icons/io5";
 import { BsCurrencyDollar } from "react-icons/bs";
-import { DatePicker, message} from 'antd';
+import { DatePicker} from 'antd';
 import { setDate } from 'rsuite/esm/utils/dateUtils';
 import BAPI from '../helper/variable'
 // import {Cloudinary} from "@cloudinary/url-gen";
 import axios from 'axios';
 
-export default function Freelancerchat() {
+export default function Clientchat() {
   const accessToken=localStorage.getItem("accessToken");
-  const [clients,setClients] =useState([]);
+  const [freelancers,setFreelancers] =useState([]);
   const [search,setSearch]=useState('');
   const [userMessage, setuserMessage] = useState('');
   const [freeLancerOnline, setFreeLancerOnline] = useState(true);
@@ -47,12 +47,12 @@ export default function Freelancerchat() {
   useEffect(()=>{
     const getChats=async()=>{
         try{
-           const response=await axios.get(`${BAPI}/api/v0/chats/get-freelancer-chats`,{
+           const response=await axios.get(`${BAPI}/api/v0/chats/get-manager-chats`,{
             headers:{
                 Authorization:`Bearer ${accessToken}`
             }
            });
-          setClients(response.data);
+          setFreelancers(response.data);
         }
         catch(err){
             console.log("Error while fetching chat : ", err)
@@ -75,21 +75,10 @@ export default function Freelancerchat() {
     setPriceValue('');
   };
 
-  const handleSendPrice = async() => {
+  const handleSendPrice = () => {
     if (priceValue.trim() !== '') {
-      const newPriceMessage = {message: priceValue, sent_by: selectedChatInfo.freelancer_id, chat_id:selectedChatInfo.id ,status:'NEGOTIATION_PENDING',deadline:''};
-    //   setMessages((prevMessages) => [...prevMessages, newPriceMessage]);
-        try{
-            const response=await axios.post(`${BAPI}/api/v0/chats/send-message`,newPriceMessage,{
-            headers:{
-                Authorization:`Bearer ${accessToken}`,
-            }
-            })
-            console.log(response);
-    }
-    catch(err){
-        console.log("Error in sending chat : ",err)
-    }
+      const newPriceMessage = { type: 'price', content: priceValue, username: 'you' };
+      setMessages((prevMessages) => [...prevMessages, newPriceMessage]);
       handleClosePriceInput();
     } else {
       toast.error('Please enter a valid price');
@@ -106,80 +95,76 @@ export default function Freelancerchat() {
     setDeliverableValue('');
   };
 
-  const handleSendDeliverable = () => {
+  const handleSendDeliverable = async() => {
     if (deliverableValue.trim() !== '' && selectedDate) {
-      const newDeliverableMessage = { 
-        type: 'deliverable', 
-        content: { deliverable: deliverableValue, date: selectedDate }, 
-        username: 'you' 
-      };
-      setMessages((prevMessages) => [...prevMessages, newDeliverableMessage]);
+      const newDeliverableMessage = {message: deliverableValue, sent_by: selectedChatInfo.manager_id, chat_id:selectedChatInfo.id ,status:'DELIVERABLES',deadline:selectedDate};
+      try{
+        const response=await axios.post(`${BAPI}/api/v0/chats/send-message`,newDeliverableMessage,{
+           headers:{
+               Authorization:`Bearer ${accessToken}`,
+           }
+        })
+        console.log(response);
+        }
+        catch(err){
+            console.log("Error in sending chat : ",err)
+        }
       handleCloseDeliverableInput();
     } else {
       toast.error('Please enter a valid deliverable and select a date');
     }
   };
-
-  const handleAccept=async(messageId)=>{
-    try{
-        const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
-            "message_id":messageId,
-            "status":"DELIVERABLES_ACCEPTED"
-        },{
-            headers:{
-                Authorization:`Bearer ${accessToken}`,
-            }
-        })
-        console.log(negres);
-    }
-    catch(err){
-        console.log("Error while Accepting price : ",err)
-    }
-  }
-
-  const uploadImage = async () => {
-    const formData = new FormData();
-    formData.append("file", image);
-    formData.append('upload_preset', 'er103mfg');
-    try {
-      const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dlpcihcmz/image/upload',
-        formData
-      );
   
-      const imageUrl = response.data.url;
-      setPhotoUrl(imageUrl);
-      console.log(photoUrl);
-  
-      if (photoUrl !== '') {
-        const newMessage = {
-          message: imageUrl,
-          sent_by: selectedChatInfo.freelancer_id,
-          chat_id: selectedChatInfo.id,
-          status: 'DELIVERABLE_IMAGE',
-          deadline: ''
-        };
-        console.log(newMessage);
+    const handleNegotiate=async(messaegId)=>{
         try{
-            const sendMessageResponse = await axios.post(
-              `${BAPI}/api/v0/chats/send-message`,
-              newMessage,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`
+            const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
+                "message_id":messaegId,
+                "status":"NEGOTIATION_REJECTED"
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken}`,
                 }
-              }
-            );
-      
-            console.log(sendMessageResponse);
+            })
+            console.log(negres);
         }
         catch(err){
-            console.log("error while sending Image : ", err)
+            console.log("Error while Negotiating price : ",err)
         }
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
     }
+
+    const handleAcceptPrice=async(messaegId)=>{
+        try{
+            const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
+                "message_id":messaegId,
+                "status":"NEGOTIATION_ACCEPTED"
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken}`,
+                }
+            })
+            console.log(negres);
+        }
+        catch(err){
+            console.log("Error while Accepting price : ",err)
+        }
+    }
+
+  const uploadImage = async () => {
+    const formdata = new FormData();
+    
+        formdata.append("file", image);
+        formdata.append("upload_preset", "grullwork");
+        formdata.append("cloud_name", "dvvaaxmto");
+        const activityResponse = await axios.post(
+          "https://api.cloudinary.com/v1_1/dvvaaxmto/image/upload",
+          formdata
+        );
+
+        const url1 = activityResponse.data.url;
+
+        setPhotoUrl(url1)
+        console.log(url1);
+    // const cld = new Cloudinary({cloud: {cloudName: 'dvvaaxmto'}});
   };
   
   const handleFileChange = async (event) => {
@@ -211,8 +196,7 @@ export default function Freelancerchat() {
     if (userMessage === '') {
       return toast.error('Please write a message');
     }
-  
-    const newMessage = {message: userMessage, sent_by: selectedChatInfo.freelancer_id, chat_id:selectedChatInfo.id ,status:'NORMAL',deadline:''};
+    const newMessage = {message: userMessage, sent_by: selectedChatInfo.manager_id, chat_id:selectedChatInfo.id ,status:'NORMAL',deadline:''};
     try{
          const response=await axios.post(`${BAPI}/api/v0/chats/send-message`,newMessage,{
             headers:{
@@ -269,7 +253,7 @@ export default function Freelancerchat() {
     setSelectedChat(chat);
   };
 
-  const filteredClients = clients;
+  const filteredClients = freelancers;
   
   const updateTextareaHeight = (element) => {
     element.style.height = 'auto';
@@ -314,16 +298,16 @@ export default function Freelancerchat() {
                 </Box>
                 <Box>
                     {
-                        (clients!==null && clients?.length!==0)?(clients?.map((client,indx)=>(
+                        freelancers?.map((chat,indx)=>(
                             <React.Fragment key={indx}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', padding: '22px 20px 13px',alignItems:'center',justifyContent:'space-between',gap:'40px',cursor:'pointer'}} onClick={() => handleChatSelect(JSON.parse(client).id)}>
+                                <Box sx={{ display: 'flex', flexDirection: 'row', padding: '22px 20px 13px',alignItems:'center',justifyContent:'space-between',gap:'40px',cursor:'pointer'}} onClick={() => handleChatSelect(JSON.parse(chat).id)}>
                                     <Box sx={{ display: 'flex', flexDirection: 'row',alignItems:'center',gap:'10px'}}>
                                         <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
-                                        {JSON.parse(client).first_name[0]}
+                                        {JSON.parse(chat).first_name[0]}
                                         </Avatar>
                                         <Box sx={{display:'flex',flexDirection:'column'}}>
-                                        <Typography sx={{color:'#353535',fontWeight:'500',fontSize:'18px'}}>{JSON.parse(client).first_name} {JSON.parse(client).last_name}</Typography>
-                                        <Typography sx={{color:'#353535',fontWeight:'400',fontSize:'14px'}}>{JSON.parse(client).job_title}</Typography>
+                                        <Typography sx={{color:'#353535',fontWeight:'500',fontSize:'18px'}}>{JSON.parse(chat).first_name} {JSON.parse(chat).last_name}</Typography>
+                                        <Typography sx={{color:'#353535',fontWeight:'400',fontSize:'14px'}}>{JSON.parse(chat).job_title}</Typography>
                                         </Box>
                                     </Box>
                                     <Box sx={{minWidth:'50px'}}>
@@ -332,7 +316,7 @@ export default function Freelancerchat() {
                                 </Box>
                                 <Divider/>
                             </React.Fragment>
-                        ))):<Box sx={{padding: '22px 20px 13px',textAlign:'center'}}>No chats available</Box>
+                        ))
                     }
                 </Box>
             </Box>
@@ -381,8 +365,8 @@ export default function Freelancerchat() {
                     </div>
 
                     <Grid sx={{padding:'20px 35px',display:'flex',flexDirection:'column',gap:'13px',height:'400px', alignItems:'flex-end',overflowY:'auto'}} className='chat-container_chat_msg_scroll' ref={chatContainerRef}>
-                    {messages.map((message, index) => (
-                                <Grid key={index} className={message.sent_by!==selectedChatInfo?.freelancer_id ? 'message-receive' : 'message-send'}
+                            {messages.map((message, index) => (
+                                <Grid key={index} className={message.sent_by!==selectedChatInfo?.manager_id ? 'message-receive' : 'message-send'}
                                     sx={{
                                         display: 'flex',
                                         flexDirection:'row',
@@ -396,7 +380,7 @@ export default function Freelancerchat() {
                                           C
                                         </Avatar>
                                       ) : <div style={{width:'40px'}}></div>}                                      
-                                        {(message.status === 'DELIVERABLE_IMAGE' || message.status === 'DELIVERABLE_IMAGE_ACCEPTED' ||message.status === 'DELIVERABLE_IMAGE_REJECTED' ) && (
+                                       {(message.status === 'DELIVERABLE_IMAGE' || message.status === 'DELIVERABLE_IMAGE_ACCEPTED' ||message.status === 'DELIVERABLE_IMAGE_REJECTED' ) && (
                                             <Box sx={{width:'100%',display:'flex',justifyContent:'flex-end',width: '50%',flexDirection:'column',marginBottom:'10px'}}>
                                                 <img
                                                     src={message.message}
@@ -406,10 +390,10 @@ export default function Freelancerchat() {
                                                 <Box sx={{display: 'flex',flexDirection:'row',gap:'10px',justifyContent:'flex-end',marginTop:'10px'}}>
                                                     {
                                                         message.status==='DELIVERABLE_IMAGE'?
-                                                            (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
-                                                                <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Unsend</Button>
-                                                                <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Edit</Button>
-                                                            </Box>):null 
+                                                        (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
+                                                        <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Accept</Button>
+                                                        <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Decline</Button>
+                                                    </Box>):null 
                                                     }
                                                 </Box>
                                             </Box>
@@ -438,7 +422,7 @@ export default function Freelancerchat() {
                                             </Box>
                                             
                                         )} */}
-                                        {(message.status === 'NEGOTIATION_ACCEPTED' || message.status === 'NEGOTIATION_PENDING' || message.status==='NEGOTIATION_REJECTED') && (
+                                        {(message.status === 'NEGOTIATION_ACCEPTED' || message.status=== 'NEGOTIATION_PENDING' || message.status==='NEGOTIATION_REJECTED') && (
                                             <Box sx={{display:'flex',flexDirection:'column',gap:'8px',marginBottom:'10px'}}>
                                             <Box sx={{
                                                     maxWidth: '100%',
@@ -465,8 +449,8 @@ export default function Freelancerchat() {
                                             {
                                                 message.status==='NEGOTIATION_PENDING'?
                                                 (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
-                                                    <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Cancel</Button>
-                                                    <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Edit</Button>
+                                                    <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}} onClick={()=>{handleAcceptPrice(message.id)}}>Accept</Button>
+                                                    <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>handleNegotiate(message.id)}>Negotiaite</Button>
                                                 </Box>):null
                                             }
                                             </Box>
@@ -498,10 +482,10 @@ export default function Freelancerchat() {
                                             </Box>
                                             {
                                                message.status==='DELIVERABLES'?
-                                                    (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
-                                                        <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Extend</Button>
-                                                        <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>{handleAccept(message.id)}}>Accept</Button>
-                                                    </Box>):null
+                                               (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
+                                               <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Cancel</Button>
+                                               <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Edit</Button>
+                                           </Box>):null
                                             }
                                             </Box>
                                             

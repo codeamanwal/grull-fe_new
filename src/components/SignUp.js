@@ -6,6 +6,7 @@ import Select from 'react-select';
 import Button from '@mui/material/Button';
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
+import BAPI from '../helper/variable';
 import grullLogo from "../assets/grullLogoPurple.svg"
 
 const SignUp = () => {
@@ -45,7 +46,7 @@ const SignUp = () => {
           };
         console.log(registrationData)
         try {
-            const response = await fetch('http://35.154.4.80/api/v0/auth/register', {
+            const response = await fetch(`${BAPI}/api/v0/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

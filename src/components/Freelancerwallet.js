@@ -13,7 +13,7 @@ import { Radio, RadioGroup, FormControl, FormControlLabel } from '@mui/material'
 import { FiEdit3 } from "react-icons/fi";
 import { TfiReload } from "react-icons/tfi";
 import '../styles/wallet.css';
-
+import BAPI from '../helper/variable'
 export default function Freelancerwallet() {
   const [country, setCountry] = useState('india'); 
   const [paymentway,setpaymentway]=useState('');

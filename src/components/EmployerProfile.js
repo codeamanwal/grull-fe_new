@@ -14,7 +14,7 @@ import { CiCamera } from "react-icons/ci";
 import { CiLocationOn } from "react-icons/ci";
 import { MdWorkOutline } from "react-icons/md";
 import Header2 from './Header2';
-
+import BAPI from '../helper/variable'
 const Employerprofile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
@@ -126,7 +126,7 @@ const Employerprofile = () => {
         const fetchUserProfile = async () => {
           try {
             
-            const response = await axios.get('http://35.154.4.80/api/v0/users/me', {
+            const response = await axios.get(`${BAPI}/api/v0/users/me`, {
               headers: {
                 'Authorization':`Bearer ${accessToken}`,
               },
@@ -178,7 +178,7 @@ const Employerprofile = () => {
     // change user details
     const updateUserProfile = async () => {
         try {
-            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 first_name: newName,
                 description: newJobCategory,
                 location: {
@@ -222,7 +222,7 @@ const Employerprofile = () => {
     };
     const updateAbout = async () => {
         try {
-            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 description: newinputval,
             },
                 {
@@ -287,7 +287,7 @@ const Employerprofile = () => {
     useEffect(() => {
         const fetchPostedJobs = async () => {
             try {
-                const response = await axios.get('http://35.154.4.80/api/v0/users/me/jobs', {
+                const response = await axios.get(`${BAPI}/api/v0/users/me/jobs`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },

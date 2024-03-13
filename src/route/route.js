@@ -16,9 +16,9 @@ import FreelancerManagerJobs from '../components/FreelancerManageJobs';
 import ClientDashboard from '../components/ClientDashboard';
 import ClientManageJobs from '../components/ClientManageJobs';
 import JobApplications from '../components/EmployerjobApplication';
-import Freelancerchat from "../components/Freelancerchat";
 import Transactions from "../components/Transactions";
 import CommonWallet from "../components/CommonWallet";
+// import Freelancerchat from 
 
 export default function PageRoute() {
      return (
@@ -41,8 +41,8 @@ export default function PageRoute() {
             <Route path="/client" element={<ClientDashboard />} />
             <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
             <Route path="/jobapplications/:jobid" element={<JobApplications />} />
-            <Route path="/freelancerchat" element={<Freelancerchat />} />
             <Route path="/transactions" element={<Transactions />} />
+            <Route path="/freelancerchat" element ={<Freelancerchat />} />
             <Route path="/commonwallet" element={<CommonWallet />} /> 
          </Routes>
        </BrowserRouter>

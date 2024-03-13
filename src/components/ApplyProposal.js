@@ -7,7 +7,7 @@ import axios from 'axios';
 import Header3 from './Header3';
 import { Button } from '@mui/material';
 import { FaArrowUp } from "react-icons/fa6";
-
+import BAPI from '../helper/variable'
 const ApplyProposal = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
@@ -56,7 +56,7 @@ const ApplyProposal = () => {
         try{
             const proposal = document.querySelector('[name="proposal"]').value;
             const proposed_rate = document.querySelector('[name="proposed_rate"]').value;
-            const response = await axios.post(`http://35.154.4.80/api/v0/jobs/${jobid}/apply`, 
+            const response = await axios.post(`${BAPI}/api/v0/jobs/${jobid}/apply`, 
                  {"proposed_rate":proposed_rate,"proposal":proposal},{
                   headers: {
                       'Content-Type': 'application/json',

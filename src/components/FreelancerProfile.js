@@ -9,6 +9,7 @@ import { CiCamera } from "react-icons/ci";
 import Header1 from './Header1';
 import Avatar from '@mui/material/Avatar';
 import { Box, Chip } from '@mui/material';
+import BAPI from '../helper/variable';
 import { useLocation } from 'react-router-dom';
 
 const FreelancerProfile = () => {
@@ -177,7 +178,7 @@ const FreelancerProfile = () => {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const response = await axios.get('http://35.154.4.80/api/v0/users/me',
+                const response = await axios.get(`${BAPI}/api/v0/users/me`,
                     {
                         headers: {
                             'Content-Type': 'application/json',
@@ -229,7 +230,7 @@ const FreelancerProfile = () => {
     //updating user profile values
     const updateUserProfile = async () => {
         try {
-            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 first_name: newName,
                 role: newJobCategory,
                 location: {
@@ -272,7 +273,7 @@ const FreelancerProfile = () => {
     // updating skills and languages
     const updateSkillsAndLanguages = async () => {
         try {
-            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 skills: [...tempSkills],
                 languages: [...tempLanguages],
             },
@@ -306,7 +307,7 @@ const FreelancerProfile = () => {
     // updating about and projects
     const updateProjectsAndAbout = async () => {
         try {
-            const response = await axios.patch('http://35.154.4.80/api/v0/users/me', {
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 description: newinputval,
                 work_sample_urls: [...projects, ...tempProjects],
                 portfolio_urls: [...portfolios, ...tempPortfolios],

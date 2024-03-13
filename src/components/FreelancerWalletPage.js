@@ -23,6 +23,7 @@ import { NavLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { MdArrowOutward } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
+import BAPI from '../helper/variable';
 
 interface Props {
   window?: () => Window;
@@ -58,7 +59,7 @@ export default function FreelancerDashboard(props: Props) {
        const infofetch=async()=>{
         try {
           const response = await fetch(
-            'http://35.154.4.80/api/v0/users/me', 
+            `${BAPI}/api/v0/users/me`, 
             {
               method: 'GET',
               headers: {

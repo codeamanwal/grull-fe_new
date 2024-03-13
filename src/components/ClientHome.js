@@ -4,9 +4,9 @@ import { Box, Button, Grid } from '@mui/material';
 import { Radio, RadioGroup, FormControl, FormControlLabel } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiDotsVertical } from "react-icons/hi";
+import BAPI from '../helper/variable';
 import Slider from '@mui/material/Slider';
 import '../styles/freelancerhome.css';
-
 export default function ClientHome() {
     
     const [availability, setAvailability] = useState('available');

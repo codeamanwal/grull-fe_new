@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import grullLogo from "../assets/grullLogoPurple.svg"
 import { useLocation } from 'react-router-dom';
+import BAPI from '../helper/variable';
 
 const Login = () => {
   const { pathname } = useLocation();
@@ -34,7 +35,7 @@ const Login = () => {
         formData.append("username", email);
         formData.append("password", password);
     
-        const response = await fetch('http://35.154.4.80/api/v0/auth/login', {
+        const response = await fetch(`${BAPI}/api/v0/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

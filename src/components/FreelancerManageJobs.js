@@ -5,6 +5,7 @@ import { Link,useNavigate, useParams } from 'react-router-dom';
 import Job from './Job';
 import '../styles/freelancermanagejobs.css';
 import axios from 'axios';
+import BAPI from '../helper/variable';
 
 const ManageJobs = () => {
   const { section } = useParams();
@@ -26,7 +27,7 @@ const ManageJobs = () => {
   useEffect(() => {
     const getApplications = async (page = 1) => {
       try {
-        const response = await axios.get('http://35.154.4.80/api/v0/users/me/job-applications', {
+        const response = await axios.get(`${BAPI}/api/v0/users/me/job-applications`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
@@ -68,7 +69,7 @@ const ManageJobs = () => {
   const getJobDetails = async (applications) => {
     try {
       const jobDetailsPromises = applications.map(async (application) => {
-        const response = await axios.get(`http://35.154.4.80/api/v0/jobs/${application.job_id}`, {
+        const response = await axios.get(`${BAPI}/api/v0/jobs/${application.job_id}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,

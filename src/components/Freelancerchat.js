@@ -18,6 +18,7 @@ import { setDate } from 'rsuite/esm/utils/dateUtils';
 import BAPI from '../helper/variable'
 // import {Cloudinary} from "@cloudinary/url-gen";
 import axios from 'axios';
+import io from 'socket.io-client';
 
 export default function Freelancerchat() {
   const accessToken=localStorage.getItem("accessToken");
@@ -43,6 +44,68 @@ export default function Freelancerchat() {
   const [image,setImage]=useState('');
   const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatInfo,setSelectedChatInfo]=useState(null);
+  const [editMode,setEditMode]=useState(false);
+  const [editmessageId,setEditmessageId]=useState('');
+  const [receivedMessage, setReceivedMessage] = useState(0);
+  const [connected, setConnected] = useState(false);
+
+  const [clientId, setClientId] = useState(
+    Math.floor(new Date().getTime() / 1000)
+  );
+ 
+  const [websckt, setWebsckt] = useState(null);
+  
+  useEffect(() => {
+    // Generate a unique client ID
+    const newClientId = Date.now().toString();
+    // setClientId(newClientId);
+
+    const url = `ws://localhost:8000/ws/${newClientId}`;
+    const ws = new WebSocket(url);
+
+    ws.onopen = () => {
+        console.log("WebSocket connection opened");
+        // Send a connection message to the server
+        ws.send("Connect");
+    };
+
+    ws.onmessage = (event) => {
+        console.log("Message received from server:", event.data);
+        // Handle incoming messages from the server
+        setReceivedMessage(Math.floor(Math.random() * 1000000));
+
+    };
+
+    ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        // Handle WebSocket errors
+    };
+
+    ws.onclose = () => {
+        console.log("WebSocket connection closed");
+        // Perform cleanup tasks if needed
+    };
+
+    // Set the WebSocket object to state
+    setWebsckt(ws);
+
+    // Cleanup function when component unmounts
+    return () => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.close();
+        }
+    };
+}, [selectedChatInfo]); // Include clientId as a dependency is unnecessary
+
+const sendMessageSocket = () => {
+    if (websckt && websckt.readyState === WebSocket.OPEN) {
+        websckt.send("hdjhdj");
+        setReceivedMessage(Math.floor(Math.random() * 1000000));
+
+    } else {
+        console.error("WebSocket is not open or not initialized");
+    }
+};
 
   useEffect(()=>{
     const getChats=async()=>{
@@ -72,20 +135,45 @@ export default function Freelancerchat() {
 
   const handleClosePriceInput = () => {
     setPriceInputOpen(false);
+    setEditMode(false);
     setPriceValue('');
+  };
+
+  const handleEditedSendPrice = async() => {
+    if (priceValue.trim() !== '') {
+    const newPriceMessage =  {message: priceValue, message_id:editmessageId ,status:'NEGOTIATION_PENDING',deadline:''};
+    //   setMessages((prevMessages) => [...prevMessages, newPriceMessage]);
+    const priceburl = `${BAPI}/api/v0/chats/update-deliverable`;
+    setEditMode(false);
+    try{
+        const response=await axios.post(priceburl,newPriceMessage,{
+        headers:{
+            Authorization:`Bearer ${accessToken}`,
+        }
+        })
+        console.log(response);
+    }
+    catch(err){
+        console.log("Error in updating price chat : ",err)
+    }
+      handleClosePriceInput();
+    } else {
+      toast.error('Please enter a valid price');
+    }
+    sendMessageSocket()
   };
 
   const handleSendPrice = async() => {
     if (priceValue.trim() !== '') {
-      const newPriceMessage = {message: priceValue, sent_by: selectedChatInfo.freelancer_id, chat_id:selectedChatInfo.id ,status:'NEGOTIATION_PENDING',deadline:''};
-    //   setMessages((prevMessages) => [...prevMessages, newPriceMessage]);
-        try{
-            const response=await axios.post(`${BAPI}/api/v0/chats/send-message`,newPriceMessage,{
-            headers:{
-                Authorization:`Bearer ${accessToken}`,
-            }
-            })
-            console.log(response);
+    const newPriceMessage =  {message: priceValue, sent_by: selectedChatInfo.freelancer_id, chat_id:selectedChatInfo.id ,status:'NEGOTIATION_PENDING',deadline:''};
+    const priceburl =`${BAPI}/api/v0/chats/send-message`;
+    try{
+        const response=await axios.post(priceburl,newPriceMessage,{
+        headers:{
+            Authorization:`Bearer ${accessToken}`,
+        }
+        })
+        console.log(response);
     }
     catch(err){
         console.log("Error in sending chat : ",err)
@@ -94,7 +182,15 @@ export default function Freelancerchat() {
     } else {
       toast.error('Please enter a valid price');
     }
+    sendMessageSocket()
   };
+
+  const handleEditPrice=async(message)=>{
+    setEditMode(true);
+    setPriceValue(message.message);
+    setPriceInputOpen(true);
+    setEditmessageId(message.id);
+  }
 
   const handleOpenDeliverable = () => {
     setDeliverableInputOpen((prev)=>(!prev));
@@ -135,25 +231,45 @@ export default function Freelancerchat() {
     catch(err){
         console.log("Error while Accepting price : ",err)
     }
+    sendMessageSocket()
+  }
+
+  const handleCancel=async(messageId)=>{
+    try{
+        const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
+            "message_id":messageId,
+            "status":"NORMAL"
+        },{
+            headers:{
+                Authorization:`Bearer ${accessToken}`,
+            }
+        })
+        console.log(negres);
+    }
+    catch(err){
+        console.log("Error while Accepting price : ",err)
+    }
+    sendMessageSocket()
   }
 
   const uploadImage = async () => {
     const formData = new FormData();
     formData.append("file", image);
     formData.append('upload_preset', 'er103mfg');
+    formData.append('cloud_name','dlpcihcmz')
     try {
       const response = await axios.post(
         'https://api.cloudinary.com/v1_1/dlpcihcmz/image/upload',
         formData
       );
-  
-      const imageUrl = response.data.url;
+     
+      const imageUrl = await response.data.url;
       setPhotoUrl(imageUrl);
       console.log(photoUrl);
   
       if (photoUrl !== '') {
         const newMessage = {
-          message: imageUrl,
+          message: 'hello',
           sent_by: selectedChatInfo.freelancer_id,
           chat_id: selectedChatInfo.id,
           status: 'DELIVERABLE_IMAGE',
@@ -180,6 +296,7 @@ export default function Freelancerchat() {
     } catch (error) {
       console.error('Error uploading image:', error);
     }
+    sendMessageSocket()
   };
   
   const handleFileChange = async (event) => {
@@ -225,6 +342,7 @@ export default function Freelancerchat() {
         console.log("Error in sending chat : ",err)
     }
     setuserMessage('');
+    sendMessageSocket();
   };
   
   useEffect(()=>{
@@ -263,7 +381,7 @@ export default function Freelancerchat() {
     }
     if(selectedChat!=null){
          getChat();}
-  },[selectedChat]);
+  },[selectedChat,receivedMessage]);
   
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
@@ -357,7 +475,7 @@ export default function Freelancerchat() {
                             <div className=''>
                                 <i class="fa-solid fa-chevron-down"></i>
                             </div>
-                            <div className=''>
+                            <div className='' onClick={()=>setSelectedChat(null)}>
                                 <i class="fa-solid fa-xmark"></i>
                             </div>
                         </div>
@@ -465,8 +583,8 @@ export default function Freelancerchat() {
                                             {
                                                 message.status==='NEGOTIATION_PENDING'?
                                                 (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
-                                                    <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Cancel</Button>
-                                                    <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Edit</Button>
+                                                    <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}} onClick={()=>{handleCancel(message.id)}}>Cancel</Button>
+                                                    <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>{handleEditPrice(message)}}>Edit</Button>
                                                 </Box>):null
                                             }
                                             </Box>
@@ -504,7 +622,6 @@ export default function Freelancerchat() {
                                                     </Box>):null
                                             }
                                             </Box>
-                                            
                                         )}
                                         {message.status === 'NORMAL' && (
                                             <Typography sx={{
@@ -577,7 +694,7 @@ export default function Freelancerchat() {
                                                     onChange={(e)=>setPriceValue(e.target.value)}
                                                     style={{border:'none',outline:'none',boxShadow:'0px 0px 4px 1px #00000040',borderRadius:'8px',padding:'5px 10px',width:'120px'}}
                                                 />
-                                                <IoSend style={{fontSize:'20px',cursor:'pointer',color:'#B27EE3'}} onClick={handleSendPrice} />
+                                                <IoSend style={{fontSize:'20px',cursor:'pointer',color:'#B27EE3'}} onClick={editMode? handleEditedSendPrice:handleSendPrice} />
                                             </Box>
                                         </Box>
                                     </Box>

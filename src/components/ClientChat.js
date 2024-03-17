@@ -14,10 +14,12 @@ import toast, { Toaster } from 'react-hot-toast';
 import { IoSend } from "react-icons/io5";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { DatePicker} from 'antd';
-import { setDate } from 'rsuite/esm/utils/dateUtils';
 import BAPI from '../helper/variable'
 // import {Cloudinary} from "@cloudinary/url-gen";
 import axios from 'axios';
+import dayjs from 'dayjs';
+import io from 'socket.io-client';
+
 
 export default function Clientchat() {
   const accessToken=localStorage.getItem("accessToken");
@@ -39,11 +41,72 @@ export default function Clientchat() {
   const [deliverableInputOpen, setDeliverableInputOpen] = useState(false);
   const [deliverableValue, setDeliverableValue] = useState('');
   const [selectedDate, setSelectedDate] = React.useState(null);
+  const [dateval,setDateval]=useState('');
   const [photoUrl,setPhotoUrl] =useState('');
   const [image,setImage]=useState('');
   const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatInfo,setSelectedChatInfo]=useState(null);
+  const [editMode,setEditMode]=useState(false);
+  const [editmessageId,setEditmessageId]=useState('');
 
+  const [receivedMessage, setReceivedMessage] = useState(true);
+  const [connected, setConnected] = useState(false);
+  const [clientId, setClientId] = useState(
+    Math.floor(new Date().getTime() / 1000)
+  );
+  const [websckt, setWebsckt] = useState();
+  useEffect(() => {
+    // Generate a unique client ID
+    const newClientId = Date.now().toString();
+    // setClientId(newClientId);
+
+    const url = `ws://localhost:8000/ws/${newClientId}`;
+    const ws = new WebSocket(url);
+
+    ws.onopen = () => {
+        console.log("WebSocket connection opened");
+        // Send a connection message to the server
+        ws.send("Connect");
+    };
+
+    ws.onmessage = (event) => {
+        console.log("Message received from server:", event.data);
+        // Handle incoming messages from the server
+        setReceivedMessage(Math.floor(Math.random() * 1000000));
+
+    };
+
+    ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        // Handle WebSocket errors
+    };
+
+    ws.onclose = () => {
+        console.log("WebSocket connection closed");
+        // Perform cleanup tasks if needed
+    };
+
+    // Set the WebSocket object to state
+    setWebsckt(ws);
+
+    // Cleanup function when component unmounts
+    return () => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.close();
+        }
+    };
+}, [selectedChatInfo]); // Include clientId as a dependency is unnecessary
+
+const sendMessageSocket = () => {
+    if (websckt && websckt.readyState === WebSocket.OPEN) {
+        websckt.send("hdjhdj");
+        setReceivedMessage(Math.floor(Math.random() * 1000000));
+
+    } else {
+        console.error("WebSocket is not open or not initialized");
+    }
+};
+   
   useEffect(()=>{
     const getChats=async()=>{
         try{
@@ -62,7 +125,7 @@ export default function Clientchat() {
   },[])
 
   const handleDateChange = (date, dateString) => {
-    console.log(dateString)
+    console.log(dateString);
     setSelectedDate(dateString);
   };
 
@@ -95,6 +158,28 @@ export default function Clientchat() {
     setDeliverableValue('');
   };
 
+  const handleSendEditedDeliverable = async() => {
+    if (deliverableValue.trim() !== '' && selectedDate) {
+      const newDeliverableMessage = {message: deliverableValue,  message_id:editmessageId ,status:'DELIVERABLES',deadline:selectedDate};
+      setEditMode(false);
+      try{
+        const response=await axios.post(`${BAPI}/api/v0/chats/update-deliverable`,newDeliverableMessage,{
+           headers:{
+               Authorization:`Bearer ${accessToken}`,
+           }
+        })
+        console.log(response);
+        }
+        catch(err){
+            console.log("Error in sending chat : ",err)
+        }
+      handleCloseDeliverableInput();
+    } else {
+      toast.error('Please enter a valid deliverable and select a date');
+    }
+    sendMessageSocket()
+  };
+
   const handleSendDeliverable = async() => {
     if (deliverableValue.trim() !== '' && selectedDate) {
       const newDeliverableMessage = {message: deliverableValue, sent_by: selectedChatInfo.manager_id, chat_id:selectedChatInfo.id ,status:'DELIVERABLES',deadline:selectedDate};
@@ -113,8 +198,18 @@ export default function Clientchat() {
     } else {
       toast.error('Please enter a valid deliverable and select a date');
     }
+    sendMessageSocket()
   };
-  
+
+  const handleEditDeliverable=async(message)=>{
+    setEditMode(true);
+    setDeliverableValue(message.message);
+    setDeliverableInputOpen(true);
+    setSelectedDate(message.deadline);
+    setDateval(dayjs(message.deadline, 'DD-MM-YYYY'));
+    setEditmessageId(message.id);
+  }
+
     const handleNegotiate=async(messaegId)=>{
         try{
             const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
@@ -130,6 +225,7 @@ export default function Clientchat() {
         catch(err){
             console.log("Error while Negotiating price : ",err)
         }
+        sendMessageSocket()
     }
 
     const handleAcceptPrice=async(messaegId)=>{
@@ -147,6 +243,7 @@ export default function Clientchat() {
         catch(err){
             console.log("Error while Accepting price : ",err)
         }
+        sendMessageSocket()
     }
 
   const uploadImage = async () => {
@@ -209,6 +306,7 @@ export default function Clientchat() {
         console.log("Error in sending chat : ",err)
     }
     setuserMessage('');
+    sendMessageSocket()
   };
   
   useEffect(()=>{
@@ -247,7 +345,7 @@ export default function Clientchat() {
     }
     if(selectedChat!=null){
          getChat();}
-  },[selectedChat]);
+  },[selectedChat,receivedMessage]);
   
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
@@ -341,7 +439,7 @@ export default function Clientchat() {
                             <div className=''>
                                 <i class="fa-solid fa-chevron-down"></i>
                             </div>
-                            <div className=''>
+                            <div className='' onClick={()=>setSelectedChat(null)}>
                                 <i class="fa-solid fa-xmark"></i>
                             </div>
                         </div>
@@ -484,7 +582,7 @@ export default function Clientchat() {
                                                message.status==='DELIVERABLES'?
                                                (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
                                                <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Cancel</Button>
-                                               <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Edit</Button>
+                                               <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>{handleEditDeliverable(message)}}>Edit</Button>
                                            </Box>):null
                                             }
                                             </Box>
@@ -580,14 +678,14 @@ export default function Clientchat() {
                                                     onChange={(e)=>setDeliverableValue(e.target.value)}
                                                     style={{border:'none',outline:'none',boxShadow:'0px 0px 4px 1px #00000040',borderRadius:'8px',padding:'5px 10px',width:'200px'}}
                                                 />
-                                                <DatePicker onChange={handleDateChange} 
+                                                <DatePicker onChange={handleDateChange} defaultPickerValue={dateval}
                                                  style={{width:'100%'}} format="DD-MM-YYYY"/>
                                                 <Box sx={{
                                                     backgroundColor:'#B27EE3',
                                                     cursor:'pointer',
                                                     width:'100%',
                                                     borderRadius:'8px',textAlign:'center',padding:'2px 0'
-                                                }}  onClick={handleSendDeliverable} >
+                                                }}  onClick={editMode?handleSendEditedDeliverable:handleSendDeliverable} >
                                                 <IoSend style={{fontSize:'18px',color:'#fff'}}/>
                                                 </Box>
                                             </Box>

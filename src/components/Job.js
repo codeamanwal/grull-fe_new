@@ -9,7 +9,12 @@ import { FaHeart } from "react-icons/fa";
 import '../styles/freelancermanagejobs.css';
 import { useNavigate } from 'react-router-dom';
 
-const Job = ({ position, companyName, companyLogoUrl, location, startDate, isLast,status }) => {
+const Job = ({ position, companyName, companyLogoUrl, location, startDate, isLast,status,job_id }) => {
+
+  const handleView=(job_id)=>{
+    navigate(`/jobdetails/${job_id}`)
+}
+
   const navigate=useNavigate();
   const clickApplyNow=()=>{
     navigate('/applyproposal');
@@ -19,7 +24,7 @@ const Job = ({ position, companyName, companyLogoUrl, location, startDate, isLas
 
   return (
     <React.Fragment>
-      <Box sx={{ backgroundColor: '#fff', padding: '30px', borderRadius: '16px', display: 'flex', flexDirection: 'row' }} className='job'>
+      <Box sx={{ backgroundColor: '#fff', padding: '30px', borderRadius: '16px', display: 'flex', flexDirection: 'row' }} className='job' onClick={()=>handleView(job_id)}>
         <Box sx={{ display: 'flex' }}>
           <img className='jobcomplogo'
             style={{ width: '50px', height: '50px' }}

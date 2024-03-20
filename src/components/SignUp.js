@@ -43,6 +43,7 @@ const SignUp = () => {
             password: password,
             first_name: firstName,
             last_name: lastName,
+            list_as_freelancer:userType==='freelancer'
           };
         console.log(registrationData)
         try {

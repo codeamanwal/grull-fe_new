@@ -25,7 +25,10 @@ interface Props {
 export default function ClientDashboard(props: Props) {
 
   const [activeButton, setActiveButton] = useState('home');
+  const [fullname,setFullname]=useState('');
+  const [role,setRole]=useState('');
   const navigate = useNavigate();
+  const avatarBackgroundColor = 'Grey';
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -33,6 +36,32 @@ export default function ClientDashboard(props: Props) {
       navigate('/clientmanagejobs/posted');
     }
   };
+  
+  const accessToken = localStorage.getItem('accessToken');
+  useEffect(()=>{
+    const infofetch=async()=>{
+     try {
+       const response = await fetch(
+         `${BAPI}/api/v0/users/me`,
+         {
+           method: 'GET',
+           headers: {
+             'Content-Type': 'application/json',
+             'Authorization': `Bearer ${accessToken}`,
+           },
+         }
+       );
+       const responseData = await response.json();
+       setFullname(responseData.full_name);
+       setRole(responseData.role);
+       localStorage.setItem("user",JSON.stringify(responseData));
+       console.log(localStorage.getItem("user"));
+     } catch (error) {
+       console.error('Error during fetching data:', error);
+     }
+    }
+    infofetch();
+},[]);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -73,11 +102,17 @@ export default function ClientDashboard(props: Props) {
         <Typography sx={{color: '#B27EE3',fontSize:'25px',fontWeight:'700'}}>GRULL</Typography>
       </Box>
       <Box sx={{marginTop:'100px'}}>
-         <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
-             <Avatar alt="Remy Sharp" onClick={()=>{navigate('/employerprofile')}} src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
+      <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
+         <Avatar
+        alt={fullname}
+        style={{ backgroundColor: avatarBackgroundColor }}
+        onClick={()=>{navigate('/freelancerprofile')}}
+      >
+        {fullname[0]}
+      </Avatar>
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
-               <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>Astle Benjamin</Typography>
-               <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>UI UX Designer</Typography>
+               <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>{fullname}</Typography>
+               <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>{role}</Typography>
              </Grid>
          </Box>
          <Box

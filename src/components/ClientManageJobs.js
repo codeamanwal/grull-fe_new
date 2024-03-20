@@ -194,11 +194,11 @@ const ClientManageJobs = () => {
                         <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' >Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData.filter((job) => ['Ongoing'].includes(job.status)).length === 0 ? (
+                    {jobData.filter((job) => ['ONGOING'].includes(job.status)).length === 0 ? (
                         <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No ongoing jobs found.</Typography>
                       ) : (
                         jobData
-                          .filter((job) => ['Ongoing'].includes(job.status))
+                          .filter((job) => ['ONGOING'].includes(job.status))
                           .map((job, index) => (
                             <ClientJob
                               key={index}

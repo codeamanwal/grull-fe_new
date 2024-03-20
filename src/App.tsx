@@ -1,3 +1,4 @@
+
 import { Grid } from "@mui/material";
 import Section1 from "./components/Section1";
 import Section2 from "./components/Section2";
@@ -23,7 +24,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 function App() {
-  const { hash,pathname } = useLocation();
+  const { hash, pathname } = useLocation();
 
   function scrollToSection(id: string) {
     const section = document.getElementById(id);
@@ -40,28 +41,28 @@ function App() {
   }, [hash]);
 
   return (
-    <Grid sx={{ overflow: "hidden" }}>
-      <Navbar />
-      <Section1 />
-      <Section2 />
-      <Section3 />
-      <Section4 />
-      <Section5 />
-      <Section6 />
-      <Section7 />
-      <Section8 />
-      <Section9 />
-      <Section10 />
-      <Section11 />
-      <Section13 />
-      <Section14 />
-      <Section15 />
-      <Section16 />
-      <Section17 />
-      <Section18 />
-      <Section19 />
-      <Footer />
-    </Grid>
+      <Grid sx={{ overflow: "hidden" }}>
+        <Navbar />
+        <Section1 />
+        <Section2 />
+        <Section3 />
+        <Section4 />
+        <Section5 />
+        <Section6 />
+        <Section7 />
+        <Section8 />
+        <Section9 />
+        <Section10 />
+        <Section11 />
+        <Section13 />
+        <Section14 />
+        <Section15 />
+        <Section16 />
+        <Section17 />
+        <Section18 />
+        <Section19 />
+        <Footer />
+      </Grid>
   );
 }
 

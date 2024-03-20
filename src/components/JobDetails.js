@@ -19,7 +19,8 @@ const JobDetails = () => {
     const accessToken = localStorage.getItem('accessToken');
     const { jobid } = useParams();
     const [jobDetails, setJobDetails] = useState(null);
-
+    const useR=localStorage.getItem('user');
+    const userId=JSON.parse(useR)?.id
     const getTimeDifference = (modifiedAt) => {
         const now = new Date();
         const modifiedDate = new Date(modifiedAt);
@@ -66,6 +67,7 @@ const JobDetails = () => {
                 });
     
                 if (response.status === 200) {
+                    console.log(response.data)
                     setJobDetails(response.data);
                     console.log(response.data);
                 } else {
@@ -155,7 +157,13 @@ const JobDetails = () => {
             <Box sx={{width:{lg:'300px',xs:'auto'}, borderRadius: '16px',display: 'flex', flexDirection: 'column',boxShadow:'0px 0px 4px 0px #00000040'}}>
                 <Box sx={{display:'flex',flexDirection:'column',gap:'8px',alignItems:'center',padding:'30px 0 20px'}}>
                     <Typography style={{ color: '#B27EE3', fontSize: '13px',}}>Non Negotiable</Typography>
-                    <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>
+                    {
+                        jobDetails?.employee?.id!==userId?(
+                            <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>):(
+                                
+                    <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={()=>{navigate('/freelancerchat')}}>Chat Now</Button>
+                            )
+                    }
 
                     <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />}>Save Job</Button>
                     <Typography style={{ color: '#454545', fontSize: '16px',}}>Applicants : {jobDetails?.job_applicants_count }</Typography>

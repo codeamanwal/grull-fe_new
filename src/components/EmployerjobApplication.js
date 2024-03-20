@@ -99,10 +99,27 @@ const JobApplications = () => {
         
       }
       catch (error) {
-        console.error('Error occurred:', error);
+        console.error('Error occurred while accepting :', error);
       }
   }
 
+  const handleReject=async(applicationId)=>{
+    try{
+      const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/reject`, {
+        
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      });
+       console.log(response)
+      
+    }
+    catch (error) {
+      console.error('Error occurred while rejecting :', error);
+    }
+}
 
   const createrefs = (Freelancers) => {
     // console.log("Freelancers:", Freelancers);
@@ -225,110 +242,68 @@ const JobApplications = () => {
       <div style={{ marginBottom: '50px', marginTop: '30px',}} className='browseFreelancer'>
 
         <div className='browseFreelancer-box'>
-          {allFreelancers?.map((freelancer,indx) => (
-            <Box key={indx} >
-            <Box sx={{padding:{sm:'30px',xs:'18px 16px'}}}>
-              <Box style={{ display: 'flex',flexDirection:'column'}}>
-                <Box style={{ display: 'flex',flexDirection:'row',gap:'20px'}}>
-                  <Avatar variant="square" sx={{textTransform:'uppercase',width:{sm:'200px',xs:'120px'},height:{sm:'200px',xs:'120px'},borderRadius:'16px'}}>
-                    {freelancer.employee.full_name[0]}
-                  </Avatar>
-                  <Box style={{ display: 'flex',flexDirection:'column',gap:'5px',width:'100%',height:'auto'}}  key={indx*indx} >
-                      <Box style={{ display: 'flex',flexDirection:'row',justifyContent:'space-between'}}>
-                           <Box style={{ display: 'flex',flexDirection:'column'}}>
-                               <Typography sx={{fontWeight:'700',fontSize:{sm:'28px',xs:'22px'}}}>{freelancer.employee.full_name}</Typography>
-                               <Typography sx={{fontWeight:'600',fontSize:{sm:'17px',xs:'15px'}}}>{freelancer.employee.role}</Typography>
-                               <Typography sx={{fontWeight:'600',fontSize:{sm:'17px',xs:'15px'}}}>${freelancer.employee.rate_per_hour}/hr</Typography>
-                           </Box>
-                           <Box style={{ display: 'flex',flexDirection:'row',gap:'10px'}}>
-                           <img
-                              src={require('../assets/dislikeIcon.png')} 
-                              alt="Dislike"
-                              style={{ cursor: 'pointer', height:'50px', width:'50px', borderRadius:'50%' }}
-                              onClick={() => handleDislikeClick(freelancer.freelancer_id)}  
-                            />
-                            <img
-                              src={require('../assets/likeIcon.png')}  
-                              alt="Like"
-                              style={{ cursor: 'pointer',height:'50px', width:'50px', borderRadius:'50%' }}
-                              onClick={() => handleLikeClick(freelancer.freelancer_id)}  
-                            />
-                           </Box>
-                      </Box>
-                      <Box>
-                      <Typography sx={{ fontWeight: '500', fontSize: { sm: '17px', xs: '15px' }, color: '#454545' }}>
-                          {/* {expandedDescriptions[indx]? 
-                            (freelancer?.description.substring(0, 350) + '...'):freelancer?.description}
-                          {boxRefs.current[indx] && boxRefs.current[indx].clientHeight > 200 && (
-                            <Button onClick={() => toggleExpand(indx)} sx={{padding:'0px',color:'#B27EE3',width:'fit-content'}}>
-                              {!expandedDescriptions[indx] ? 'less' : 'more'}
-                            </Button>
-                          )} */}
-                        </Typography>
-                      </Box>
+        {((allFreelancers.length === 0) || 
+    (allFreelancers?.filter((application) => ['PENDING'].includes(application.status)).length === 0)) ? (
+    <>
+      <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No applications found.</Typography>
+    </>
+  ) : (
+    allFreelancers?.filter((application) => ['PENDING'].includes(application.status)).map((freelancer, indx) => (
+      <Box key={indx}>
+        <Box sx={{ padding: { sm: '30px', xs: '18px 16px' } }}>
+          <Box style={{ display: 'flex', flexDirection: 'column' }}>
+            <Box style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+              <Avatar variant="square" sx={{ textTransform: 'uppercase', width: { sm: '200px', xs: '120px' }, height: { sm: '200px', xs: '120px' }, borderRadius: '16px' }}>
+                {freelancer.employee.full_name[0]}
+              </Avatar>
+              <Box style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '100%', height: 'auto' }} key={indx * indx}>
+                <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography sx={{ fontWeight: '700', fontSize: { sm: '28px', xs: '22px' } }}>{freelancer.employee.full_name}</Typography>
+                    <Typography sx={{ fontWeight: '600', fontSize: { sm: '17px', xs: '15px' } }}>{freelancer.employee.role}</Typography>
+                    <Typography sx={{ fontWeight: '600', fontSize: { sm: '17px', xs: '15px' } }}>${freelancer.employee.rate_per_hour}/hr</Typography>
+                  </Box>
+                  <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                    <img
+                      src={require('../assets/dislikeIcon.png')}
+                      alt="Dislike"
+                      style={{ cursor: 'pointer', height: '50px', width: '50px', borderRadius: '50%' }}
+                      onClick={() => handleDislikeClick(freelancer.freelancer_id)}
+                    />
+                    <img
+                      src={require('../assets/likeIcon.png')}
+                      alt="Like"
+                      style={{ cursor: 'pointer', height: '50px', width: '50px', borderRadius: '50%' }}
+                      onClick={() => handleLikeClick(freelancer.freelancer_id)}
+                    />
                   </Box>
                 </Box>
-                <Box sx={{margin:{sm:'13px 0 5px 0',xs:'10px 0 3px 0'}}}>
-                  <ul style={{display:'flex',flexWrap:'wrap',gap:'15px'}}>
-                    {
-                      freelancer.employee.skills.map((skill, index)=><li key={index} style={{fontSize:'16px',padding:"10px 25px",backgroundColor:'#E9E9E9',color:'#000000',borderRadius:'16px',width:'fit-content',fontWeight:'500'}}>{skill}</li>)
-                    }
-                    
-                  </ul>
-                </Box>
-                <Box sx={{marginTop:'15px',display:'flex',gap:'12px'}}>
-                  <Button sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}} onClick={()=>handleAccept(freelancer.id)}>Accept</Button>
-                  <Button sx={{color: '#B27EE3',backgroundColor: 'white',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',boxShadow: '0px 0px 4px 0.5px #00000040',':hover':{color: '#B27EE3',backgroundColor: 'white'}}}>Reject</Button>
-                </Box>
+                <Box>
+                  <Typography sx={{ fontWeight: '500', fontSize: { sm: '17px', xs: '15px' }, color: '#454545' }}>
+                  {/* Your description rendering logic */}
+                </Typography>
               </Box>
+            </Box>
           </Box>
-          {indx !== allFreelancers.length - 1 && <Divider />}
+          <Box sx={{ margin: { sm: '13px 0 5px 0', xs: '10px 0 3px 0' } }}>
+            <ul style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+              {
+                freelancer.employee.skills.map((skill, index) => <li key={index} style={{ fontSize: '16px', padding: "10px 25px", backgroundColor: '#E9E9E9', color: '#000000', borderRadius: '16px', width: 'fit-content', fontWeight: '500' }}>{skill}</li>)
+              }
+
+            </ul>
+          </Box>
+          <Box sx={{ marginTop: '15px', display: 'flex', gap: '12px' }}>
+            <Button sx={{ color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px', padding: '6px 40px', fontSize: '16px', ':hover': { color: 'white', backgroundColor: '#B27EE3' } }} onClick={() => handleAccept(freelancer.id)}>Accept</Button>
+            <Button sx={{ color: '#B27EE3', backgroundColor: 'white', borderRadius: '16px', padding: '6px 40px', fontSize: '16px', boxShadow: '0px 0px 4px 0.5px #00000040', ':hover': { color: '#B27EE3', backgroundColor: 'white' } }} onClick={() => handleReject(freelancer.id)} >Reject</Button>
+          </Box>
         </Box>
-            // <div key={freelancer.id} style={{ marginBottom: '30px', padding: '10px' }}>
-            //   <div style={{ marginBottom: '-15px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-            //   <h3>{freelancer.employee.full_name}</h3>
-            //     <img
-            //       src={require('../assets/dislikeIcon.png')} 
-            //       alt="Dislike"
-            //       style={{ marginLeft: '350px', cursor: 'pointer', height:'50px', width:'50px', borderRadius:'50%' }}
-            //       onClick={() => handleDislikeClick(freelancer.id)}  
-            //     />
-            //     <img
-            //       src={require('../assets/likeIcon.png')}  
-            //       alt="Like"
-            //       style={{ marginLeft: '5px', cursor: 'pointer',height:'50px', width:'50px', borderRadius:'50%' }}
-            //       onClick={() => handleLikeClick(freelancer.id)}  
-            //     />
-            //   </div>
+      </Box>
+      {indx !== allFreelancers.length - 1 && <Divider />}
+    </Box>
+  ))
+)}
 
-            //   <div style={{ marginBottom: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-            //     <p>{freelancer.employee.role}</p>
-            //     {/* Add any other details you want to display */}
-            //   </div>
-
-            //   <div style={{ marginBottom: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-            //     <p>${freelancer.employee.rate_per_hour}/hr</p>
-            //     {/* Add any other details you want to display */}
-            //   </div>
-
-            //   <div style={{ marginBottom: '18px', marginLeft: '30px', display: 'flex', alignItems: 'center' }}>
-            //     {freelancer.employee.skills.map((skill, index) => (
-            //       <div key={index} style={{ backgroundColor: '#E9E9E9', color: 'black', borderRadius: '12px', padding: '5px', marginRight: '5px', height: '25px' }}>
-            //         {skill}
-            //       </div>
-            //     ))}
-            //   </div>
-
-            //   <div style={{display:'flex',flexDirection:'row',gap:'30px'}} >
-            //     <Button style={{ borderRadius: '10px', backgroundColor: '#B27EE3', height: '35px', width: '120px',color:'#fff' }}>Accept</Button>
-            //     <Button style={{ borderRadius: '10px', backgroundColor: 'grey', height: '35px', width: '120px',color:'#000' }}>Reject</Button>
-            //     {/* <p style={{ cursor:'pointer',color: 'white', marginLeft: '20px' }} onClick={()=>handleHire(freelancer.id)}>Hire</p> */}
-            //   </div>
-
-            //   {/* You can customize the display of other details as needed */}
-            //   <hr style={{ color: '#FFFFFF', marginTop: '35px', marginBottom: '-15px' }} />
-            // </div>
-          ))}
         </div>
       </div>
 

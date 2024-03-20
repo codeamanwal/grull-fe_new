@@ -10,6 +10,7 @@ import '../styles/freelancermanagejobs.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import BAPI from '../helper/variable'
+import { useNavigate } from 'react-router-dom';
 const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,companyName,applicantcount }) => {
     const accessToken='Bss8MEl8WatvSk5SlA-YIRAZDiIk2MOkBlpgwOxGrYU';
     const formatDate = (isoDate) => {
@@ -38,9 +39,13 @@ const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,company
         console.error('Error occurred:', error);
     }
    }
+   const navigate=useNavigate()
+   const handleView=(job_id)=>{
+    navigate(`/clientchat`)
+}
   return (
     <React.Fragment>
-      <Box sx={{ backgroundColor: '#fff', padding: '30px', borderRadius: '16px', display: 'flex', flexDirection: 'row' }} className='job'>
+      <Box sx={{ backgroundColor: '#fff', padding: '30px', borderRadius: '16px', display: 'flex', flexDirection: 'row' }} className='job' >
         <Box sx={{ display: 'flex' }}>
           <img className='jobcomplogo'
             style={{ width: '50px', height: '50px' }}
@@ -56,7 +61,7 @@ const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,company
                   <Link style={{ display: status !== 'PENDING' ? 'none' : 'inline', color: '#2F66EC' }} to={`/jobapplications/${id}`}>View {applicantcount} Applicants</Link>
 
                 </Box>
-                {status === 'Ongoing' ? (
+                {status === 'ONGOING' ? (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Slider className='ongoingjobslider' sx={{ color: '#ED8335', height: '8px', width: '300px', marginLeft: '10px', '& .MuiSlider-thumb': { width: '20px', height: '20px' } }} />
                     </Box>
@@ -69,6 +74,9 @@ const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,company
                       <Typography sx={{ backgroundColor:  '#2E81FF' , color: '#FFF', textAlign: 'center', borderRadius: '16px', padding: '8px 0px', width: '120px' }} className='job-action'>{status}</Typography>
                     </Box>
                   )}
+                  {
+                    status==='ONGOING'?(<Button onClick={()=>{handleView(id)}}>Chat Now</Button>):null
+                  }
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center',gap:'30px' }} className='job-opts'>
                 <FaHeart style={{fontSize:'20px',display:status==='Saved'?'block':'none'}} />

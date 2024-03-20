@@ -18,6 +18,9 @@ import ClientManageJobs from '../components/ClientManageJobs';
 import JobApplications from '../components/EmployerjobApplication';
 import Transactions from "../components/Transactions";
 import CommonWallet from "../components/CommonWallet";
+import Clientchat from "../components/ClientChat"
+import Freelancerchat from "../components/Freelancerchat";
+import Loading from "../components/Loading";
 // import Freelancerchat from 
 
 export default function PageRoute() {
@@ -42,8 +45,10 @@ export default function PageRoute() {
             <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
             <Route path="/jobapplications/:jobid" element={<JobApplications />} />
             <Route path="/transactions" element={<Transactions />} />
-            <Route path="/freelancerchat" element ={<Freelancerchat />} />
+            <Route path="/freelancerchat" element ={<Freelancerchat/>} />
             <Route path="/commonwallet" element={<CommonWallet />} /> 
+            <Route path="/clientchat" element={<Clientchat />} />
+            <Route path="/loading" element={<Loading />} />
          </Routes>
        </BrowserRouter>
      )

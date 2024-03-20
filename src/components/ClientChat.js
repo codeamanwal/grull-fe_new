@@ -55,12 +55,19 @@ export default function Clientchat() {
     Math.floor(new Date().getTime() / 1000)
   );
   const [websckt, setWebsckt] = useState();
+  const [clientname,setClientname]=useState('');
+  const [freelancername,setfreelancername]=useState('');
+
+  useEffect(()=>{
+      const user=localStorage.getItem('user');
+      setClientname(JSON.parse(user).first_name)
+  },[])
   useEffect(() => {
     // Generate a unique client ID
     const newClientId = Date.now().toString();
     // setClientId(newClientId);
 
-    const url = `ws://localhost:8000/ws/${newClientId}`;
+    const url = `wss://api.dev.grull.tech/ws/${newClientId}`;
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
@@ -104,6 +111,7 @@ const sendMessageSocket = () => {
 
     } else {
         console.error("WebSocket is not open or not initialized");
+        setReceivedMessage(Math.floor(Math.random() * 1000000));
     }
 };
    
@@ -398,7 +406,7 @@ const sendMessageSocket = () => {
                     {
                         freelancers?.map((chat,indx)=>(
                             <React.Fragment key={indx}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', padding: '22px 20px 13px',alignItems:'center',justifyContent:'space-between',gap:'40px',cursor:'pointer'}} onClick={() => handleChatSelect(JSON.parse(chat).id)}>
+                                <Box sx={{ display: 'flex', flexDirection: 'row', padding: '22px 20px 13px',alignItems:'center',justifyContent:'space-between',gap:'40px',cursor:'pointer'}} onClick={() =>{ handleChatSelect(JSON.parse(chat).id);setfreelancername(JSON.parse(chat).first_name)}}>
                                     <Box sx={{ display: 'flex', flexDirection: 'row',alignItems:'center',gap:'10px'}}>
                                         <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
                                         {JSON.parse(chat).first_name[0]}
@@ -424,12 +432,12 @@ const sendMessageSocket = () => {
                     <div className='chat_Profile_frnd'>
                         <Box>
                             <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
-                                F
+                                {freelancername[0]}
                             </Avatar>
                            {freeLancerOnline ? <div className='chat_Profile_Online'></div> : null}
                         </Box>
                         <div className='chat_Profile_frnd_Name'>
-                            <h3>Freelancer</h3>
+                            <h3>{freelancername}</h3>
                             <p>Online</p>
                         </div>
                         <div className='chat_profile_settings'>
@@ -448,12 +456,12 @@ const sendMessageSocket = () => {
                     <div className='chat-container_client'>
                         <Box>
                             <Avatar sx={{ textTransform: 'uppercase', width: '70px', height: '70px' }}>
-                                C
+                                {clientname[0]}
                             </Avatar>
                             {clientOnline ? <div className='chat_container_client_Online'></div> : null}
                         </Box>
                         <div className='chat-container_client_Name'>
-                            <h3>Client</h3>
+                            <h3>{clientname}</h3>
                             <p>Location</p>
                         </div>
                     </div>

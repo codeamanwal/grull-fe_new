@@ -80,6 +80,7 @@ const BrowseJobs = () => {
         });
   
         if (response.status === 200) {
+          console.log(response.data)
           setJobs(prevJobs => {
             const newJobs = response.data.results.filter(newJob => !prevJobs.some(existingJob => existingJob.id === newJob.id));
             return [...prevJobs, ...newJobs];
@@ -758,7 +759,7 @@ const BrowseJobs = () => {
 
         <div className='browseJobs-right-box'>
             {
-              filteredJobs.map((job,index)=>
+              filteredJobs.filter(job => job.status === 'PENDING').map((job,index)=>
               <>
               <Box sx={{padding:{sm:'30px',xs:'18px 16px'}}} key={index}>
                <Box sx={{display:'flex',flexDirection:'column',gap:{sm:'10px',xs:'8px'}}}>

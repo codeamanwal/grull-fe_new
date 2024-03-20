@@ -9,7 +9,7 @@ import BAPI from '../helper/variable';
 
 const ManageJobs = () => {
   const { section } = useParams();
-  const accessToken = localStorage.getItem('accessTokenFreelancer');
+  const accessToken = localStorage.getItem('accessToken');
   const [selectedSection, setSection] = useState(section || 'applied');
   const navigate=useNavigate();
   const handleButtonClick=(selectedsection)=>{
@@ -39,11 +39,12 @@ const ManageJobs = () => {
         });
 
         if (response.status === 200) {
+          console.log(response.data)
           setApplications(prevApplications => {
             const newApplications = response.data.results.filter(newApp => !prevApplications.some(existingApp => existingApp.id === newApp.id));
             return [...prevApplications, ...newApplications];
           });
-
+            console.log(applications)
           if (response.data.next) {
             await getApplications(page + 1);
           }
@@ -86,105 +87,6 @@ const ManageJobs = () => {
     }
   };
   
-
-// const jobData = [
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Started on Tue',
-//     status: 'Selected'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Started on Tue',
-//     status: 'In Progress'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Started on Tue',
-//     status: 'Rejected'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Saved on Tue',
-//     status: 'Completed'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Saved on Tue',
-//     status: 'Completed'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Saved on Tue',
-//     status: 'Completed'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Started on Tue',
-//     status: 'Ongoing'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Started on Tue',
-//     status: 'Ongoing'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Started on Tue',
-//     status: 'Ongoing'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Saved on Tue',
-//     status: 'Saved'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Saved on Tue',
-//     status: 'Saved'
-//   },
-//   {
-//     position: 'UI/UX Designer',
-//     companyName: 'Elula Tech Pvt Ltd',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     location: 'Bengaluru, Karnataka',
-//     startDate: 'Saved on Tue',
-//     status: 'Saved'
-//   },
-// ];
   return (
     <Box sx={{padding:'50px 90px'}} className='managejobs-page'>
          <Box>
@@ -212,7 +114,9 @@ const ManageJobs = () => {
                         <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/freelancerprofile'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData
+                    {jobData.filter((job) => ['PENDING'].includes(job.status)).length === 0 ? (
+                        <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No Applied jobs found.</Typography>
+                      ) : (jobData
                           .filter((job) => ['PENDING'].includes(job.status))
                           .map((job, index) => (
                             <Job
@@ -224,8 +128,9 @@ const ManageJobs = () => {
                               startDate={job.applied_on}
                               isLast={index === jobData.length - 1}
                               status={job.status}
+                              job_id={job.id}
                             />
-                          ))}
+                          )))}
                     </Box>
                   </Box>
                )
@@ -263,8 +168,8 @@ const ManageJobs = () => {
                         <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/freelancerprofile'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {/* {jobData
-                      .filter((job) => ['Ongoing'].includes(job.status))
+                    {jobData
+                      .filter((job) => ['ONGOING'].includes(job.status))
                       .map((job, index) => (
                         <Job
                           key={index}
@@ -275,9 +180,10 @@ const ManageJobs = () => {
                           startDate={job.startDate}
                           isLast={index === jobData.length - 1}
                           status={job.status}
+                          job_id={job.id}
                         />
                       ))}
-                       */}
+                      
                     </Box>
                   </Box>
                )

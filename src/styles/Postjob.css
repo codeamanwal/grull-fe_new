@@ -1,0 +1,209 @@
+.input-form{
+    /* margin-left: 80px; */
+    width: 60%;
+    padding: 90px 0 40px 90px;
+}
+.jobposting-form{
+    display: flex;
+    flex-direction: column;
+    gap:30px
+}
+.jobposting-form h2{
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+.jobposting-form h4{
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+.form-val{
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    color: #000000B2;
+    font-weight: 400;
+    padding: 15px 22px;
+    border: none;
+    font-size: 18px;
+    width: 100%;
+    resize: none;
+    outline: none;
+    overflow: hidden;
+}
+.form-val-two{
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    color: #000000B2;
+    font-weight: 400;
+    padding: 8px 17px;
+    border: none;
+    font-size: 18px;
+    width: 100%;
+}
+.form-val-three{
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    color: #000000B2;
+    font-weight: 400;
+    padding: 8px 17px;
+    border: none;
+    font-size: 18px;
+    width: 250px;
+}
+.form-val-4{
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    color: #000000B2;
+    font-weight: 400;
+    padding: 8px 17px;
+    border: none;
+    font-size: 18px;
+    width: 140px;
+}
+.form-val-5{
+    border-radius: 16px;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    color: #000000B2;
+    font-weight: 400;
+    padding: 15px 17px;
+    border: none;
+    font-size: 18px;
+    width: 140px;
+    text-align: center;
+}
+.custom-checkbox{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+.custom-checkbox .form-check-input {
+   width: 30px !important;
+   height: 30px !important;
+   border: none !important;
+   box-shadow: 0px 0px 4px 0px #00000040;
+   border-radius: 16px;
+   outline: none;
+}
+
+.butcont-jobpost{
+    margin-top:30px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+.save-button{
+    width: 200px;
+    height:40px;
+    border-radius: 16px;
+    color: white;
+    background-color: #b27ee3;
+    border: none;
+}
+
+.cancel-button{
+    width: 200px;
+    height:40px;
+    border-radius: 16px;
+    background-color: white;
+    color: #b27ee3;
+    border: 1px solid #b27ee3;
+}
+
+.container {
+    display: inline-block;
+    width:120px;
+ }
+ .button {
+    padding: 0;
+    width: 100px;
+    border: 0;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    outline: 0;
+    font-size: 20px;
+ }
+
+ ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+   }
+   li {
+    padding: 8px 12px;
+   }
+   
+   li:hover {
+    background-color: rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+   }
+
+   @media only screen and (max-width:1000px){
+    .input-form{
+        /* margin-left: 80px; */
+        width:100%;
+        padding: 60px 60px;
+    }
+   }
+   @media only screen and (max-width:650px){
+    .input-form{
+        padding: 40px 30px;
+    }
+    .jobposting-form{
+        gap:25px
+    }
+    .jobposting-form h2{
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .jobposting-form h4{
+        font-size: 16px;
+    }
+    .form-val{
+        width: 80%;
+        padding: 11px 20px;
+        font-size: 16px;
+    }
+    .form-val-two{
+        width:80%;
+        padding: 2px 12px;
+        font-size: 16px;
+    }
+    .form-val-three{
+        width: 140px;
+        padding: 2px 12px;
+        font-size: 16px;
+    }
+    .form-val-4{
+        width: 120px;
+        padding: 2px 12px;
+        font-size: 16px;
+    }
+    .form-val-5{
+        width: 100px;
+        padding: 11px 12px;
+        font-size: 16px;
+    }
+    .custom-checkbox .form-check-input {
+       width: 15px !important;
+       height: 15px !important;
+       border: none !important;
+       box-shadow: 0px 0px 4px 0px #00000040;
+       border-radius: 16px;
+       outline: none;
+    }
+    .custom-checkbox .form-check-label{
+        font-size: 12px;
+    }
+    .loc-form{
+        gap:15px !important;
+    }
+    .bud-form{
+        gap: 10px !important;
+    }
+    .jobdesc{
+        width: 100% !important;
+    }
+   }

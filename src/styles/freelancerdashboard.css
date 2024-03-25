@@ -1,0 +1,86 @@
+@media only screen and (min-width:600px){
+   .css-jb026w-MuiToolbar-root{
+      padding-left: 0px !important; 
+      padding-right: 0px !important;
+   }
+}
+
+@media only screen and (max-width:1350px){
+   .dashboard-drawer{
+    padding:0 25px 0 65px !important;
+   }
+   .dashboard-navbar-buttons{
+    gap:30px !important;
+   }
+}
+@media only screen and (max-width:1230px){
+    .dashboard-navbar-buttons{
+     gap:20px !important;
+    }
+ }
+ @media only screen and (max-width:1150px){
+    .dashboard-drawer{
+        padding:10px 30px!important;
+       }
+    .dashboard-navbar{
+     padding: 0 10px 0 20px !important;
+    }
+    .dashboard-navbar-con{
+      padding:0 30px 0 30px !important
+   }
+ }
+ @media only screen and (max-width:900px){
+   .resdash{
+      display: none !important;
+   }
+   .dashboardavatar{
+     display: none !important;
+   }
+   .dashboard-navbar-con {
+      padding:0 10px 0 10px !important
+   }
+ }
+ @media only screen and (max-width:700px){
+   .dashboard-navbar-con p{
+      font-size: 34px !important;
+   }
+   .dashboard-navbar-con button{
+      font-size: 15px !important;
+   }
+ }
+ @media only screen and (max-width:600px){
+   .dashboard-navbar{
+     height: 95px!important;
+     justify-content: left !important;
+     gap:5px !important
+   }
+   .dashboard-navbar-con{
+      flex-direction: column !important;
+      align-items: start !important;
+      padding: 0 !important;
+     /* padding-top: 10px !important; */
+   }
+   .dashboard-navbar-con p{
+      font-size: 24px !important;
+      /* text-align: left !important; */
+      line-height: 43px !important;
+   }
+   .dashboard-navbar-con button{
+      font-size: 13px !important;
+      width: 128px !important;
+      padding: 0 !important;
+      height: 35px !important;
+   }
+   .dashboard-navbar-buttons{
+      gap:10px !important; 
+   }
+
+ }
+ @media only screen and (max-width:600px){
+    .css-k008qs{
+     display: block !important;
+    }
+    .dashboard-buts{
+      width: 20px !important ;
+    }
+ }

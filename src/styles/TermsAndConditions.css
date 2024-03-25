@@ -1,0 +1,69 @@
+/* terms.css */
+.body {
+  padding: 20px;
+}
+.text-black {
+    color: black;
+  }
+
+  .text-white{
+    color: white;
+  }
+  
+  .ms-20 {
+    margin-left: 20px;
+  }
+  
+  .me-20 {
+    margin-right: 20px;
+  }
+  
+  .mb-40 {
+    margin-bottom: 40px;
+  }
+  
+  .mt-10 {
+    margin-top: 10px;
+  }
+  
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .text-3xl {
+    font-size: 1.875rem; /* Equivalent to Tailwind's text-3xl */
+  }
+  
+  .font-bold {
+    font-weight: bold;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem; /* Equivalent to Tailwind's mb-4 */
+  }
+  
+  .text-xl {
+    font-size: 1.25rem; /* Equivalent to Tailwind's text-xl */
+  }
+  
+  .list-disc {
+    list-style-type: disc;
+  }
+  
+  .pl-5 {
+    padding-left: 1.25rem;
+  }
+  
+  .mb-8 {
+    margin-bottom: 2rem; /* Equivalent to Tailwind's mb-8 */
+  }
+  
+  a {
+    color: white; /* Customize link color */
+  }
+  
+  a:hover {
+    text-decoration: underline; /* Add underline on hover */
+  }
+  

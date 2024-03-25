@@ -1,0 +1,206 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat_Profile_frnd {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding:11px 30px;
+}
+
+.chat_Profile_Online {
+    width: 10px;
+    height: 10px;
+    background-color: #03a600;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    left: 28px;
+    display: none;
+}
+
+.chat_Profile_frnd_Name {
+    display: flex;
+    flex-direction: column;
+    margin-left: 13px;
+    align-items: flex-start;
+}
+
+.chat_Profile_frnd_Name h3{
+    font-size: 20px;
+    font-weight: 600;
+}
+.chat_Profile_frnd_Name p{
+    font-size: 17px;
+    font-weight: 500;
+    color:#454545;
+}
+
+.chat_profile_settings {
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+}
+
+.chat_profile_settings i {
+    font-size: 25px;
+    margin: 0 20px;
+    cursor: pointer;
+}
+
+.chat-container_client {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 15px 30px;
+}
+
+.chat_container_client_Online {
+    width: 15px;
+    height: 15px;
+    background-color: #03a600;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    display: none;
+}
+
+.chat-container_client_Name {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 15px;
+    height: 100%;
+}
+
+.chat-container_chat_msg_scroll {
+    width: 100%;
+    box-sizing: border-box;
+}
+.chat_Container_Textarea {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+    margin: 12px auto;
+}
+
+.chat_Container_Textarea i {
+    font-size: 25px;
+    margin: 10px 20px;
+    cursor: pointer;
+}
+
+.Textarea_chat {
+    width: 100%;
+    resize: none;
+    outline: none;
+    overflow: hidden;
+    border: none;
+    font-size: 18px;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0px 0px 4px 1px #00000040;
+}
+
+.chat_Profile_send {
+    display: flex;
+    flex-direction: row;
+    padding: 30px 20px 15px;
+    margin: auto;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.chat_Profile_send i {
+    font-size: 20px;
+    margin: 0 20px;
+    cursor: pointer;
+}
+
+.chat_Profile_send1 ,.chat_Profile_send_div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chat_Profile_send_div button{
+    background-color: #b27ee3;
+    font-size: 17px;
+    border-radius: 16px;
+    color: white;
+    padding: 5px 20px;
+    margin: 0;
+}
+.chat_Profile_send_div button:hover{
+    background-color: #b27ee3;
+    color: white;
+}
+/* Chat component CSS */
+
+.chat-container_chat_date {
+    width: 100%;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    padding:15px 0;
+}
+
+.message-send {
+    flex-direction: row-reverse !important;
+}
+
+.message-receive {
+    margin-right: auto !important;
+}
+
+@media screen and (max-width: 600px) {
+    .chat-container {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .chat_Profile_frnd_Img {
+        height: 30px;
+        width: 30px;
+        margin-left: 5px;
+    }
+
+    .chat_profile_settings i {
+        font-size: 20px;
+        margin: 0 15px;
+    }
+
+    .chat_Profile_frnd_Name h3 {
+        font-size: 16px;
+    }
+
+    .chat_Profile_frnd_Name p {
+        font-size: 13px;
+    }
+
+    .chat-container_client_Img {
+        height: 50px;
+        width: 50px;
+        margin-left: 5px;
+    }
+    .chat_Profile_Online {
+        bottom: 5px;
+        left: 27px;
+    }
+    .chat_container_client_Online {
+        bottom: 10px;
+        left: 40px;
+    }
+    .chat_Container_Textarea i {
+        font-size: 20px;
+        margin: 5px 10px;
+        cursor: pointer;
+    }
+}

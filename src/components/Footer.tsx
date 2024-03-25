@@ -42,11 +42,12 @@ function Footer() {
           />
           <Box sx={{ width: { xs: "100%", md: "60%" }, margin: "24px 0" }}>
             <Typography variant="font_16_600">
-              1st floor, Appek Building, 20/A,7th A Cross Rd, 10th Block,
-              Koramangala, Bengaluru,
+            #423 A 9th main 1st cross - 
+            Iti layout main road , Bangalore
             </Typography>
-            <Typography variant="font_16_600" sx={{ margin: "12px 0" }}>
-              Karnataka 560095
+            <Typography variant="font_16_600">
+            BENGALURU, KARNATAKA 560068
+             India
             </Typography>
             <Typography variant="font_16_600" sx={{ margin: "12px 0" }}>
               contact@grull.work

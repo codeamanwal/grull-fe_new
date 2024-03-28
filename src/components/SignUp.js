@@ -88,9 +88,9 @@ const SignUp = () => {
             <div className='outer-most'>
                 <div className='content'>
                 <h2>Complete Your Grull profile</h2>
-                    <div>
+                    {/* <div>
                         <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
-                    </div>
+                    </div> */}
                     <div>
                         <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
                     </div>

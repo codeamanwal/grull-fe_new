@@ -67,7 +67,7 @@ export default function Clientchat() {
     const newClientId = Date.now().toString();
     // setClientId(newClientId);
 
-    const url = `wss://api.dev.grull.tech/ws/${newClientId}`;
+    const url = `wss://api.grull.tech/ws/${newClientId}`;
     const ws = new WebSocket(url);
 
     ws.onopen = () => {

@@ -7,11 +7,12 @@ import instaIcon from "../assets/instaIcon.svg";
 import { footerLinks } from "../helper/constant";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 import {Link} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 function Footer() {
   const { dustyOrange } = shades;
   const scrollToSection = useScrollToContactUsHook()
-
+  const navigate=useNavigate()
 
   return (
     <Grid
@@ -144,7 +145,7 @@ function Footer() {
               margin: { xs: "24px 0", md: "56px 0 0 0" },
               cursor:'pointer'
             }}
-            onClick={scrollToSection}
+            onClick={()=>navigate('/home')}
           >
             Hire a Designer
           </Box>

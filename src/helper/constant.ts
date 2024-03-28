@@ -270,22 +270,22 @@ export const footerLinks = {
       link: "/cancellation-policies",
       text: "Cancellation Policy",
     },
-    {
-      link: "",
-      text: "Fraud Disclaimer",
-    },
+    // {
+    //   link: "",
+    //   text: "Fraud Disclaimer",
+    // },
   ],
   PRODUCTS: [
     {
-      link: "",
+      link: "/coming-soon",
       text: "Academy",
     },
     {
-      link: "",
+      link: "/home",
       text: "Marketplace",
     },
     {
-      link: "",
+      link: "/coming-soon",
       text: "Community",
     },
   ],
@@ -294,33 +294,33 @@ export const footerLinks = {
       link: "/about-us",
       text: "About Us",
     },
-    {
-      link: "",
-      text: "Press",
-    },
-    {
-      link: "",
-      text: "Blogs",
-    },
-    {
-      link: "",
-      text: "Careers",
-    },
+    // {
+    //   link: "/",
+    //   text: "Press",
+    // },
+    // {
+    //   link: "/",
+    //   text: "Blogs",
+    // },
+    // {
+    //   link: "/",
+    //   text: "Careers",
+    // },
   ],
-  RESOURCES: [
-    {
-      link: "",
-      text: "Support",
-    },
-    {
-      link: "",
-      text: "FAQs",
-    },
-    {
-      link: "",
-      text: "Raise a query",
-    },
-  ],
+  // RESOURCES: [
+  //   {
+  //     link: "/",
+  //     text: "Support",
+  //   },
+  //   {
+  //     link: "/",
+  //     text: "FAQs",
+  //   },
+  //   {
+  //     link: "/",
+  //     text: "Raise a query",
+  //   },
+  // ],
 };
 
 export const section4Cards = [

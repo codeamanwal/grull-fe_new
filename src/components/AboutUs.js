@@ -31,7 +31,11 @@ function AboutUs() {
         <section>
           <br />
           <br />
-          <h3>Grull is a design-centric freelancing platform with a deep commitment to quality. Unlike generic competitors, we foster a community where designers thrive, continuously upskill through Grull Academy, and build long-lasting client relationships. Our AI-driven matchmaking ensures the right fit for projects and cultures. With a zero-commission model, we prioritize designers’ earnings. Robust conflict resolution mechanisms and a localized-global approach provide support and accessibility. We prioritize sustainable growth, offering a seamless user experience. Grull addresses the holistic needs of the freelance design industry, making it stand out in a competitive landscape.</h3>
+          <h3>Grull is a design-centric freelancing platform with a deep commitment to quality.
+             Unlike generic competitors, we foster a community where designers thrive, continuously upskill through Grull Academy, and build long-lasting client relationships. Our AI-driven matchmaking ensures the right fit for projects and cultures. With a zero-commission model, we prioritize designers’ earnings.
+             Robust conflict resolution mechanisms and a localized-global approach provide support and accessibility.
+             We prioritize sustainable growth, offering a seamless user experience. Grull addresses the holistic needs of the freelance design industry, making it stand out in a competitive landscape.
+             Grull is registered at #423 A 9th main 1st cross -  Iti layout main road , Bangalore BENGALURU, KARNATAKA 560068 India and operating at GARUDA-BHIVE / oneHash BMTC Complex, BTM Layout Kuvempu Nagar, Stage 2, Bengaluru - 560068.</h3>
         </section>
       </main>
  

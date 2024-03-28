@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Signup.css';
@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import BAPI from '../helper/variable';
 
 const Login = () => {
+  const { REACT_APP_GOOGLE_CLIENT_ID, REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT } = process.env
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -20,6 +21,28 @@ const Login = () => {
     const handleSignupClick = () => {
         navigate('/');
     };
+
+    const openGoogleLoginPage = useCallback(() => {
+      const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+      
+      const scope = [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+      ].join(" ");
+  
+      const params = new URLSearchParams({
+        response_type: "code",
+        client_id: REACT_APP_GOOGLE_CLIENT_ID,
+        redirect_uri: `${REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT}/google`,
+        prompt: "select_account",
+        access_type: "offline",
+        scope,
+      });
+  
+      const url = `${googleAuthUrl}?${params}`;
+      console.log("googleauth url is : ", url);
+      window.location.href = url;
+    }, []);
 
     const handleLoginClick = async () => {
       try {
@@ -79,11 +102,11 @@ const Login = () => {
       <div className='outer-most'>
           <div className='content'>
           <h2>Login to your Grull profile</h2>
-              <div>
+              {/* <div>
                   <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
-              </div>
+              </div> */}
               <div>
-                  <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
+                  <Button className='google-button' onClick={openGoogleLoginPage} startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
               </div>
 
 

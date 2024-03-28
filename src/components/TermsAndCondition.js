@@ -9,7 +9,7 @@ export default function TermsAndCondition() {
   return (
     <Grid
     sx={{
-      height:"100vh",
+      height:"100%",
       width: "100%",
       background: dustyOrange,
       padding: { xs: "36px 24px", md: "50px 32px 32px 32px" },
@@ -22,7 +22,7 @@ export default function TermsAndCondition() {
         <h1 className="text-3xl font-bold mb-4">Terms and Conditions for Grull.work</h1>
 
         <p>{`Last Updated: 21-02-2024`}</p>
-        <p className="mb-8">{`Welcome to Grull.work, a service provided by Grull Technologies ("Company", "we", "us", or "our"), located at Sanjay Gupta 22-A, Asaf Ali Road , Delhi - 110002. These Terms and Conditions ("Terms") govern your use of the Grull.work website and its associated services (collectively, the "Service").`}</p>
+        <p className="mb-8">{`Welcome to Grull.work, a service provided by Grull Technologies ("Company", "we", "us", or "our"), registered at #423 A 9th main 1st cross -  Iti layout main road , Bangalore BENGALURU, KARNATAKA 560068 India and operating at GARUDA-BHIVE / oneHash BMTC Complex, BTM Layout Kuvempu Nagar, Stage 2, Bengaluru - 560068 . These Terms and Conditions ("Terms") govern your use of the Grull.work website and its associated services (collectively, the "Service").`}</p>
 
         <h2 className="text-xl font-bold mb-4">Acceptance of Terms</h2>
             <p className="mb-8">{`By accessing or using our Service, you confirm that you have read, understood, and agree to be bound by these Terms, including any additional terms and conditions and policies referenced herein. If you do not agree to these Terms, you are not authorized to use the Service.`}</p>

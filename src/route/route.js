@@ -27,9 +27,24 @@ import Policies from "../components/Policies"
 import CancellationPolicy from '../components/CancellationPolicy.js'
 import ComingSoon from "../comingSoonPage/ComingSoon.tsx";
 import AboutUs from "../components/AboutUs.js";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import GoogleAuth from "../components/GoogleAuth.js";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 export default function PageRoute() {
      return (
        <BrowserRouter>
+       <ScrollToTop /> 
          <Routes>
             <Route path="/" element={<App />} />
             <Route path="/home" element={<Start />} />
@@ -58,6 +73,7 @@ export default function PageRoute() {
             <Route path='/cancellation-policies' element={<CancellationPolicy/>}/>
             <Route path='/coming-soon' element={<ComingSoon/>}/>
             <Route path='/about-us' element={<AboutUs/>}/>
+            <Route path="/google" element={<GoogleAuth />} />
          </Routes>
  
        </BrowserRouter>

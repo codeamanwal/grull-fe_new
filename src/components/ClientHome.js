@@ -29,10 +29,24 @@ export default function ClientHome() {
     const clickpostjobs =()=>{
       navigate('/postjob')
     }
+    const [firstname,setFirstname]=useState('');
+    const [walletbalance,setwalletbalance]=useState('')
+    useEffect(()=>{
+        const infofetch=()=>{
+        const user=localStorage.getItem('user');
+        if(!user){
+          navigate("/")
+        }
+        setFirstname(JSON.parse(user).first_name);
+        setwalletbalance(JSON.parse(user).wallet_balance
+        )
+        }
+        infofetch();
+   },[])
   return (
-    <Box sx={{padding:'70px 90px'}} className='home-container'>
+    <Box sx={{padding:'90px 90px 70px'}} className='home-container'>
        <Box>
-         <Typography sx={{fontSize:'32px',fontWeight:'600',letterSpacing:'-1px'}} className='home-heading'>Welcome, Astle</Typography>
+         <Typography sx={{fontSize:'32px',fontWeight:'600',letterSpacing:'-1px'}} className='home-heading'>Welcome, {firstname}</Typography>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px'}} className='home-container-grid'>
             <Box sx={{ backgroundColor: '#B27EE31A', padding: '25px 30px',borderRadius:'16px',display:'flex',flexDirection:'column',gap:'7px' }}>
                 <Typography sx={{color:"#000",fontSize:'22px'}} className='home-subheading'>Post your next job</Typography>
@@ -47,7 +61,7 @@ export default function ClientHome() {
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
             <Box sx={{ backgroundColor: '#B27EE31A', padding: '25px 30px',borderRadius:'16px',display:'flex',flexDirection:'column',gap:'7px',alignItems:'center' }}>
                 <Box sx={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-                   <Typography sx={{color:"#000",fontSize:'25px',fontWeight:'800',}} className='home-subheading'>₹8415.00</Typography>
+                   <Typography sx={{color:"#000",fontSize:'25px',fontWeight:'800',}} className='home-subheading'>₹{walletbalance}</Typography>
                    <Link style={{color:'#B27EE3',marginLeft:'10px'}}>Hide Balance</Link>
                 </Box>
                 <Typography sx={{color:"#656565",fontSize:'20px'}} className='home-subheading'>Current Balance</Typography>
@@ -62,7 +76,8 @@ export default function ClientHome() {
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/clientmanagejobs/ongoing'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
-            <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
+            No Ongoing Jobs yet
+            {/* <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
                 <Box sx={{display:'flex',alignItems:'center'}}>
                     <img style={{width:'50px',height:'50px'}} alt="elula"
                     src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
@@ -111,7 +126,7 @@ export default function ClientHome() {
                                 height: '22px' },}}/>
                     </Box>
                 </Box>
-            </Box>
+            </Box> */}
          </Grid>
        </Box>
 
@@ -121,7 +136,8 @@ export default function ClientHome() {
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/clientmanagejobs/completed'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
-            <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
+              No Completed Jobs yet.
+            {/* <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
                 <Box sx={{display:'flex',alignItems:'center'}}>
                     <img style={{width:'50px',height:'50px'}} alt="elula"
                     src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
@@ -144,7 +160,7 @@ export default function ClientHome() {
                     <Typography sx={{color:"#656565",fontSize:'17px'}} className='home-content'>Bengaluru, Karnataka</Typography>
                     <Typography sx={{color:"#656565",fontSize:'15px'}} className='home-content'>Completed on Tue</Typography>
                 </Box>
-            </Box>
+            </Box> */}
          </Grid>
        </Box>
     </Box>

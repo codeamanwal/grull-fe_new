@@ -19,16 +19,16 @@ export default function TermsAndCondition() {
     <div className='body'>
          <div className="text-black">
       <div className="ms-20 me-20 mb-40 mt-10 mx-auto">
-        <h1 className="text-3xl font-bold mb-4">Terms and Conditions for Grull.work</h1>
+        <h1 className="text-3xl font-bold mb-4">Terms and Conditions for Grull Technologies Pvt Ltd</h1>
 
         <p>{`Last Updated: 21-02-2024`}</p>
-        <p className="mb-8">{`Welcome to Grull.work, a service provided by Grull Technologies ("Company", "we", "us", or "our"), registered at #423 A 9th main 1st cross -  Iti layout main road , Bangalore BENGALURU, KARNATAKA 560068 India and operating at GARUDA-BHIVE / oneHash BMTC Complex, BTM Layout Kuvempu Nagar, Stage 2, Bengaluru - 560068 . These Terms and Conditions ("Terms") govern your use of the Grull.work website and its associated services (collectively, the "Service").`}</p>
+        <p className="mb-8">{`Welcome to Grull Technologies Pvt Ltd, a service provided by Grull Technologies ("Company", "we", "us", or "our"), registered at PROP- SANJAY GUPTA 22-A ASAF ALI ROAD DELHI 110002 and operating at #423 A 9th main 1st cross -  Iti layout main road , Bangalore BENGALURU, KARNATAKA 560068 India. These Terms and Conditions ("Terms") govern your use of the Grull Technologies Pvt Ltd website and its associated services (collectively, the "Service").`}</p>
 
         <h2 className="text-xl font-bold mb-4">Acceptance of Terms</h2>
             <p className="mb-8">{`By accessing or using our Service, you confirm that you have read, understood, and agree to be bound by these Terms, including any additional terms and conditions and policies referenced herein. If you do not agree to these Terms, you are not authorized to use the Service.`}</p>
         
         <h2 className="text-xl font-bold mb-4">Service Description</h2>
-        <p className="mb-8">{`Grull.work offers an AI-powered tool that summarizes email content, providing users with concise updates. The Service is subject to scheduled maintenance, updates, and enhancements, all aimed at improving user experience.`}</p>
+        <p className="mb-8">{`Grull Technologies Pvt Ltd offers an AI-powered tool that summarizes email content, providing users with concise updates. The Service is subject to scheduled maintenance, updates, and enhancements, all aimed at improving user experience.`}</p>
 
         <h2 className="text-xl font-bold mb-4">User Accounts</h2>
         <p className="mb-8">{`To access certain features of the Service, you may be required to create an account. You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete.`}</p>

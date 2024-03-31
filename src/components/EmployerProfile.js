@@ -19,15 +19,6 @@ const Employerprofile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const avatarBackgroundColor = 'Grey'; 
-    const getInitials = (name) => {
-        // Check if name is defined before splitting
-        if (name) {
-          const names = name.split(' ');
-          return names[0][0].toUpperCase();
-        } else {
-          return ''; // Handle the case where name is undefined
-        }
-      };
     const handlePostJobClick = () => {
         navigate('/postjob');
     }
@@ -137,7 +128,11 @@ const Employerprofile = () => {
     
               setSavedName(full_name);
               setSavedJobCategory(role);
-              setSavedLocation(location.country);
+              if(location){
+              setSavedLocation(location?.country);}
+              else{
+                setSavedLocation('Location Here')
+              }
               setJobsPostedCount(jobs_posted_count);
               setAvgRateOffered(average_rate_offered);
               setInputAboutValue(description);
@@ -373,7 +368,7 @@ const Employerprofile = () => {
                                             alt={savedName}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
-                                            {getInitials(savedName)}
+                                            {savedName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
                                             <label htmlFor="fileInput" className='camera-icon-label'>
                                                 <CiCamera className='camera-icon' />
@@ -588,6 +583,7 @@ const Employerprofile = () => {
                 </div>
                 <div className='review-box'>
                     <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
+                    <p style={{marginTop:'10px'}}>You have no reviews yet.</p>
                 </div>
             </div>
 

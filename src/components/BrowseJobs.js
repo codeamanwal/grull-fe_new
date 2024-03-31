@@ -206,7 +206,6 @@ const BrowseJobs = () => {
       {/* div 1 for header */}
       <Header3 />
 
-
       {/* div 2 for box and browse, search bar */}
       <div className='rectangle'></div>
       <div className='search-bar'>
@@ -789,7 +788,7 @@ const BrowseJobs = () => {
                 </Box>
                </Box>
              </Box>
-             {index !== jobs.length - 1 && <Divider />}
+             {(index !== jobs.length - 1 || filteredJobs.filter(job => job.status === 'PENDING').length===1 ) && <Divider />}
               </>)
             }
              

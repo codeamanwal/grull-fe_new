@@ -20,7 +20,7 @@ const SignUp = () => {
     const { userType } = useParams();
 
     const handleCreateAccountClick = async () => {
-        if (isReceiveEmailsChecked && isAgreeToTermsChecked) {
+        if (isAgreeToTermsChecked) {
         const firstName = document.querySelector('[name="First_name"]').value;
         const lastName = document.querySelector('[name="Last_name"]').value;
         const email = document.querySelector('[name="email"]').value;
@@ -45,7 +45,6 @@ const SignUp = () => {
             last_name: lastName,
             list_as_freelancer:userType==='freelancer'
           };
-        console.log(registrationData)
         try {
             const response = await fetch(`${BAPI}/api/v0/auth/register`, {
                 method: 'POST',
@@ -56,6 +55,7 @@ const SignUp = () => {
             });
             console.log(response)
             if (response.status === 201) {
+                alert('User registered Successfully!')
                 navigate('/login');
             } else if (response.status === 400) {
                 alert('REGISTER USER ALREADY EXISTS');
@@ -66,7 +66,7 @@ const SignUp = () => {
             console.error('Error during registration:', error);
         }
     } else {
-        alert('Please Tick the Checkboxes')    
+        alert('Please agree to the terms to proceed.')    
     }
     };
 
@@ -79,7 +79,7 @@ const SignUp = () => {
     return (
         <div>
             <div className='headerStyle'>
-        <img src={grullLogo} alt="Grull" className='header-logo'/>
+        <img src={grullLogo} alt="Grull" className='header-logo' onClick={()=>navigate('/')} style={{cursor:'pointer'}} />
             </div>
             <div>
             <div className='res-content'>
@@ -91,7 +91,7 @@ const SignUp = () => {
                     {/* <div>
                         <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
                     </div> */}
-                    <div>
+                    {/* <div>
                         <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
                     </div>
 
@@ -100,10 +100,10 @@ const SignUp = () => {
                         <hr className='hr-line' />
                         <h3 style={{ color: '#a3a3a3', fontWeight: 'normal', margin: '0 10px' }}>OR</h3>
                         <hr className='hr-line' />
-                    </div>
+                    </div> */}
 
                     <Form>
-                        <div style={{ display: 'flex', gap: '15px',justifyContent:'space-between' }} >
+                        <div style={{ display: 'flex', gap: '15px',justifyContent:'space-between',marginTop:'60px' }} >
                             <Form.Group className='form-group' controlId="formBasicFirstName" style={{display:'flex',flex:1}}>
                                 <Form.Control className='form-vals' type="text" name='First_name' placeholder="First Name" />
                             </Form.Group>

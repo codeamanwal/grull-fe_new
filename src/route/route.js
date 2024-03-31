@@ -51,7 +51,7 @@ export default function PageRoute() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup/:userType" element={<SignUp />} />
             <Route path="/freelancerprofile" element={<FreelancerProfile/>}/>
-            <Route path="/employerprofile" element={<EmployerProfile/>}/>
+            <Route path="/clientprofile" element={<EmployerProfile/>}/>
             <Route path="/postjob" element={<PostJob/>}/>
             <Route path="/applyproposal/:jobid" element={<ApplyProposal/>}/>
             <Route path="/browsefreelancer" element={<BrowseFreelancer/>}/>

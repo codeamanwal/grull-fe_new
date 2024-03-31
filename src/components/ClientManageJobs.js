@@ -7,6 +7,8 @@ import ClientJob from './ClientJob';
 import axios from 'axios';
 import Header3 from './Header3';
 import BAPI from '../helper/variable'
+import Header4 from './Header4';
+import { NavLink } from 'react-router-dom';
 const ClientManageJobs = () => {
   const { section } = useParams();
   const [selectedSection, setSection] = useState(section || 'applied');
@@ -44,74 +46,10 @@ const ClientManageJobs = () => {
     }
     getjobs();
  },[])
-// const jobData = [
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Posted',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Posted',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Posted',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Completed',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Completed',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Completed',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Ongoing',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Ongoing',
-//     applicantcount:1
-//   },
-//   {
-//     workdesc: 'UI/UX Designer',
-//     companyLogoUrl: 'https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0',
-//     postedDate: '9/5/2023',
-//     status: 'Ongoing',
-//     applicantcount:1
-//   },
-// ];
+
   return (
     <Box>
-      <Header3 />
+      <Header4 />
 <Box sx={{padding:'50px 90px'}} className='managejobs-page'>
          <Box>
            <Typography sx={{fontSize: '32px', fontWeight: 700, lineHeight: '38px', letterSpacing: '-1px',textAlign: 'left',  }} className='managejobs-title'>
@@ -133,7 +71,7 @@ const ClientManageJobs = () => {
                   <Box>
                     <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}} className='jobs-category'>Posted Jobs</Typography>
-                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/employerprofile'>Manage Profile</Link>
+                        <Link  to='/clientprofile' component={NavLink} style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
                     {jobData.filter((job) => ['PENDING'].includes(job.status)).length === 0 ? (
@@ -147,9 +85,10 @@ const ClientManageJobs = () => {
                             id={job.id}
                             title={job.title}
                             companyLogoUrl={job.companyLogoUrl}
+                            companyName={job.company_name}
                             postedDate={job.created_at}
                             isLast={index === jobData.length - 1}
-                            applicantcount={job.job_applicants_count}
+                            applicantcount={job.applicants}
                             status={job.status}
                           />
                           ))
@@ -162,7 +101,7 @@ const ClientManageJobs = () => {
                   <Box>
                     <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography className='jobs-category' sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}}>Completed Jobs</Typography>
-                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/employerprofile'>Manage Profile</Link>
+                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/clientprofile'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
                     {jobData.filter((job) => ['Completed'].includes(job.status)).length === 0 ? (
@@ -172,14 +111,15 @@ const ClientManageJobs = () => {
                           .filter((job) => ['Completed'].includes(job.status))
                           .map((job, index) => (
                             <ClientJob
-                              key={index}
-                              id={job.id}
-                              workdesc={job.workdesc}
-                              companyLogoUrl={job.companyLogoUrl}
-                              postedDate={job.postedDate}
-                              isLast={index === jobData.length - 1}
-                              applicantcount={job.applicants}
-                              status={job.status}
+                            key={index}
+                            id={job.id}
+                            title={job.title}
+                            companyLogoUrl={job.companyLogoUrl}
+                            companyName={job.company_name}
+                            postedDate={job.created_at}
+                            isLast={index === jobData.length - 1}
+                            applicantcount={job.applicants}
+                            status={job.status}
                             />
                           ))
                       )}           
@@ -191,7 +131,7 @@ const ClientManageJobs = () => {
                   <Box>
                     <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography  className='jobs-category' sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}}>Ongoing Jobs</Typography>
-                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' >Manage Profile</Link>
+                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to="/clientprofile" >Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
                     {jobData.filter((job) => ['ONGOING'].includes(job.status)).length === 0 ? (
@@ -203,9 +143,10 @@ const ClientManageJobs = () => {
                             <ClientJob
                               key={index}
                               id={job.id}
-                              workdesc={job.workdesc}
+                              title={job.title}
                               companyLogoUrl={job.companyLogoUrl}
-                              postedDate={job.postedDate}
+                              companyName={job.company_name}
+                              postedDate={job.created_at}
                               isLast={index === jobData.length - 1}
                               applicantcount={job.applicants}
                               status={job.status}

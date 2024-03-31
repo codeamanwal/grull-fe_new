@@ -10,8 +10,18 @@ import { shades } from "../helper/shades";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
+import { useEffect, useState } from "react";
 
 function Navbar() {
+  
+  const [accessToken,setAccessToken] = useState(null);
+  useEffect(()=>{
+    const userexist=localStorage.getItem('accessToken');
+    if(userexist){
+        setAccessToken(userexist)
+    }
+  },[]);
+   
   const { lavender } = shades;
   const isDesktop = useMediaQuery("(min-width:500px)");
   const { pathname } = useLocation();

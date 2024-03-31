@@ -80,10 +80,6 @@ export default function FreelancerDashboard(props: Props) {
        infofetch();
   },[]);
 
-  const getInitials = (name) => {
-    return 'A';
-  };
-
   const handleButtonClick = (button) => {
     setActiveButton(button);
     if (button === 'manageJobs') {
@@ -91,12 +87,10 @@ export default function FreelancerDashboard(props: Props) {
     }
   };
 
-  const clickProfileImage = () => {
-    setShowDropdown(!showDropdown);
-  }
-
   const clickLogout = () => {
-      console.log("Logging out...");
+    localStorage.clear();
+    navigate("/");
+    console.log("Logging out...");
   }
 
   const handleClickOutside = (e) => {
@@ -139,16 +133,16 @@ export default function FreelancerDashboard(props: Props) {
   const drawer = (
     <div style={{backgroundColor:'#000',paddingLeft:'80px',paddingRight:'40px',height:'100vh'}} className='dashboard-drawer'>
       <Box sx={{display:'flex',padding:'22px 0'}} >
-        <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px' }} />
+        <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px',cursor:'pointer' }} onClick={()=>navigate('/')}  />
       </Box>
       <Box sx={{marginTop:'100px'}}>
          <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
          <Avatar
         alt={fullname}
         style={{ backgroundColor: avatarBackgroundColor }}
-        onClick={()=>{navigate('/freelancerprofile')}}
+        onClick={() => { navigate('/freelancerprofile') }}
       >
-        {getInitials(fullname)}
+        {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
       </Avatar>
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
                <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>{fullname}</Typography>
@@ -196,7 +190,7 @@ export default function FreelancerDashboard(props: Props) {
            <Header1 />
         </Toolbar>
         <Toolbar sx={{
-            height:{sm:'80px',xs:'90px'},
+            height:{sm:'80px',xs:'60px'},
             backgroundColor:'#EDEDED',
             boxShadow:" 0px 0px 4px 0.5px #00000040",
         }}>
@@ -218,7 +212,7 @@ export default function FreelancerDashboard(props: Props) {
                 Dashboard </Typography>
             </Box>
             <Box sx={{display:'flex',gap:'40px',alignItems:'center'}} className='dashboard-navbar-buttons'>
-                <Box
+                {/* <Box
                   sx={{
                     background: 'linear-gradient(90deg, #ED8335 0%, #B27EE3 100%)',
                     // display: 'inline-block',
@@ -234,18 +228,23 @@ export default function FreelancerDashboard(props: Props) {
                 <Button
                   sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}}> 
                   {<CiShare2 style={{height:'1.5em',width:'1.3em'}}/>}Share Profile
-                </Button>
-                <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',':hover':{}}} className='resdash' />
+                </Button> */}
+                <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/freelancerchat')} className='resdash' />
                 <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
                 <Box ref={container1} sx={{position:'relative'}}>
                 <Avatar
-                  alt={fullname[0]}
-                  style={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
-                  className='dashboardavatar'
-                  onClick={clickProfileImage}
-                >
-                  {getInitials(fullname)}
-                </Avatar>
+                    className='resdash'
+                    alt={fullname}
+                    style={{ backgroundColor: avatarBackgroundColor, cursor: 'pointer' }}
+                    onClick={() => { 
+                      setShowDropdown(!showDropdown); 
+                      if (changeopts) {
+                        handlesettings();
+                      }
+                    }}
+                  >
+                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                  </Avatar>
                 {showDropdown && (
                                         <Box
                                         sx={{
@@ -270,7 +269,7 @@ export default function FreelancerDashboard(props: Props) {
                                                     alt={fullname[0]}
                                                     style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
                                                 >
-                                                    {getInitials(fullname)}
+                                                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                                 </Avatar>
                                                 <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                                                     <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px',color:'#000000'}}>{fullname}</Typography>
@@ -284,25 +283,24 @@ export default function FreelancerDashboard(props: Props) {
                                         {
                                           !changeopts? 
                                           (<>
-                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
-                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                        <Link to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
+                                        <Link to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
                                         <Link onClick={handlesettings} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
                                         <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
-                                        <Link
-                                            to='/'
-                                            onClick={clickLogout}
+                                        <Link to="/"
                                             style={{ backgroundColor: '#fff', textDecoration: 'none', color: 'black', fontWeight: '500', padding: '4px 0', ':hover': { backgroundColor: 'transparent' }, minHeight: '0' }}
                                         >
-                                            Logout
+                                            <div onClick={clickLogout} style={{ cursor: 'pointer' }}>Logout</div>
                                         </Link>
                                           </>) : 
                                           (<>
-                                        <Link component={NavLink} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Find Work</Link>
-                                        <Link component={NavLink} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
-                                        <Link component={NavLink} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
-                                        <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                            <Link to='/managejobs/applied' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Manage Jobs</Link>
+                                        <Link to='/browsejobs' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Find Work</Link>
+                                        <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
+                                        <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
+                                        {/* <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
                                             <Button endIcon={<MdArrowOutward />} sx={{border: '1px solid #000000',fontWeight:'600',color:'#000000',borderRadius:'16px',padding:'7px 25px'}}>Post a project</Button>
-                                        </Link>
+                                        </Link> */}
                                           </>)
                                         }
                                         </Box>

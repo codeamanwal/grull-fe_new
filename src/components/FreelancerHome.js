@@ -39,30 +39,19 @@ export default function FreelancerHome() {
     const [walletbalance,setwalletbalance]=useState('')
     const accessToken = localStorage.getItem('accessToken');
     useEffect(()=>{
-        const infofetch=async()=>{
-         try {
-           const response = await fetch(
-             `${BAPI}/api/v0/users/me`, 
-             {
-               method: 'GET',
-               headers: {
-                 'Content-Type': 'application/json',
-                 'Authorization': `Bearer ${accessToken}`,
-               },
-             }
-           );
-           const responseData = await response.json();
-           console.log(responseData)
-           setFirstname(responseData.first_name);
-           setwalletbalance(responseData.wallet_balance)
-         } catch (error) {
-           console.error('Error during fetching data:', error);
-         }
+        const infofetch=()=>{
+        const user=localStorage.getItem('user');
+        if(!user){
+          navigate("/")
+        }
+        setFirstname(JSON.parse(user).first_name);
+        setwalletbalance(JSON.parse(user).wallet_balance
+        )
         }
         infofetch();
    },[])
   return (
-    <Box sx={{padding:'70px 90px'}} className='home-container'>
+    <Box sx={{padding:'90px 90px 70px'}} className='home-container'>
        <Box>
          <Typography sx={{fontSize:'32px',fontWeight:'600',letterSpacing:'-1px'}} className='home-heading'>Welcome, {firstname}</Typography>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px'}} className='home-container-grid'>
@@ -119,7 +108,8 @@ export default function FreelancerHome() {
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/ongoing'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
-            <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
+         No Ongoing Jobs yet
+            {/* <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
                 <Box sx={{display:'flex',alignItems:'center'}}>
                     <img style={{width:'50px',height:'50px'}} alt="elula"
                     src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
@@ -168,7 +158,7 @@ export default function FreelancerHome() {
                                 height: '22px' },}}/>
                     </Box>
                 </Box>
-            </Box>
+            </Box> */}
          </Grid>
        </Box>
 
@@ -178,7 +168,8 @@ export default function FreelancerHome() {
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/completed'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
-            <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
+            No Completed Jobs yet.
+            {/* <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
                 <Box sx={{display:'flex',alignItems:'center'}}>
                     <img style={{width:'50px',height:'50px'}} alt="elula"
                     src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
@@ -201,7 +192,7 @@ export default function FreelancerHome() {
                     <Typography sx={{color:"#656565",fontSize:'17px'}} className='home-content'>Bengaluru, Karnataka</Typography>
                     <Typography sx={{color:"#656565",fontSize:'15px'}} className='home-content'>Completed on Tue</Typography>
                 </Box>
-            </Box>
+            </Box> */}
          </Grid>
        </Box>
     </Box>

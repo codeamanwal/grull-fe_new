@@ -21,15 +21,6 @@ const FreelancerProfile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const avatarBackgroundColor = 'Grey';
-    const getInitials = (name) => {
-        // Check if name is defined before splitting
-        if (name) {
-            const names = name.split(' ');
-            return names[0][0].toUpperCase();
-        } else {
-            return ''; // Handle the case where name is undefined
-        }
-    };
     const handleImage1Click = () => {
         // logic for what will happen when clicked on messaging image
     }
@@ -37,11 +28,9 @@ const FreelancerProfile = () => {
     const handleImage2Click = () => {
         // logic for what will happen when clicked on notifications image
     }
-
-   
-
+    
     const switchToEmployerClick = () => {
-        navigate('/employerprofile');
+        navigate('/clientprofile');
     }
 
     const handleFileChange = (event) => {
@@ -192,10 +181,15 @@ const FreelancerProfile = () => {
 
                     setSavedName(responseData.full_name);
                     setNewName(responseData.full_name);
-                    setNewLocation(responseData.location.country);
+                    setNewLocation(responseData.location?.country);
                     setNewJobCategory(responseData.role);
                     setSavedJobCategory(responseData.role);
-                    setSavedLocation(responseData.location.country);
+                    if(responseData.location){
+                        console.log(responseData)
+                        setSavedLocation(responseData.location?.country);}
+                        else{
+                          setSavedLocation('Location Here')
+                        }
                     setJobsCompletedCount(responseData.jobs_completed_count);
                     setRatePerHour(responseData.rate_per_hour);
                     setSkills(responseData.skills);
@@ -250,8 +244,11 @@ const FreelancerProfile = () => {
                 const responseData = response.data;
                 console.log(response)
                 setSavedName(responseData.full_name);
-                setSavedJobCategory(responseData.role);
-                setSavedLocation(responseData.location.country);
+                setSavedJobCategory(responseData.role);if(responseData.location){
+                    setSavedLocation(responseData.location?.country);}
+                    else{
+                      setSavedLocation('Location Here')
+                    }
                 setJobsCompletedCount(responseData.jobs_completed_count);
                 setRatePerHour(responseData.rate_per_hour);
                 setTopBoxEditMode(false);
@@ -454,7 +451,7 @@ const FreelancerProfile = () => {
                                             alt={savedName}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
-                                            {getInitials(savedName)}
+                                            {savedName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
                                         <label htmlFor="fileInput" className='camera-icon-label'>
                                             <CiCamera className='camera-icon' />
@@ -682,7 +679,7 @@ const FreelancerProfile = () => {
                         <div style={{width:'90%',marginLeft:'20px'}}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginTop:'30px'}} >
                             <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Ongoing Work/Portfolio</h2>
-                            <a href="#" style={{ marginLeft: 'auto', color: '#ED8335', fontWeight: 'bold' }}>Manage Projects</a>
+                            <a href="/managejobs/applied" style={{ marginLeft: 'auto', color: '#ED8335', fontWeight: 'bold' }}>Manage Projects</a>
                         </div>
 
                         <Box sx={{ marginTop:'25px',marginBottom:'45px',display:'flex',flexDirection:'row',gap:'15px',flexWrap:'wrap'}}>
@@ -786,6 +783,7 @@ const FreelancerProfile = () => {
                 {/* foruth div for reviews */}
                 <div className='review-box'>
                     <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
+                    <p style={{marginTop:'10px'}}>You have no reviews yet.</p>
                 </div>
             </div>
         </div>

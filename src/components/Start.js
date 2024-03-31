@@ -26,7 +26,7 @@ const Start = () => {
   return (
     <div >
       <div className='headerStyle'>
-        <img src={grullLogo} alt="Grull" className='header-logo'/>
+        <img src={grullLogo} alt="Grull" className='header-logo' onClick={()=>navigate('/')} style={{cursor:'pointer'}} />
       </div>
       <div className='startpage'>
         <div className='one'>

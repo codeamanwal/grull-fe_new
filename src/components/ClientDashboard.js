@@ -1,11 +1,12 @@
-import React,{useEffect, useState} from 'react';
+import React,{useEffect, useRef, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
+import Logo from "../assets/Logo1.png";
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Button,Grid } from '@mui/material';
+import { Button,Divider,Grid } from '@mui/material';
 import { FiHome } from "react-icons/fi";
 import { IoWalletOutline } from "react-icons/io5";
 import BAPI from '../helper/variable';
@@ -18,6 +19,9 @@ import ClientHome from './ClientHome';
 import { CiShare2 } from "react-icons/ci";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io"
+import Header1 from './Header1';
+import { useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 interface Props {
   window?: () => Window;
 }
@@ -29,6 +33,38 @@ export default function ClientDashboard(props: Props) {
   const [role,setRole]=useState('');
   const navigate = useNavigate();
   const avatarBackgroundColor = 'Grey';
+  const [showDropdown, setShowDropdown] = useState(false);
+  const container1 = useRef();
+  const [changeopts,setChangeopts]=useState(false);
+  const accessToken = localStorage.getItem('accessToken');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+      window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const clickLogout = () => {
+    localStorage.clear();
+    navigate("/");
+    console.log("Logging out...");
+  }
+
+  const handleClickOutside = (e) => {
+      if (container1.current && !container1.current.contains(e.target)) {
+          setShowDropdown(false);
+      }
+  };
+
+  const handlesettings =()=>{
+        setChangeopts((prev)=>!prev);
+  }
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -37,7 +73,6 @@ export default function ClientDashboard(props: Props) {
     }
   };
   
-  const accessToken = localStorage.getItem('accessToken');
   useEffect(()=>{
     const infofetch=async()=>{
      try {
@@ -62,9 +97,6 @@ export default function ClientDashboard(props: Props) {
     }
     infofetch();
 },[]);
-
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -98,17 +130,18 @@ export default function ClientDashboard(props: Props) {
 
   const drawer = (
     <div style={{backgroundColor:'#000',paddingLeft:'80px',paddingRight:'40px',height:'100vh'}} className='dashboard-drawer'>
-      <Box sx={{display:'flex',padding:'18px 0'}} >
-        <Typography sx={{color: '#B27EE3',fontSize:'25px',fontWeight:'700'}}>GRULL</Typography>
+      <Box sx={{display:'flex',padding:'22px 0'}} >
+      <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px',cursor:'pointer' }}  onClick={()=>navigate('/')} />
       </Box>
       <Box sx={{marginTop:'100px'}}>
       <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
-         <Avatar
+      <Avatar
         alt={fullname}
         style={{ backgroundColor: avatarBackgroundColor }}
-        onClick={()=>{navigate('/freelancerprofile')}}
+        onClick={() => { navigate('/freelancerprofile') }}
       >
-        {fullname[0]}
+        {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+
       </Avatar>
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
                <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>{fullname}</Typography>
@@ -145,19 +178,26 @@ export default function ClientDashboard(props: Props) {
         sx={{
           width: { sm: `calc(100% - ${getDrawerWidth()}px)` },
           ml: { sm: `${getDrawerWidth()}px` },
-          backgroundColor:'#EDEDED',
-          boxShadow:" 0px 0px 4px 0.5px #00000040",
-          height:"80px",
-          display:'flex',
-          justifyContent:'center',
-          padding:'0px 80px 0 60px ',
         }}
-        className='dashboard-navbar'
       >
         <Toolbar sx={{
-            display:'flex',
-            justifyContent:'space-between'
+          width:'100%',
+          padding:"0",
+          display:{xs:'block',md:'none'}
         }} >
+           <Header1 />
+        </Toolbar>
+        <Toolbar sx={{
+           height:{sm:'80px',xs:'60px'},
+           backgroundColor:'#EDEDED',
+           boxShadow:" 0px 0px 4px 0.5px #00000040",
+        }} >
+          <Box sx={{
+            display:'flex',
+            justifyContent:'space-between',
+            width:'100%',
+            padding:'0 70px 0 60px'
+          }}  className='dashboard-navbar-con'>
             <Box >
                 <Typography style={{
                     // fontFamily: 'Urbanist',
@@ -170,7 +210,7 @@ export default function ClientDashboard(props: Props) {
                 Dashboard </Typography>
             </Box>
             <Box sx={{display:'flex',gap:'40px',alignItems:'center'}} className='dashboard-navbar-buttons'>
-                  <Box
+                  {/* <Box
                   sx={{
                     background: 'linear-gradient(90deg, #ED8335 0%, #B27EE3 100%)',
                     // display: 'inline-block',
@@ -186,11 +226,87 @@ export default function ClientDashboard(props: Props) {
                 <Button
                   sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}}> 
                   {<CiShare2 style={{height:'1.5em',width:'1.3em'}}/>}Share Profile
-                </Button>
-                <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',':hover':{}}}/>
-                <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}}/>
-                <Avatar alt="Remy Sharp" onClick={()=>{navigate('/employerprofile')}} src="https://img.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg?w=360" />
-            </Box>
+                </Button> */}
+                <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/clientchat')}  className='resdash' />
+                <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
+                <Box ref={container1} sx={{position:'relative'}}>
+                <Avatar
+                    className='resdash'
+                    alt={fullname}
+                    style={{ backgroundColor: avatarBackgroundColor, cursor: 'pointer' }}
+                    onClick={() => { 
+                      setShowDropdown(!showDropdown); 
+                      if (changeopts) {
+                        handlesettings();
+                      }
+                    }}
+                  >
+                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                  </Avatar>
+                {showDropdown && (
+                                        <Box
+                                        sx={{
+                                              padding:'15px 30px 20px 20px',
+                                              display: showDropdown?'block':'none',
+                                              position:'absolute',
+                                              backgroundColor:'#fff',
+                                              zIndex:'1',
+                                              top:{xs:'58px',sm:'65px'},
+                                              right:{xs:'-55px',sm:'-80px',md:'-20px'},
+                                              boxShadow: '0px 0px 4px 1px #00000040',
+                                              borderRadius:{xs:'10px',sm:'40px'},
+                                              width:{xs:'250px',sm:'280px'},
+                                              display:'flex',
+                                              flexDirection:'column',
+                                              gap:'5px'
+                                            }}
+                                        >
+                                        <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Avatar
+                                                    alt={fullname[0]}
+                                                    style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
+                                                >
+                                                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                                </Avatar>
+                                                <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
+                                                    <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px',color:'#000000'}}>{fullname}</Typography>
+                                                    <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{role}</Typography>
+                                                </div>
+                                            </div>
+                                        </Box>
+                                        <Link to="/clientprofile" style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                            <Button sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
+                                        </Link>
+                                        {
+                                          !changeopts? 
+                                          (<>
+                                        <Link to="/client" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
+                                        <Link to="/client" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                        <Link onClick={handlesettings} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
+                                        <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
+                                        <Link to="/"
+                                            style={{ backgroundColor: '#fff', textDecoration: 'none', color: 'black', fontWeight: '500', padding: '4px 0', ':hover': { backgroundColor: 'transparent' }, minHeight: '0' }}
+                                        >
+                                            <div onClick={clickLogout} style={{ cursor: 'pointer' }}>Logout</div>
+                                        </Link>
+                                          </>) : 
+                                          (<>
+                                        <Link to='/clientmanagejobs/posted' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Manage Jobs</Link>
+                                        <Link to='/postjob' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Post Job</Link>
+                                        <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
+                                        <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
+                                        {/* <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                            <Button endIcon={<MdArrowOutward />} sx={{border: '1px solid #000000',fontWeight:'600',color:'#000000',borderRadius:'16px',padding:'7px 25px'}}>Post a project</Button>
+                                        </Link> */}
+                                          </>)
+                                        }
+                                        </Box>
+                                    )}
+
+                                    </Box>
+                 </Box>
+                 </Box>
         </Toolbar>
       </AppBar>
       <Box

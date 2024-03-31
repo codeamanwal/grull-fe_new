@@ -69,7 +69,7 @@
       font-size: 13px !important;
       width: 128px !important;
       padding: 0 !important;
-      height: 35px !important;
+      /* height: 35px !important; */
    }
    .dashboard-navbar-buttons{
       gap:10px !important; 

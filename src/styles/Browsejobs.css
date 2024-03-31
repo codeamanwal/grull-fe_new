@@ -66,6 +66,8 @@
 .browseJobs-right-box{
     flex:1 !important;
     width: auto !important;
+    box-shadow: 0px 0px 4px 0px #00000040;
+    border-radius: 16px;
     overflow-y: auto;
 }
 .browseJobs-right-box::-webkit-scrollbar {

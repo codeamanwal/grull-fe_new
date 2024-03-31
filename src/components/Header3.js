@@ -17,29 +17,46 @@ import {
 import Logo from "../assets/Logo1.png";
 import mobilelogo from "../assets/grullPurpuleMobileLogo.svg"
 import { LuMenu } from "react-icons/lu";
+import BAPI from '../helper/variable'
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 export default function Header3() {
+    const [changeopts,setChangeopts]=useState(false);
     const container = useRef();
     const container1=useRef()
-    const savedName='akarsh'
+    const [savedName,setSavedName]=useState('');
+    const [category,setcategory]=useState('')
     const isSmallScreen = useMediaQuery('(max-width:600px)');
-    const getInitials = (name) => {
-        // Check if name is defined before splitting
-        if (name) {
-            const names = name.split(' ');
-            return names[0][0].toUpperCase();
-        } else {
-            return ''; // Handle the case where name is undefined
-        }
-    };
     const navigate =useNavigate()
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMangejobsDropdown, setshowMangejobsDropdown] = useState(false);
     
     const avatarBackgroundColor = 'Grey';
+    const accessToken = localStorage.getItem('accessToken');
+    useEffect(()=>{
+        const infofetch=async()=>{
+         try {
+           const response = await fetch(
+             `${BAPI}/api/v0/users/me`,
+             {
+               method: 'GET',
+               headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${accessToken}`,
+               },
+             }
+           );
+           const responseData = await response.json();
+           setSavedName(responseData.full_name)
+           setcategory(responseData.role);
+         } catch (error) {
+           console.error('Error during fetching data:', error);
+         }
+        }
+        infofetch();
+   },[]);
     const clickProfileImage = () => {
         setShowDropdown((prevState) => (!prevState));
     }
@@ -66,16 +83,18 @@ export default function Header3() {
     const viewProfileClick = () => {
         navigate('/freelancerprofile');
     }
-
+    const handlesettings =()=>{
+        setChangeopts((prev)=>!prev);
+  }
   return (
     <Grid container sx={{ background: '#000000', height:{xs:'60px', sm:'70px'}, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding : {xs:'0px 4%',md:'0 6%'}, flexWrap: 'nowrap',gap:'50px' }}>
                 <Grid item >
                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap:{md:'25px',lg:'40px'}, alignItems: 'center' }}>
                        {/* <Typography sx={{color:'#B27EE3'}}>Grull</Typography> */}
                        {isSmallScreen ? (
-                            <img src={mobilelogo} alt='GRULL' style={{ width: '60px', height: '38px' }} />
+                            <img src={mobilelogo} alt='GRULL' style={{ width: '60px', height: '38px',cursor:'pointer' }}  onClick={()=>navigate('/')}/>
                         ) : (
-                            <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px' }} />
+                            <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px',cursor:'pointer' }} onClick={()=>navigate('/')} />
                         )}
                     </Box>
                 </Grid>
@@ -105,9 +124,10 @@ export default function Header3() {
                                               gap:'15px'
                                             }}
                                         >
-                                        <Link component={NavLink} to="/clientmanagejobs/posted" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Posted Jobs</Link>
-                                        <Link component={NavLink} to="/clientmanagejobs/ongoing" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Ongoing Jobs</Link>
-                                        <Link component={NavLink} to="/clientmanagejobs/completed" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Completed Jobs</Link>
+                                        <Link component={NavLink} to="/managejobs/applied" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Applied Jobs</Link>
+                                        <Link component={NavLink} to="/managejobs/saved" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Saved Jobs</Link>
+                                        <Link component={NavLink} to="/managejobs/ongoing" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Ongoing Jobs</Link>
+                                        <Link component={NavLink} to="/managejobs/completed" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Completed Jobs</Link>
                                         
                                         </Box>
                                     )}
@@ -116,20 +136,25 @@ export default function Header3() {
                                 <input style={{color:'#fff',backgroundColor:'transparent',borderRadius:'16px',outline:'none',border:'1px solid #fff',padding:'8px 14px', width: '100%'}} placeholder='Search for Jobs, Projects or company'/>
                             </Box>
                             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap:{xs:'8px',sm:'30px', md:'25px',lg:'36px'}, alignItems: 'center' }}>
-                                <IconButton sx={{fontSize:{ xs:'24px',sm:'30px'},display:{ xs:'block',md:'none'}}}>
-                                   <FiMessageSquare style={{ color: '#fff'}} />
+                                <IconButton sx={{fontSize:{ xs:'24px',sm:'30px'}}}>
+                                   <FiMessageSquare style={{ color: '#fff'}} onClick={()=>navigate('/freelancerchat')} />
                                 </IconButton>
-                                <IconButton sx={{fontSize:{ xs:'27px',sm:'33px'}}}>
+                                {/* <IconButton sx={{fontSize:{ xs:'27px',sm:'33px'}}}>
                                    <IoMdNotificationsOutline style={{ color: '#fff'}} />
-                                </IconButton>
+                                </IconButton> */}
                                 <Box ref={container} sx={{position:'relative'}}>
                                     <Avatar
                                         alt={savedName}
                                         sx={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
                                         // className='dashboardavatar profile'
-                                        onClick={clickProfileImage}
+                                        onClick={()=>{clickProfileImage()
+                                            if (changeopts) {
+                                                handlesettings();
+                                              }
+                                        }}
+
                                     >
-                                        {getInitials(savedName)}
+                                       {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
                                     </Avatar>
                                     {showDropdown && (
                                         <Box
@@ -155,28 +180,37 @@ export default function Header3() {
                                                     alt={savedName}
                                                     style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
                                                 >
-                                                    {getInitials(savedName)}
+                                                   {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+
                                                 </Avatar>
                                                 <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                                                     <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px'}}>{savedName}</Typography>
-                                                    <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>Job Category</Typography>
+                                                    <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{category}</Typography>
                                                 </div>
                                             </div>
                                         </Box>
                                         <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
                                             <Button onClick={viewProfileClick} sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
                                         </Link>
-                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
-                                        <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
-                                        <Link component={NavLink} to="/page3" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
-                                        <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
-                                        <Link
-                                            to='/'
-                                            onClick={clickLogout}
-                                            style={{ backgroundColor: '#fff', textDecoration: 'none', color: 'black', fontWeight: '500', padding: '4px 0', ':hover': { backgroundColor: 'transparent' }, minHeight: '0' }}
-                                        >
-                                            Logout
-                                        </Link>
+                                        {
+                                            !changeopts? (<>
+                                            <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
+                                            <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                            <Link onClick={()=>setChangeopts(!changeopts)} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
+                                            <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
+                                            <Link
+                                                to='/'
+                                                onClick={clickLogout}
+                                                style={{ backgroundColor: '#fff', textDecoration: 'none', color: 'black', fontWeight: '500', padding: '4px 0', ':hover': { backgroundColor: 'transparent' }, minHeight: '0' }}
+                                            >
+                                                Logout
+                                            </Link>
+                                            </>):(<>
+                                        <Link to='/browsejobs' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Find Work</Link>
+                                        <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
+                                        <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
+                                            </>)
+                                        }
                                         </Box>
                                     )}
                                 </Box>

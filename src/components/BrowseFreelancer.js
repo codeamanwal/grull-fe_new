@@ -16,6 +16,7 @@ import { LiaFilterSolid } from "react-icons/lia";
 import BAPI from '../helper/variable'
 
 import Avatar from '@mui/material/Avatar';
+import Header4 from "./Header4";
 
 const BrowseFreelancer = () => {
   const navigate = useNavigate();
@@ -133,7 +134,7 @@ const BrowseFreelancer = () => {
   return (
     <div>
       {/* div 1 for header */}
-      <Header3 />
+      <Header4 />
 
 
       {/* div 2 for box and browse, search bar */}
@@ -498,7 +499,7 @@ const BrowseFreelancer = () => {
                     </Box>
                   </Box>
               </Box>
-              {indx !== allFreelancers.length - 1 && <Divider />}
+              {(indx !== allFreelancers.length - 1 || allFreelancers.length===1) && <Divider />}
             </Box>
           ))}
         </div>

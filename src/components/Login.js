@@ -93,7 +93,7 @@ const Login = () => {
     return (
       <div>
       <div className='headerStyle'>
-          <img src={grullLogo} alt="Grull" className='header-logo'/>
+          <img src={grullLogo} alt="Grull" className='header-logo' onClick={()=>navigate('/')} style={{cursor:'pointer'}} />
       </div>
       <div>
       <div className='res-content'>
@@ -105,7 +105,7 @@ const Login = () => {
               {/* <div>
                   <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
               </div> */}
-              <div>
+              {/* <div>
                   <Button className='google-button' onClick={openGoogleLoginPage} startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
               </div>
 
@@ -114,12 +114,12 @@ const Login = () => {
                   <hr className='hr-line' />
                   <h3 style={{ color: '#a3a3a3', fontWeight: 'normal', margin: '0 10px' }}>OR</h3>
                   <hr className='hr-line' />
-              </div>
+              </div> */}
 
               <Form>
                   
 
-                  <Form.Group className="mb-3 form-group" controlId="formBasicEmail" style={{display:'flex'}}>
+                  <Form.Group className="mb-3 form-group" controlId="formBasicEmail" style={{display:'flex',marginTop:'50px'}}>
                       <Form.Control className='form-vals-two' type="email" name='email' placeholder="Email" />
                   </Form.Group>
 

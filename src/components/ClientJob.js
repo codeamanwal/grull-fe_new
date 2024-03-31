@@ -11,8 +11,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import BAPI from '../helper/variable'
 import { useNavigate } from 'react-router-dom';
-const ClientJob = ({ id,title, postedDate, companyLogoUrl, isLast,status,companyName,applicantcount }) => {
-    const accessToken='Bss8MEl8WatvSk5SlA-YIRAZDiIk2MOkBlpgwOxGrYU';
+const ClientJob = ({ id, title, companyLogoUrl, companyName, postedDate, isLast, applicantcount, status}) => {
+  
+  const accessToken = localStorage.getItem('accessToken');
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
         const day = date.getDate();

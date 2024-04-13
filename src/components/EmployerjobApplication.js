@@ -95,7 +95,8 @@ const JobApplications = () => {
             'Authorization': `Bearer ${accessToken}`,
           }
         });
-         console.log(response)
+         console.log(response);
+         navigate("/clientchat")
         
       }
       catch (error) {
@@ -155,11 +156,6 @@ const JobApplications = () => {
   const handleLikeClick=()=>{
 
   }
-
-  const handleHire=()=>{
-
-  }
-
   return (
     <div>
       <Header2 />
@@ -208,7 +204,7 @@ const JobApplications = () => {
 
         <div >
             <Button sx={{color:category==='freelancers'?'#fff':'#FFFFFFB2',borderBottom:category==='freelancers'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',fontSize:'16px'}} onClick={()=>setcategory('freelancers')}>Freelancers</Button >
-            <Button sx={{color:category==='projects'?'#fff':'#FFFFFFB2',borderBottom:category==='projects'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',marginLeft:'20px',fontSize:'16px'}} onClick={()=>setcategory('projects')}>Projects</Button >
+            {/* <Button sx={{color:category==='projects'?'#fff':'#FFFFFFB2',borderBottom:category==='projects'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',marginLeft:'20px',fontSize:'16px'}} onClick={()=>setcategory('projects')}>Projects</Button > */}
         </div>
       </div>
       <div className="sortingjobs" style={{marginBottom:'30px',cursor:'pointer'}}>

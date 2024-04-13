@@ -7,6 +7,8 @@ import { HiDotsVertical } from "react-icons/hi";
 import Slider from '@mui/material/Slider';
 import '../styles/freelancerhome.css';
 import BAPI from '../helper/variable';
+import axios from 'axios';
+import Job from './Job';
 
 export default function FreelancerHome() {
     
@@ -38,18 +40,95 @@ export default function FreelancerHome() {
     const [firstname,setFirstname]=useState('');
     const [walletbalance,setwalletbalance]=useState('')
     const accessToken = localStorage.getItem('accessToken');
-    useEffect(()=>{
-        const infofetch=()=>{
-        const user=localStorage.getItem('user');
-        if(!user){
-          navigate("/")
+    useEffect(() => {
+      const infofetch = async () => {
+          try {
+              const response = await fetch(
+                  `${BAPI}/api/v0/users/me`,
+                  {
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${accessToken}`,
+                    },
+                  }
+                );
+              const responseData = await response.json();
+              setFirstname(responseData?.first_name);
+              setwalletbalance(responseData?.wallet_balance);
+          } catch (error) {
+              console.error("Error fetching user information:", error);
+          }
+      }
+      infofetch();
+  }, []);
+
+  const [applications, setApplications] = useState([]);
+  const [jobData, setJobs] = useState([]);
+
+  useEffect(() => {
+    const getApplications = async (page = 1) => {
+      try {
+        const response = await axios.get(`${BAPI}/api/v0/users/me/job-applications`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          params: {
+            page: page,
+            per_page: 8,
+          },
+        });
+
+        if (response.status === 200) {
+        const acceptedApplications = response.data.results.filter(application =>
+            application.status === "ACCEPTED"
+        );
+        const completedApplications = response.data.results.filter(application =>
+            application.status === "COMPLETED"
+        );
+
+        const latestAccepted = acceptedApplications.slice(0, 2);
+        const latestCompleted = completedApplications.slice(0, 2);
+
+        const latestApplications = [...latestAccepted, ...latestCompleted];
+        setApplications(latestApplications);
         }
-        setFirstname(JSON.parse(user).first_name);
-        setwalletbalance(JSON.parse(user).wallet_balance
-        )
-        }
-        infofetch();
-   },[])
+      } catch (error) {
+        console.error('Error occurred:', error);
+      }
+    };
+
+    getApplications();
+  }, [accessToken]);
+
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      const jobDetails = await getJobDetails(applications);
+      setJobs(jobDetails);
+    };
+    fetchJobDetails();
+  }, [applications]);
+
+  const getJobDetails = async (applications) => {
+    try {
+      const jobDetailsPromises = applications.map(async (application) => {
+        const response = await axios.get(`${BAPI}/api/v0/jobs/${application.job_id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
+        response.data['applied_on']=application.modified_at;
+        return response.data;
+      });
+
+      return Promise.all(jobDetailsPromises);
+    } catch (error) {
+      console.error('Error occurred:', error);
+    }
+  };
+
   return (
     <Box sx={{padding:'90px 90px 70px'}} className='home-container'>
        <Box>
@@ -108,57 +187,28 @@ export default function FreelancerHome() {
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/ongoing'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
-         No Ongoing Jobs yet
-            {/* <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
-                <Box sx={{display:'flex',alignItems:'center'}}>
-                    <img style={{width:'50px',height:'50px'}} alt="elula"
-                    src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
-                </Box>
-                <Box sx={{display:'flex',flexDirection:'column',gap:'10px',flex:1,paddingLeft:'20px',}}>
-                    <Box sx={{display:'flex',flexDirection:'row',gap:'2px',justifyContent:'space-between'}}>
-                        <Box sx={{display:'flex',flexDirection:'column',gap:'2px'}}>
-                            <Typography sx={{color:"#000",fontSize:'22px'}} className='home-subheading'>UI/UX Designer</Typography>
-                            <Typography sx={{color:"#656565",fontSize:'18px'}} className='home-content'>Elula Tech Pvt Ltd</Typography>
-                            <Typography sx={{color:"#656565",fontSize:'18px'}} className='home-content'>Bengaluru, Karnataka</Typography>
-                            <Typography sx={{color:"#656565",fontSize:'15px'}} className='home-content'>Started on Tue</Typography>
-                        </Box>
-                        <Box>
-                           <HiDotsVertical style={{fontSize:'22px'}}/>
-                        </Box>
-                    </Box>
-                    <Box >
-                        <Slider className='homeongoingjobslider'
-                            sx={{color:'#ED8335',height:'8px','& .MuiSlider-thumb': {
-                                width: '22px',
-                                height: '22px' },}}/>
-                    </Box>
-                </Box>
-            </Box>
-            <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
-                <Box sx={{display:'flex',alignItems:'center'}}>
-                    <img style={{width:'50px',height:'50px'}} alt="elula"
-                    src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
-                </Box>
-                <Box sx={{display:'flex',flexDirection:'column',gap:'10px',flex:1,paddingLeft:'20px',}}>
-                    <Box sx={{display:'flex',flexDirection:'row',gap:'2px',justifyContent:'space-between'}}>
-                        <Box sx={{display:'flex',flexDirection:'column',gap:'2px'}}>
-                            <Typography sx={{color:"#000",fontSize:'22px'}} className='home-subheading'>UI/UX Designer</Typography>
-                            <Typography sx={{color:"#656565",fontSize:'18px'}} className='home-content'>Elula Tech Pvt Ltd</Typography>
-                            <Typography sx={{color:"#656565",fontSize:'18px'}} className='home-content'>Bengaluru, Karnataka</Typography>
-                            <Typography sx={{color:"#656565",fontSize:'15px'}} className='home-content'>Started on Tue</Typography>
-                        </Box>
-                        <Box>
-                           <HiDotsVertical style={{fontSize:'22px'}}/>
-                        </Box>
-                    </Box>
-                    <Box >
-                        <Slider className='homeongoingjobslider'
-                            sx={{color:'#ED8335',height:'8px','& .MuiSlider-thumb': {
-                                width: '22px',
-                                height: '22px' },}}/>
-                    </Box>
-                </Box>
-            </Box> */}
+            {jobData.filter(job => job.status === 'ONGOING').length > 0 ? (
+                  jobData
+                  .filter((job) => ['ONGOING'].includes(job.status))
+                  .map((job, index) => (
+                    <Job
+                      passed_from={1}
+                      key={index}
+                      position={job.title}
+                      companyName={job.company_name}
+                      companyLogoUrl={job.companyLogoUrl}
+                      location={job.location}
+                      startDate={job.applied_on}
+                      isLast={index === jobData.length - 1}
+                      status={job.status}
+                      job_id={job.id}
+                      total_deliverables={job.total_deliverables}
+                      completed_deliverables={job.completed_deliverable}
+                    />
+                  ))
+                  ) : (
+                      <p >No Ongoing Jobs yet</p>
+                  )}
          </Grid>
        </Box>
 
@@ -168,31 +218,28 @@ export default function FreelancerHome() {
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/completed'>View All</Link>
          </Box>
          <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
-            No Completed Jobs yet.
-            {/* <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
-                <Box sx={{display:'flex',alignItems:'center'}}>
-                    <img style={{width:'50px',height:'50px'}} alt="elula"
-                    src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
-                </Box>
-                <Box sx={{paddingLeft:'20px',display:'flex',flexDirection:'column',gap:'2px'}}>
-                    <Typography sx={{color:"#000",fontSize:'22px'}} className='home-subheading'>UI/UX Designer</Typography>
-                    <Typography sx={{color:"#656565",fontSize:'18px'}} className='home-content'>Elula Tech Pvt Ltd</Typography>
-                    <Typography sx={{color:"#656565",fontSize:'18px'}} className='home-content'>Bengaluru, Karnataka</Typography>
-                    <Typography sx={{color:"#656565",fontSize:'15px'}} className='home-content'>Completed on Tue</Typography>
-                </Box>
-            </Box>
-            <Box sx={{ backgroundColor: '#B27EE31A', padding: '20px 30px 35px',borderRadius:'16px',display:'flex',flexDirection:'row',}}>
-                <Box sx={{display:'flex',alignItems:'center'}}>
-                    <img style={{width:'50px',height:'50px'}} alt="elula"
-                    src="https://media.licdn.com/dms/image/C510BAQEsvVxzwMgdIw/company-logo_200_200/0/1631404454753/elula_tech_logo?e=2147483647&v=beta&t=5LL6mvKtNqrsx91XKdfj_LoxHiXkfbp_6wmf5-LXDH0"/>
-                </Box>
-                <Box sx={{paddingLeft:'20px',display:'flex',flexDirection:'column',gap:'2px'}}>
-                    <Typography sx={{color:"#000",fontSize:'20px'}} className='home-subheading'>UI/UX Designer</Typography>
-                    <Typography sx={{color:"#656565",fontSize:'17px'}} className='home-content'>Elula Tech Pvt Ltd</Typography>
-                    <Typography sx={{color:"#656565",fontSize:'17px'}} className='home-content'>Bengaluru, Karnataka</Typography>
-                    <Typography sx={{color:"#656565",fontSize:'15px'}} className='home-content'>Completed on Tue</Typography>
-                </Box>
-            </Box> */}
+         {jobData.filter(job => job.status === 'COMPLETED').length > 0 ? (
+                  jobData
+                  .filter((job) => ['COMPLETED'].includes(job.status))
+                  .map((job, index) => (
+                    <Job
+                      passed_from={1}
+                      key={index}
+                      position={job.title}
+                      companyName={job.company_name}
+                      companyLogoUrl={job.companyLogoUrl}
+                      location={job.location}
+                      startDate={job.applied_on}
+                      isLast={index === jobData.length - 1}
+                      status={job.status}
+                      job_id={job.id}
+                      total_deliverables={job.total_deliverables}
+                      completed_deliverables={job.completed_deliverable}
+                    />
+                  ))
+                  ) : (
+                      <p >No Completed Jobs yet</p>
+                  )}
          </Grid>
        </Box>
     </Box>

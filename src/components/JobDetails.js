@@ -22,6 +22,7 @@ const JobDetails = () => {
     const useR=localStorage.getItem('user');
     const userId=JSON.parse(useR)?.id
     const getTimeDifference = (modifiedAt) => {
+        console.log(modifiedAt)
         const now = new Date();
         const modifiedDate = new Date(modifiedAt);
         const differenceInMilliseconds = now - modifiedDate;
@@ -57,6 +58,30 @@ const JobDetails = () => {
           return `${duration} days`;
         }
       };
+
+    const handleSaveJob=async()=>{
+        const job={
+            "job_id": jobid,
+            "title": jobDetails.title,
+            "company_name": jobDetails.company_name,
+            "location": jobDetails.location
+        }
+        try{
+            const response = await axios.post(`${BAPI}/api/v0/jobs/save-job`,job, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                // console.log(response.data)
+                navigate("/managejobs/saved")
+            }
+        }
+        catch(err){
+            console.log("Error while saving the job : ",err)
+        }
+    }
+
     useEffect(() => {
         const fetchJobDetails = async () => {
             try {
@@ -67,9 +92,7 @@ const JobDetails = () => {
                 });
     
                 if (response.status === 200) {
-                    console.log(response.data)
                     setJobDetails(response.data);
-                    console.log(response.data);
                 } else {
                     console.error('Error fetching job details:', response.data.error);
                 }
@@ -165,7 +188,7 @@ const JobDetails = () => {
                             )
                     }
 
-                    <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />}>Save Job</Button>
+                    <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />} onClick={()=>handleSaveJob()} >Save Job</Button>
                     <Typography style={{ color: '#454545', fontSize: '16px',}}>Applicants : {jobDetails?.job_applicants_count }</Typography>
                 </Box>
                     

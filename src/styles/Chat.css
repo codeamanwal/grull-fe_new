@@ -31,11 +31,11 @@
 }
 
 .chat_Profile_frnd_Name h3{
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 600;
 }
 .chat_Profile_frnd_Name p{
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 500;
     color:#454545;
 }
@@ -160,7 +160,18 @@
     margin-right: auto !important;
 }
 
+@media screen and (max-width: 900px){
+    .image_deliverable{
+        width: 200px !important;
+        height: 200px !important;
+    }
+}
+
 @media screen and (max-width: 600px) {
+    .image_deliverable{
+        width: 150px !important;
+        height: 150px !important;
+    }
     .chat-container {
         width: 100%;
         min-width: 0;

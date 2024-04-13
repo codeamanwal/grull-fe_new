@@ -19,7 +19,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleSignupClick = () => {
-        navigate('/');
+        navigate('/home');
     };
 
     const openGoogleLoginPage = useCallback(() => {
@@ -132,7 +132,7 @@ const Login = () => {
               <button className='create-account-button' onClick={handleLoginClick}>Log In</button>
                     <h5 style={{fontWeight:'normal',color: '#656565',fontSize: '16px'}}>
                         New to Grull?{' '}
-                        <a style={{ color: '#b27ee3', textDecoration: 'none',fontWeight:'700',cursor:'pointer' }} onClick={handleSignupClick}>
+                        <a style={{ color: '#b27ee3', textDecoration: 'none',fontWeight:'700',cursor:'pointer' }} onClick={()=>handleSignupClick()}>
                             Sign Up
                         </a>
                     </h5>

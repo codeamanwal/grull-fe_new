@@ -12,7 +12,7 @@ import {
   Box,
   useMediaQuery,
 } from '@mui/material';
-import Logo from "../assets/Logo1.png";
+import Logo from "../assets/grullLogoPurple.svg";
 import mobilelogo from "../assets/grullPurpuleMobileLogo.svg"
 import { LuMenu } from "react-icons/lu";
 import { NavLink } from 'react-router-dom';
@@ -60,7 +60,10 @@ export default function Header1() {
         console.log(showDropdown)
     }
     const clickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('user')
         console.log("Logging out..."); // Add this line for debugging
+        navigate("/")
     }
     
     const handleClickOutside = (e) => {
@@ -92,7 +95,7 @@ export default function Header1() {
                             <img src={Logo} alt='GRULL' style={{ width: '100px', height: '38px',cursor:'pointer' }} onClick={()=>navigate('/')} />
                         )}
                         <Box sx={{display:{xs:'none',md:'block'}}}>
-                            <Button  sx={{color:'#fff',fontSize:'16px'}} onClick={()=>{navigate('/browsejobs')}}>Find Work</Button>
+                            <Button  sx={{color:'#fff',fontSize:'16px'}} onClick={()=>{navigate('/browsejobs')}}>Browse Jobs</Button>
                         </Box>
                         <Box sx={{display:{xs:'none',md:'block'}}}>
                             {/* <Button endIcon={<MdArrowOutward />}  sx={{color:'#fff',border: '1px solid #FFFFFF', borderRadius: '16px',padding: '7px 14px',fontSize:'16px'}}>
@@ -178,7 +181,7 @@ export default function Header1() {
                                             >
                                                 Logout
                                             </Link>
-                                            </>):(<><Link to='/browsejobs' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Find Work</Link>
+                                            </>):(<><Link to='/browsejobs' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Browse Jobs</Link>
                                             <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
                                             <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
                                             </> )

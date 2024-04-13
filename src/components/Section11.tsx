@@ -4,9 +4,12 @@ import { shades } from "../helper/shades";
 import section11AcademyCircle from "../assets/section11AcademyCircle.webp";
 import section11AcademyCircleMobile from "../assets/section11AcademyCircleMobile.png";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
+import { useNavigate } from "react-router-dom";
 
 function Section11() {
+  const accessToken = localStorage.getItem('accessToken');
   const { lavender, white } = shades;
+  const navigate=useNavigate();
   const isDesktop = useMediaQuery("(min-width:600px)");
   const scrollToSection = useScrollToContactUsHook();
 
@@ -67,7 +70,7 @@ function Section11() {
             textAlign: "center",
             cursor: "pointer",
           }}
-          onClick={scrollToSection}
+          onClick={()=>navigate("/coming-soon")}
         >
           Become Mentor
         </Box>
@@ -83,7 +86,7 @@ function Section11() {
             textAlign: "center",
             cursor: "pointer",
           }}
-          onClick={scrollToSection}
+          onClick={()=>navigate("/coming-soon")}
         >
           Talk to Mentor
         </Box>

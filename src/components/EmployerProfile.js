@@ -4,9 +4,6 @@ import '../styles/Employerprofile.css';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-
-import { FiMessageSquare } from "react-icons/fi";
-import { IoMdNotificationsOutline } from "react-icons/io";
 import Avatar from '@mui/material/Avatar';
 import { Box, Button, Typography} from '@mui/material';
 import { MdArrowOutward } from "react-icons/md";
@@ -15,6 +12,8 @@ import { CiLocationOn } from "react-icons/ci";
 import { MdWorkOutline } from "react-icons/md";
 import Header2 from './Header2';
 import BAPI from '../helper/variable'
+import { RiStarSFill } from "react-icons/ri";
+
 const Employerprofile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
@@ -111,6 +110,27 @@ const Employerprofile = () => {
 
     const [jobsPostedCount, setJobsPostedCount] = useState('');
     const [avgRateOffered, setAvgRateOffered] = useState('');
+    const [reviews,setReviews]=useState([]);
+
+    useEffect(() => {
+        const fetchUserReviews = async () => {
+            try {
+                const response = await axios.get(`${BAPI}/api/v0/reviews/reviews`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`,
+                        },
+                    });
+                setReviews(response.data)
+                
+            } catch (error) {
+                // Handle network error or other issues
+                console.error('Network error:', error);
+            }
+        };
+        fetchUserReviews()
+    }, []);
 
     //giving initial values to the variables
     useEffect(() => {
@@ -286,6 +306,9 @@ const Employerprofile = () => {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },
+                    params: {
+                      status:"ONGOING,PENDING,COMPLETED"
+                    },
                 });
 
                 if (response.status === 200) {
@@ -331,6 +354,25 @@ const Employerprofile = () => {
         { value: 'CHINA', label: 'China' },
         { value: 'RUSSIA', label: 'Russia' }
     ];
+
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        const daySuffix = (day) => {
+            switch (day % 10) {
+                case 1: return day + "st";
+                case 2: return day + "nd";
+                case 3: return day + "rd";
+                default: return day + "th";
+            }
+        };
+
+        const options = { year: 'numeric', month: 'short' };
+        const formattedDate = date.toLocaleDateString('en-US', options);
+        const day = daySuffix(date.getDate());
+
+        return `${day} ${formattedDate}`;
+    };
+
     return (
         <div style={{ overflowX: 'hidden' }}>
 
@@ -549,7 +591,7 @@ const Employerprofile = () => {
                                         {job.status === 'COMPLETED' && (
                                             <Box sx={{ width:{xs:'9px',sm:'7px'}, height: {xs:'9px',sm:'7px'}, borderRadius: '50%', backgroundColor: '#DA000D',marginRight:{xs:'11px',sm:'15px'}}}></Box>
                                         )}
-                                        {job.status === 'ACTIVE' && (
+                                        {job.status === 'ONGOING' && (
                                             <Box sx={{ width:{xs:'9px',sm:'7px'}, height: {xs:'9px',sm:'7px'}, borderRadius: '50%', backgroundColor: '#2CAA00', marginRight:{xs:'11px',sm:'15px'}}}></Box>
                                         )}
                                         <Typography sx={{ fontSize:{ xs:'12px',sm:'16px',},color: '#4301A2'}}>{job.status}</Typography>
@@ -583,7 +625,59 @@ const Employerprofile = () => {
                 </div>
                 <div className='review-box'>
                     <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
-                    <p style={{marginTop:'10px'}}>You have no reviews yet.</p>
+                    {
+                        reviews.length===0? 
+                        (<p style={{marginTop:'10px'}}>You have no reviews yet.</p>):
+                        (reviews.map((review,index)=>(
+                                <Box key={index} sx={{
+                                    margin:'15px 0',
+                                    borderRadius:'16px',
+                                    boxShadow: '0px 0px 4px 0px #00000040',
+                                    width:'100%',
+                                    padding:'20px',
+                                    display:'flex',
+                                    flexDirection:'row',
+                                    alignItems:'center'
+                                }}>
+                                    <Box sx={{
+                                        width:{md:'180px',sm:"150px",xs:'100px'},
+                                        display:'flex',flexDirection:'column',alignItems:'center',padding:'10px',justifyContent:'center'
+                                    }}>
+                                        <Avatar
+                                        alt={savedName}
+                                        sx={{ backgroundColor: '#B27EE3',width:{sm:'65px',xs:'40px'},height:{sm:'65px',xs:'40px'} }}
+                                    >
+                                       {/* {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()} */}
+                                       {review.posted_by_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+                                    </Avatar>
+                                        <Typography sx={{color:'#000000',fontSize:{sm:'16px',xs:'13px'},textAlign:'center',marginTop:'5px'}}>{review.posted_by_name}</Typography>
+
+                                    </Box>
+                                    <Box sx={{
+                                        display:'flex',
+                                        flexDirection:'column',
+                                        width:'auto',
+                                        gap:'14px',
+                                        justifyContent:'space-between',
+                                        marginLeft:{sm:'50px',xs:'10px'}
+                                    }}>
+                                         <Box sx={{
+                                        display:'flex',
+                                        flexDirection:'row'
+                                        }}>
+                                            <Box sx={{display:'flex',
+                                        flexDirection:'row',alignItems:'center',gap:'5px'}}>
+                                            <RiStarSFill style={{color:'#B27EE3',fontSize:{sm:'20px',xs:'14px'}}} />  {review.stars}
+                                            </Box>
+                                            <Typography sx={{color:'#000000',fontSize:{sm:'16px',xs:'13px'},marginLeft:'16px'}}>Reviewed on {formatDate(review.created_at)}</Typography>
+                                        </Box>
+                                    <Box>
+                                        <Typography sx={{color:'#454545',fontSize:{sm:'20px',xs:'15px'}}}>{review.review}</Typography>
+                                    </Box>
+                                    </Box>
+                                </Box>
+                            )))
+                    }
                 </div>
             </div>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Freelancerprofile.css';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink,useParams } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { CiLocationOn } from "react-icons/ci";
@@ -11,10 +11,11 @@ import Avatar from '@mui/material/Avatar';
 import { Box, Chip } from '@mui/material';
 import BAPI from '../helper/variable';
 import { useLocation } from 'react-router-dom';
+import { Typography } from '@mui/material'
+import { RiStarSFill } from "react-icons/ri";
 
 const FreelancerProfile = () => {
     const { pathname } = useLocation();
-
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [pathname]);
@@ -85,6 +86,8 @@ const FreelancerProfile = () => {
 
     const [inputAboutValue, setInputAboutValue] = useState('');
     const [newinputval,setnewinputval]= useState('');
+
+    const [reviews,setReviews]=useState([]);
 
     const filters=['All','UI/UX','3d Visualization','Graphic Design','Video Editing']
 
@@ -162,7 +165,26 @@ const FreelancerProfile = () => {
             setNewPortfolio('');
         }
     };
-
+    useEffect(() => {
+        const fetchUserReviews = async () => {
+            try {
+                const response = await axios.get(`${BAPI}/api/v0/reviews/reviews`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`,
+                        },
+                    });
+                setReviews(response.data)
+                console.log("REVIEWS ",response.data)
+                
+            } catch (error) {
+                // Handle network error or other issues
+                console.error('Network error:', error);
+            }
+        };
+        fetchUserReviews()
+    }, []);
     //fetching initial user profile values for name,skills, projects, etc.
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -224,6 +246,15 @@ const FreelancerProfile = () => {
     //updating user profile values
     const updateUserProfile = async () => {
         try {
+            const data={
+                first_name: newName,
+                role: newJobCategory,
+                location: {
+                    city: '',
+                    state: '',
+                    country: newLocation,
+                }}
+            console.log(data)
             const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 first_name: newName,
                 role: newJobCategory,
@@ -244,8 +275,9 @@ const FreelancerProfile = () => {
                 const responseData = response.data;
                 console.log(response)
                 setSavedName(responseData.full_name);
-                setSavedJobCategory(responseData.role);if(responseData.location){
-                    setSavedLocation(responseData.location?.country);}
+                setSavedJobCategory(responseData.role);
+                if(responseData.location){
+                   setSavedLocation(responseData.location?.country);}
                     else{
                       setSavedLocation('Location Here')
                     }
@@ -414,6 +446,23 @@ const FreelancerProfile = () => {
         { value: 'RUSSIA', label: 'Russia' }
     ];
 
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        const daySuffix = (day) => {
+            switch (day % 10) {
+                case 1: return day + "st";
+                case 2: return day + "nd";
+                case 3: return day + "rd";
+                default: return day + "th";
+            }
+        };
+
+        const options = { year: 'numeric', month: 'short' };
+        const formattedDate = date.toLocaleDateString('en-US', options);
+        const day = daySuffix(date.getDate());
+
+        return `${day} ${formattedDate}`;
+    };
 
     return (
         <div>
@@ -783,7 +832,58 @@ const FreelancerProfile = () => {
                 {/* foruth div for reviews */}
                 <div className='review-box'>
                     <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
-                    <p style={{marginTop:'10px'}}>You have no reviews yet.</p>
+                    {
+                        reviews.length===0? 
+                        (<p style={{marginTop:'10px'}}>You have no reviews yet.</p>):
+                        (reviews.map((review,index)=>(
+                                <Box key={index} sx={{
+                                    margin:'15px 0',
+                                    borderRadius:'16px',
+                                    boxShadow: '0px 0px 4px 0px #00000040',
+                                    width:'100%',
+                                    padding:'20px',
+                                    display:'flex',
+                                    flexDirection:'row',
+                                    alignItems:'center'
+                                }}>
+                                    <Box sx={{
+                                        width:{md:'180px',sm:"150px",xs:'100px'},
+                                        display:'flex',flexDirection:'column',alignItems:'center',padding:'10px',justifyContent:'center'
+                                    }}>
+                                        <Avatar
+                                        alt={review.posted_by_name[0]}
+                                        sx={{ backgroundColor: '#B27EE3',width:{sm:'65px',xs:'40px'},height:{sm:'65px',xs:'40px'} }}
+                                    >
+                                       {review.posted_by_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+                                    </Avatar>
+                                        <Typography sx={{color:'#000000',fontSize:{sm:'16px',xs:'13px'},textAlign:'center',marginTop:'5px'}}>{review.posted_by_name}</Typography>
+
+                                    </Box>
+                                    <Box sx={{
+                                        display:'flex',
+                                        flexDirection:'column',
+                                        width:'auto',
+                                        gap:'14px',
+                                        justifyContent:'space-between',
+                                        marginLeft:{sm:'50px',xs:'10px'}
+                                    }}>
+                                         <Box sx={{
+                                        display:'flex',
+                                        flexDirection:'row'
+                                        }}>
+                                            <Box sx={{display:'flex',
+                                        flexDirection:'row',alignItems:'center',gap:'5px'}}>
+                                            <RiStarSFill style={{color:'#B27EE3',fontSize:{sm:'20px',xs:'14px'}}} />  {review.stars}
+                                            </Box>
+                                            <Typography sx={{color:'#000000',fontSize:{sm:'16px',xs:'13px'},marginLeft:'16px'}}>Reviewed on {formatDate(review.created_at)}</Typography>
+                                        </Box>
+                                    <Box>
+                                        <Typography sx={{color:'#454545',fontSize:{sm:'20px',xs:'15px'}}}>{review.review}</Typography>
+                                    </Box>
+                                    </Box>
+                                </Box>
+                            )))
+                    }
                 </div>
             </div>
         </div>

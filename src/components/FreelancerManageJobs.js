@@ -13,6 +13,10 @@ const ManageJobs = () => {
   const accessToken = localStorage.getItem('accessToken');
   const [selectedSection, setSection] = useState(section || 'applied');
   const navigate=useNavigate();
+  const [deliverables,setDeliverables]=useState({
+    'total':0,
+    'completed':0
+  })
   const handleButtonClick=(selectedsection)=>{
          setSection(selectedsection);
          navigate(`/managejobs/${selectedsection}`)
@@ -40,12 +44,11 @@ const ManageJobs = () => {
         });
 
         if (response.status === 200) {
-          console.log(response.data)
-          setApplications(prevApplications => {
-            const newApplications = response.data.results.filter(newApp => !prevApplications.some(existingApp => existingApp.id === newApp.id));
-            return [...prevApplications, ...newApplications];
-          });
-            console.log(applications)
+          // setApplications(prevApplications => {
+          //   const newApplications = response.data.results.filter(newApp => !prevApplications.some(existingApp => existingApp.id === newApp.id));
+          //   return [...prevApplications, ...newApplications];
+          // });
+          setApplications(response.data.results)
           if (response.data.next) {
             await getApplications(page + 1);
           }
@@ -62,7 +65,6 @@ const ManageJobs = () => {
     const fetchJobDetails = async () => {
       const jobDetails = await getJobDetails(applications);
       setJobs(jobDetails);
-      console.log(jobData)
     };
 
     fetchJobDetails();
@@ -77,7 +79,6 @@ const ManageJobs = () => {
             'Authorization': `Bearer ${accessToken}`,
           },
         });
-        // console.log(application.modified_at)
         response.data['applied_on']=application.modified_at;
         return response.data;
       });
@@ -87,7 +88,34 @@ const ManageJobs = () => {
       console.error('Error occurred:', error);
     }
   };
-  
+  const [savedJobs,setSavedJobs]=useState([]);
+
+  useEffect(() => {
+    const getsavedjobs = async (page = 1) => {
+      try {
+        const response = await axios.get(`${BAPI}/api/v0/jobs/saved-jobs/me`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          // params: {
+          //   page: page,
+          //   per_page: 8,
+          // },
+        });
+
+        if (response.status === 200) {
+          console.log("saved jobs : ",response.data)
+          setSavedJobs(response.data)
+        }
+      } catch (error) {
+        console.error('Error occurred:', error);
+      }
+    };
+
+    getsavedjobs();
+  }, []);
+
   return (
     <Box>
     <Header3 />
@@ -123,6 +151,7 @@ const ManageJobs = () => {
                           .filter((job) => ['PENDING'].includes(job.status))
                           .map((job, index) => (
                             <Job
+                            passed_from={0}
                               key={index}
                               position={job.title}
                               companyName={job.company_name}
@@ -132,6 +161,8 @@ const ManageJobs = () => {
                               isLast={index === jobData.length - 1}
                               status={job.status}
                               job_id={job.id}
+                              total_deliverables={job.total_deliverables}
+                              completed_deliverables={job.completed_deliverable}
                             />
                           )))}
                     </Box>
@@ -151,14 +182,18 @@ const ManageJobs = () => {
                       .filter((job) => ['COMPLETED'].includes(job.status))
                       .map((job, index) => (
                         <Job
+                        passed_from={0}
                           key={index}
-                          position={job.position}
-                          companyName={job.companyName}
+                          position={job.title}
+                          companyName={job.company_name}
                           companyLogoUrl={job.companyLogoUrl}
                           location={job.location}
-                          startDate={job.startDate}
+                          startDate={job.applied_on}
                           isLast={index === jobData.length - 1}
                           status={job.status}
+                          job_id={job.id}
+                          total_deliverables={job.total_deliverables}
+                          completed_deliverables={job.completed_deliverable}
                         />
                       )))}
                       
@@ -179,15 +214,18 @@ const ManageJobs = () => {
                       .filter((job) => ['ONGOING'].includes(job.status))
                       .map((job, index) => (
                         <Job
+                          passed_from={0}
                           key={index}
-                          position={job.position}
-                          companyName={job.companyName}
+                          position={job.title}
+                          companyName={job.company_name}
                           companyLogoUrl={job.companyLogoUrl}
                           location={job.location}
-                          startDate={job.startDate}
+                          startDate={job.applied_on}
                           isLast={index === jobData.length - 1}
                           status={job.status}
                           job_id={job.id}
+                          total_deliverables={job.total_deliverables}
+                          completed_deliverables={job.completed_deliverable}
                         />
                       )))}
                       
@@ -202,20 +240,22 @@ const ManageJobs = () => {
                         <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/freelancerprofile'>Manage Profile</Link>
                     </Box>
                     <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
-                    {jobData.filter((job) => ['SAVED'].includes(job.status)).length === 0 ? (
+                    {savedJobs.length === 0 ? (
                         <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No saved jobs found.</Typography>
-                      ) : (jobData
-                      .filter((job) => ['SAVED'].includes(job.status))
-                      .map((job, index) => (
+                      ) : (savedJobs.map((job, index) => (
                         <Job
+                          passed_from={0}
                           key={index}
-                          position={job.position}
-                          companyName={job.companyName}
+                          position={job.title}
+                          companyName={job.company_name}
                           companyLogoUrl={job.companyLogoUrl}
                           location={job.location}
-                          startDate={job.startDate}
-                          isLast={index === jobData.length - 1}
-                          status={job.status}
+                          startDate={job.created_at}
+                          isLast={index === savedJobs.length - 1}
+                          status="SAVED"
+                          job_id={job.job_id}
+                          total_deliverables={0}
+                          completed_deliverables={0}
                         />
                       )))}
                       

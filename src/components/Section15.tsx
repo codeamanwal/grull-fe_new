@@ -1,33 +1,44 @@
 import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { section15ImgArr } from "../helper/constant";
+import { useNavigate } from "react-router-dom";
 
 function Section15() {
 
   const isDesktop = useMediaQuery("(min-width:600px)");
 
+  const navigate=useNavigate()
 
+  const referenceComponentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleScroll = () => {
       const upperSlider = document.getElementById("upper-slider");
       const lowerSlider = document.getElementById("lower-slider");
       const scrollPosition = window.scrollY;
-      let upperSliderPosition;
-      let lowerSliderPosition;
+      let upperSliderPosition: number;
+      let lowerSliderPosition: number;
       
-      if(isDesktop){
-         upperSliderPosition = scrollPosition/25 ; // Adjust this value as needed
-         lowerSliderPosition = scrollPosition/25 ; // Adjust this value as needed
-      }else{
-        upperSliderPosition = scrollPosition/45 ; // Adjust this value as needed
-        lowerSliderPosition = scrollPosition/45 ; // Adjust this value as needed
+      // Determine the reference component's position
+      const referenceComponentPosition = referenceComponentRef.current?.getBoundingClientRect().top || 0;
+
+      // Check if the reference component has been passed
+      if (scrollPosition > referenceComponentPosition) {
+        const isDesktop: boolean = true; // Provide the logic to determine desktop or not
+
+        if (isDesktop) {
+          upperSliderPosition = (scrollPosition - referenceComponentPosition) / 25; // Adjust this value as needed
+          lowerSliderPosition = (scrollPosition - referenceComponentPosition) / 25; // Adjust this value as needed
+        } else {
+          upperSliderPosition = (scrollPosition - referenceComponentPosition) / 45; // Adjust this value as needed
+          lowerSliderPosition = (scrollPosition - referenceComponentPosition) / 45; // Adjust this value as needed
+        }
+     
+        if (upperSlider && lowerSlider) {
+          upperSlider.style.transform = `translateX(-${upperSliderPosition}px)`;
+          lowerSlider.style.transform = `translateX(${lowerSliderPosition}px)`;
+        }
       }
-   
-      if(upperSlider && lowerSlider) {
-      upperSlider.style.transform = `translateX(-${upperSliderPosition}px)`;
-      lowerSlider.style.transform = `translateX(${lowerSliderPosition}px)`;
     };
-  }
 
     window.addEventListener("scroll", handleScroll);
     return () => {
@@ -55,6 +66,8 @@ function Section15() {
           margin:{xs:"12px auto" ,md:"48px auto"},
           cursor:'pointer'
         }}
+
+        onClick={()=>navigate("/coming-soon")}
       >
         Discover More
       </Box>

@@ -3,7 +3,9 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
-import Logo from "../assets/Logo1.png";
+import Logo from "../assets/grullLogoPurple.svg";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Button,Divider,Grid } from '@mui/material';
@@ -39,6 +41,7 @@ export default function ClientDashboard(props: Props) {
   const accessToken = localStorage.getItem('accessToken');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [prof,setProf]=useState();
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -89,6 +92,7 @@ export default function ClientDashboard(props: Props) {
        const responseData = await response.json();
        setFullname(responseData.full_name);
        setRole(responseData.role);
+       setProf(responseData.id)
        localStorage.setItem("user",JSON.stringify(responseData));
        console.log(localStorage.getItem("user"));
      } catch (error) {
@@ -97,6 +101,22 @@ export default function ClientDashboard(props: Props) {
     }
     infofetch();
 },[]);
+
+const handleShareProfile = () => {
+  const url = `http://localhost:3000/client/${prof}`;
+  console.log("User Profile is: ", url);
+
+  navigator.clipboard.writeText(url)
+      .then(() => {
+          console.log('URL copied to clipboard');
+          toast.success('URL copied to clipboard');
+      })
+      .catch(err => {
+          console.error('Could not copy URL: ', err);
+          toast.error('Could not copy URL');
+      });
+}
+
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -223,10 +243,12 @@ export default function ClientDashboard(props: Props) {
                     >Grull Premium
                   </Button>
                 </Box>
-                <Button
-                  sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}}> 
+                 */}
+                 <Button
+                  sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}} onClick={()=>handleShareProfile()}  > 
                   {<CiShare2 style={{height:'1.5em',width:'1.3em'}}/>}Share Profile
-                </Button> */}
+                </Button>
+                <ToastContainer />
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/clientchat')}  className='resdash' />
                 <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
                 <Box ref={container1} sx={{position:'relative'}}>

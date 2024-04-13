@@ -11,6 +11,7 @@ import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
 import { useNavigate } from "react-router-dom";
 
 function Section1() {
+  const accessToken = localStorage.getItem('accessToken');
   const { dustyOrange, lavender, black, white, silverTree, racingGreen } =
     shades;
   const scrollToSection = useScrollToContactUsHook();
@@ -115,9 +116,9 @@ function Section1() {
               //     border: `1px solid ${white}`,
               //   },
             }}
-            onClick={()=>{navigate('/home')}}
+            onClick={()=>{accessToken!==null? navigate('/postjob') : navigate('/home')}}
           >
-            Post a Project
+            Post a Job
           </Button>
 
           <Button
@@ -136,7 +137,7 @@ function Section1() {
               //     color:black
               //   },
             }}
-            onClick={()=>{navigate('/home')}}
+            onClick={()=>{accessToken!==null?navigate('/browsejobs'): navigate('/home')}}
           >
             Find Work
           </Button>

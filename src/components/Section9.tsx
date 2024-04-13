@@ -2,11 +2,13 @@ import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
 import { shades } from "../helper/shades";
 import { section9Arr } from "../helper/constant";
+import { useNavigate } from "react-router-dom";
 
 function Section9() {
   const { lavender} =  shades;
   const isDesktop = useMediaQuery("(min-width:900px)");
-
+  const accessToken = localStorage.getItem('accessToken');
+  const navigate = useNavigate()
 
   return (
     <Grid sx={{ padding:{xs:"0", md:"24px"} }}>
@@ -22,9 +24,11 @@ function Section9() {
         {[
           {
             text: "Freelancer",
+            link: "/freelancer"
           },
           {
             text: "Client",
+            link: "/client"
           },
         ].map((obj) => {
           return (
@@ -41,6 +45,9 @@ function Section9() {
                 "&:hover": {
                   background: lavender,
                 },
+              }}
+              onClick={() => {
+                accessToken!==null?navigate(obj.link): navigate('/home')
               }}
             >
               {obj.text}

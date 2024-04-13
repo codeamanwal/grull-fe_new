@@ -2,15 +2,19 @@ import { Avatar, Box, Button, Divider, IconButton, InputBase, Typography } from 
 import React, { useEffect, useRef, useState } from 'react'
 import { RxDotsHorizontal } from "react-icons/rx";
 import { RiEdit2Line } from "react-icons/ri";
+import StarIcon from '@mui/icons-material/Star';
 import Header3 from './Header3'
 import { CiSearch } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
 import { CiFilter } from "react-icons/ci";
 import '../styles/Chat.css'
+import Form from 'react-bootstrap/Form';
+import Rating from '@mui/material/Rating';
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
 import { Grid} from '@mui/material';
 import toast, { Toaster } from 'react-hot-toast';
+import Modal from '@mui/material/Modal';
 import { IoSend } from "react-icons/io5";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { DatePicker} from 'antd';
@@ -19,6 +23,7 @@ import BAPI from '../helper/variable'
 import axios from 'axios';
 import dayjs from 'dayjs';
 import io from 'socket.io-client';
+import Header4 from './Header4';
 
 
 export default function Clientchat() {
@@ -48,7 +53,8 @@ export default function Clientchat() {
   const [selectedChatInfo,setSelectedChatInfo]=useState(null);
   const [editMode,setEditMode]=useState(false);
   const [editmessageId,setEditmessageId]=useState('');
-
+  let countDeliverable = 0;
+  let submittedacceptDeliverables=0;
   const [receivedMessage, setReceivedMessage] = useState(true);
   const [connected, setConnected] = useState(false);
   const [clientId, setClientId] = useState(
@@ -57,10 +63,19 @@ export default function Clientchat() {
   const [websckt, setWebsckt] = useState();
   const [clientname,setClientname]=useState('');
   const [freelancername,setfreelancername]=useState('');
+  const [openm, setOpenm] = useState(false);
+  const [reviewfeedback,setReviewfeedback]=useState({
+    feedback:'',
+    stars:'0'
+  })
+  const [chatCompleted,setChatCompleted]=useState(false);
+  const [job_title,setSelectedjobtitle]=useState('');
+  const handleOpen = () => setOpenm(true);
+  const handleClose = () => setOpenm(false);
 
   useEffect(()=>{
       const user=localStorage.getItem('user');
-      setClientname(JSON.parse(user).first_name)
+      setClientname(JSON.parse(user).full_name)
   },[])
   useEffect(() => {
     // Generate a unique client ID
@@ -197,7 +212,7 @@ const sendMessageSocket = () => {
                Authorization:`Bearer ${accessToken}`,
            }
         })
-        console.log(response);
+        await createnotification("Deliverable added", `${clientname} has added a new deliverable for ${job_title} job.`)
         }
         catch(err){
             console.log("Error in sending chat : ",err)
@@ -218,6 +233,27 @@ const sendMessageSocket = () => {
     setEditmessageId(message.id);
   }
 
+  
+const createnotification=async(title, content)=>{
+    const notification={
+        "title": title,
+        "content": content,
+        "notification_for": selectedChatInfo.freelancer_id
+      }
+    try{
+        const response=await axios.post(`${BAPI}/api/v0/notifications/create-notification`,notification,{
+         headers:{
+             Authorization:`Bearer ${accessToken}`
+         }
+        });
+        console.log(response.data);
+     }
+     catch(err){
+         console.log("Error while creating notification : ", err)
+     }
+  }
+
+
     const handleNegotiate=async(messaegId)=>{
         try{
             const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
@@ -228,7 +264,7 @@ const sendMessageSocket = () => {
                     Authorization:`Bearer ${accessToken}`,
                 }
             })
-            console.log(negres);
+            await createnotification("Price Negotiation", `${clientname} has negotiated the price of ${job_title} job.`)
         }
         catch(err){
             console.log("Error while Negotiating price : ",err)
@@ -246,10 +282,45 @@ const sendMessageSocket = () => {
                     Authorization:`Bearer ${accessToken}`,
                 }
             })
-            console.log(negres);
+            // console.log(negres);
+            await createnotification("Price Accepted", `${clientname} has accepted the price negotiation of ${job_title} job.`)
         }
         catch(err){
             console.log("Error while Accepting price : ",err)
+        }
+        sendMessageSocket()
+    }
+    const handleAcceptSubmission = async(messageId)=>{
+        try{
+            const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
+                "message_id":messageId,
+                "status":"DELIVERABLE_IMAGE_ACCEPTED"
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken}`,
+                }
+            })
+            await createnotification("Accepted Submission", `${clientname} has accepted the submission of ${job_title} job.`)
+        }
+        catch(err){
+            console.log("Error while Accepting deliverable : ",err)
+        }
+        sendMessageSocket()
+    }
+    const handleRejectSubmission = async(messageId)=>{
+        try{
+            const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
+                "message_id":messageId,
+                "status":"DELIVERABLE_IMAGE_REJECTED"
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken}`,
+                }
+            })
+            await createnotification("Submission declined", `${clientname} has declined the submission of ${job_title} job.`)
+        }
+        catch(err){
+            console.log("Error while Rejecting deliverable : ",err)
         }
         sendMessageSocket()
     }
@@ -276,19 +347,6 @@ const sendMessageSocket = () => {
     const file = event.target.files[0];
     setImage(file);
     uploadImage();
-    // if (file) {
-    //   if (file.type.startsWith('image/')) {
-    //     await uploadImage();
-    //     const newMessage = { type: 'image', content: selectedImage, username: 'you' };
-    //     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    //   } else if (file.type.startsWith('video/')) {
-    //     // Assuming setSelectedVideo is defined elsewhere
-    //     setSelectedVideo(file);
-    //     const newMessage = { type: 'video', content: file, username: 'you' };
-    //     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    //   } else {
-    //     toast.error('Please select an image or video file');
-    //   }
       setOpen(false);
     
   };
@@ -325,7 +383,6 @@ const sendMessageSocket = () => {
                 Authorization:`Bearer ${accessToken}`
             }
            });
-        //    console.log(response.data);
            setSelectedChatInfo(response.data);
         }
         catch(err){
@@ -336,6 +393,48 @@ const sendMessageSocket = () => {
          getChatInfo();}
   },[selectedChat]);
 
+  const submitReview=async()=>{
+    const review={
+      "stars": reviewfeedback.stars,
+      "review": reviewfeedback.feedback,
+      "review_for": selectedChatInfo.freelancer_id,
+      "job_application_id": selectedChatInfo.application_id
+    }
+    try{
+        const response=await axios.post(`${BAPI}/api/v0/reviews/create-reviews`, review, {
+            headers:{
+                Authorization:`Bearer ${accessToken}`
+            }
+           });
+            setReviewfeedback({
+                feedback:'',
+                stars:'0'
+            })
+            handleClose();
+    }
+    catch(err){
+        console.log("Error while giving review : ",err)
+    }
+}
+
+
+  const checkcompleted=async()=>{
+    let total=0;
+    let completed=0;
+    messages.forEach((message)=>{
+        if(message.status==="DELIVERABLE_IMAGE_ACCEPTED"){
+            completed++;
+        }
+        if(message.status==="DELIVERABLES_ACCEPTED"){
+            total++;
+        }
+    })
+
+    if(total!==0 && total===completed){
+        setChatCompleted(true);
+    }
+}
+
   useEffect(()=>{
     const getChat=async()=>{
         try{
@@ -344,8 +443,12 @@ const sendMessageSocket = () => {
                 Authorization:`Bearer ${accessToken}`
             }
            });
-        //    console.log(response.data);
+           console.log(response.data);
+        //    const newmessage={
+        //          status :  "REVIEW"
+        //    }
           setMessages(response.data);
+          await checkcompleted();
         }
         catch(err){
             console.log("Error while fetching chat : ", err)
@@ -355,7 +458,14 @@ const sendMessageSocket = () => {
          getChat();}
   },[selectedChat,receivedMessage]);
   
-  const handleChatSelect = (chat) => {
+  const handleChatSelect = (chat,title) => {
+    setChatCompleted(false);
+    setReviewfeedback({
+        feedback:'',
+        stars:'0'
+    });
+    setMessages([]);
+    setSelectedjobtitle(title);
     setSelectedChat(chat);
   };
 
@@ -376,7 +486,7 @@ const sendMessageSocket = () => {
   return (
     <Box>
       <Box>
-        <Header3 />
+        <Header4 />
       </Box>
       <Box sx={{padding:'40px 90px'}}>
         <Box sx={{display:'flex',flexDirection:'row',height:'820px'}}>
@@ -406,7 +516,7 @@ const sendMessageSocket = () => {
                     {
                         freelancers?.map((chat,indx)=>(
                             <React.Fragment key={indx}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', padding: '22px 20px 13px',alignItems:'center',justifyContent:'space-between',gap:'40px',cursor:'pointer'}} onClick={() =>{ handleChatSelect(JSON.parse(chat).id);setfreelancername(JSON.parse(chat).first_name)}}>
+                                <Box sx={{ display: 'flex', flexDirection: 'row', padding: '22px 20px 13px',alignItems:'center',justifyContent:'space-between',gap:'40px',cursor:'pointer'}} onClick={() =>{ handleChatSelect(JSON.parse(chat).id,JSON.parse(chat).job_title);setfreelancername(JSON.parse(chat).first_name)}}>
                                     <Box sx={{ display: 'flex', flexDirection: 'row',alignItems:'center',gap:'10px'}}>
                                         <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
                                         {JSON.parse(chat).first_name[0]}
@@ -432,12 +542,12 @@ const sendMessageSocket = () => {
                     <div className='chat_Profile_frnd'>
                         <Box>
                             <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
-                                {freelancername[0]}
+                            {clientname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                             </Avatar>
                            {freeLancerOnline ? <div className='chat_Profile_Online'></div> : null}
                         </Box>
                         <div className='chat_Profile_frnd_Name'>
-                            <h3>{freelancername}</h3>
+                            <h3>{clientname}</h3>
                             <p>Online</p>
                         </div>
                         <div className='chat_profile_settings'>
@@ -456,12 +566,12 @@ const sendMessageSocket = () => {
                     <div className='chat-container_client'>
                         <Box>
                             <Avatar sx={{ textTransform: 'uppercase', width: '70px', height: '70px' }}>
-                                {clientname[0]}
+                            {freelancername?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                             </Avatar>
                             {clientOnline ? <div className='chat_container_client_Online'></div> : null}
                         </Box>
                         <div className='chat-container_client_Name'>
-                            <h3>{clientname}</h3>
+                            <h3>{freelancername}</h3>
                             <p>Location</p>
                         </div>
                     </div>
@@ -471,8 +581,16 @@ const sendMessageSocket = () => {
                     </div>
 
                     <Grid sx={{padding:'20px 35px',display:'flex',flexDirection:'column',gap:'13px',height:'400px', alignItems:'flex-end',overflowY:'auto'}} className='chat-container_chat_msg_scroll' ref={chatContainerRef}>
-                            {messages.map((message, index) => (
-                                <Grid key={index} className={message.sent_by!==selectedChatInfo?.manager_id ? 'message-receive' : 'message-send'}
+                            {messages.map((message, index) => {
+                                 if (message.status === 'DELIVERABLES_ACCEPTED') {
+                                    countDeliverable++;
+                                }
+                                if (message.status === 'DELIVERABLE_IMAGE_ACCEPTED') {
+                                    submittedacceptDeliverables++;
+                                }
+                             return (
+                             <>
+                             <Grid  key={index}  className={message.sent_by!==selectedChatInfo?.manager_id ? 'message-receive' : 'message-send'}
                                     sx={{
                                         display: 'flex',
                                         flexDirection:'row',
@@ -497,8 +615,8 @@ const sendMessageSocket = () => {
                                                     {
                                                         message.status==='DELIVERABLE_IMAGE'?
                                                         (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
-                                                        <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}}>Accept</Button>
-                                                        <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}}>Decline</Button>
+                                                        <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}} onClick={()=>handleAcceptSubmission(message.id)}>Accept</Button>
+                                                        <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>[handleRejectSubmission(message.id)]} >Decline</Button>
                                                     </Box>):null 
                                                     }
                                                 </Box>
@@ -566,10 +684,10 @@ const sendMessageSocket = () => {
                                             <Box sx={{display:'flex',flexDirection:'column',gap:'8px',marginBottom:'10px'}}>
                                             <Box sx={{
                                                     maxWidth: '100%',
-                                                    color: '#ffffff',
+                                                    color: message.status!=='DELIVERABLES_REJECTED'?'#ffffff':'#000000',
                                                     padding:'10px 15px 10px 15px',
                                                     minWidth:'130px',
-                                                    backgroundColor:'#ED8335',
+                                                    backgroundColor:message.status!=='DELIVERABLES_REJECTED'?'#ED8335':'#EAEAEA',
                                                     borderRadius:'16px',
                                                     display:'flex',flexDirection:'column',gap:'0px'
                                                 }}>
@@ -610,7 +728,175 @@ const sendMessageSocket = () => {
                                             </Typography>
                                         )}
                                 </Grid>
-                            ))}
+                                {
+                                    message.status==="NEGOTIATION_ACCEPTED" && (
+                                        <Box 
+                                        sx={{
+                                           display:'flex',
+                                           flexDirection:'row',
+                                           justifyContent:'center',
+                                           gap:'10px',
+                                           alignItems:'center',
+                                           width:'100%',
+                                           margin:'5px 0'
+                                        }}>
+                                         <Typography sx={{color:'#454545',fontWeight:'700'}}>Congrats your project has been started</Typography>
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    message.status==="DELIVERABLES_REJECTED" && (
+                                        <Box 
+                                        sx={{
+                                           display:'flex',
+                                           flexDirection:'row',
+                                           justifyContent:'center',
+                                           gap:'10px',
+                                           alignItems:'center',
+                                           width:'100%',
+                                           margin:'5px 0'
+                                        }}>
+                                         <Typography sx={{color:'#454545',fontWeight:'700'}}>Freelancer has rejected the deliverable {countDeliverable+1}</Typography>
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    message.status==="DELIVERABLES_ACCEPTED" && (
+                                        <Box 
+                                        sx={{
+                                           display:'flex',
+                                           flexDirection:'row',
+                                           justifyContent:'center',
+                                           gap:'10px',
+                                           alignItems:'center',
+                                           width:'100%',
+                                           margin:'5px 0'
+                                        }}>
+                                         <Typography sx={{color:'#454545',fontWeight:'700'}}>Freelancer has accepted the deliverable {countDeliverable}</Typography>
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    message.status==="DELIVERABLE_IMAGE_ACCEPTED" && (
+                                        <Box 
+                                        sx={{
+                                           display:'flex',
+                                           flexDirection:'row',
+                                           justifyContent:'center',
+                                           gap:'10px',
+                                           alignItems:'center',
+                                           width:'100%',
+                                           margin:'5px 0'
+                                        }}>
+                                         <Typography sx={{color:'#454545',fontWeight:'700'}}>Deliverable {submittedacceptDeliverables} is accepted</Typography>
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    message.status==="DELIVERABLE_IMAGE_REJECTED" && (
+                                        <Box 
+                                        sx={{
+                                           display:'flex',
+                                           flexDirection:'row',
+                                           justifyContent:'center',
+                                           gap:'10px',
+                                           alignItems:'center',
+                                           width:'100%',
+                                           margin:'5px 0'
+                                        }}>
+                                         <Typography sx={{color:'#454545',fontWeight:'700'}}>Deliverable {submittedacceptDeliverables+1} is declined</Typography>
+                                        </Box>
+                                    )
+                                }
+                                </>
+                            )})
+                            }
+                                {
+                                    chatCompleted && (
+                                        <Box 
+                                        sx={{
+                                           display:'flex',
+                                           flexDirection:'row',
+                                           justifyContent:'center',
+                                           gap:'10px',
+                                           alignItems:'center',
+                                           width:'100%',
+                                           marginTop:'20px'
+                                        }}>
+                                         <Typography sx={{color:'#454545',fontWeight:'700'}}>Congrats your project is completed</Typography>
+                                        <Button sx={{
+                                            borderRadius:'16px',
+                                            color:'#fff',
+                                            backgroundColor:'#000',
+                                            padding:'5px 10px',
+                                            fontSize:'13px',
+                                            ':hover':{
+                                                color:'#fff',
+                                                backgroundColor:'#000',
+                                            }
+                                        }} onClick={handleOpen} >Give Review</Button>
+                                        <Modal
+                                            open={openm}
+                                            onClose={handleClose}
+                                            aria-labelledby="modal-modal-title"
+                                            aria-describedby="modal-modal-description"
+                                        >
+                                            <Box sx={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                width:'600px',
+                                                backgroundColor: '#fff',
+                                                boxShadow: '0px 0px 4px 1px #00000040',
+                                                borderRadius:'7px',
+                                                padding:'25px'
+                                            }}>
+                                            <Typography sx={{color:'#000000',fontSize:'23px',fontWeight:'700'}} >
+                                                Review
+                                            </Typography>
+                                            <Box sx={{
+                                                marginTop:'20px'
+                                            }}>
+                                                <Form.Group className='form-group' controlId="form">
+                                                    <Form.Control as="textarea"
+                                                        value={reviewfeedback.feedback}
+                                                        onChange={(e)=>{
+                                                            setReviewfeedback({ ...reviewfeedback, feedback: e.target.value });
+                                                        }}
+                                                        rows="5"
+                                                        className='form-val proposaldesc' 
+                                                        type="text" name='feedback' placeholder="Enter your feedback here.." />
+                                                </Form.Group>
+                                                <Rating
+                                                    emptyIcon={<StarIcon style={{ opacity: 0.55, color:'grey'}} fontSize="inherit" />}
+                                                    name="simple-controlled"
+                                                    value={reviewfeedback.stars}
+                                                    onChange={(e, newValue) => {
+                                                        setReviewfeedback({ ...reviewfeedback, stars: newValue });
+                                                    }}
+                                                />
+                                                <Button 
+                                                onClick={()=>submitReview()}
+                                                sx={{
+                                                    borderRadius:'5px',
+                                                    color:'#fff',
+                                                    backgroundColor:'#000',
+                                                    padding:'6px 15px',
+                                                    fontSize:'15px',
+                                                    marginLeft:'auto',
+                                                    ':hover':{
+                                                        color:'#fff',
+                                                        backgroundColor:'#000',
+                                                    },
+                                                    float:'right'
+                                                }}>Submit Review</Button>
+                                            </Box>
+                                            </Box>
+                                        </Modal>
+                                        </Box>
+                                    )
+                                }
                     </Grid>
 
                     <Box sx={{display:'flex',flexDirection:'column'}} className="chat_footer">
@@ -701,7 +987,7 @@ const sendMessageSocket = () => {
                                     </Box>
                                 </div>
                                 <div className='chat_Profile_send_div'>
-                                    <Button onClick={sendMessage} style={{ cursor: 'pointer' }}>Send</Button>
+                                    <Button onClick={sendMessage} style={{ cursor: 'pointer' }} disabled={chatCompleted} >Send</Button>
                                     <div className=''>
                                         <i class="fa-solid fa-ellipsis" style={{ fontSize: '25px' }}></i>
                                     </div>

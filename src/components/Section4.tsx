@@ -11,6 +11,7 @@ import * as animationData from "../jsonAnimations/section4Animation.json";
 import * as animationData2 from "../jsonAnimations/section4Animation2.json";
 import section4LeftArrow  from "../assets/section4LeftArrow.png"
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
+import { useNavigate } from "react-router-dom";
 
 function Section4() {
   const { lavender, royalBlue } = shades;
@@ -27,6 +28,7 @@ function Section4() {
     autoplay: true,
     animationData: animationData2,
   };
+  const navigate=useNavigate();
 
   return (
     <Grid sx={{ minHeight: "100vh", width: "100vw" }}>
@@ -139,7 +141,7 @@ function Section4() {
                 left:0,
 
               }}
-              onClick={scrollToSection}
+              onClick={()=>navigate("/home")}
             >
               Explore Now
             </Typography>
@@ -193,7 +195,7 @@ function Section4() {
                 display: "block",
                 cursor:'pointer'
               }}
-              onClick={scrollToSection}
+              onClick={()=>navigate("/home")}
             >
               Explore Now
             </Box>
@@ -255,8 +257,7 @@ function Section4() {
                 display: { xs: "block", md: "none" },
                 cursor:'pointer'
               }}
-              onClick={scrollToSection}
-            >
+              onClick={()=>navigate("/home")} >
               Start Your Journey
             </Box>
           </Box>

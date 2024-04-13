@@ -33,8 +33,11 @@ const ClientManageJobs = () => {
                    'Content-Type': 'application/json',
                    'Authorization': `Bearer ${accessToken}`,
                },
+               params: {
+                 status:"ONGOING,PENDING,COMPLETED"
+               },
            });
-           console.log(response.data.results);
+           console.log(response.data);
            if (response.status===200) {
                console.log('Jobs Fetchedd successfully');
                setJobdata(response.data.results);
@@ -81,6 +84,7 @@ const ClientManageJobs = () => {
                           .filter((job) => ['PENDING'].includes(job.status))
                           .map((job, index) => (
                             <ClientJob
+                            passed_from={0}
                             key={index}
                             id={job.id}
                             title={job.title}
@@ -90,6 +94,8 @@ const ClientManageJobs = () => {
                             isLast={index === jobData.length - 1}
                             applicantcount={job.applicants}
                             status={job.status}
+                            total_deliverables={job.total_deliverables}
+                            completed_deliverables={job.completed_deliverable}
                           />
                           ))
                       )} 
@@ -111,6 +117,7 @@ const ClientManageJobs = () => {
                           .filter((job) => ['Completed'].includes(job.status))
                           .map((job, index) => (
                             <ClientJob
+                            passed_from={0}
                             key={index}
                             id={job.id}
                             title={job.title}
@@ -120,6 +127,8 @@ const ClientManageJobs = () => {
                             isLast={index === jobData.length - 1}
                             applicantcount={job.applicants}
                             status={job.status}
+                            total_deliverables={job.total_deliverables}
+                            completed_deliverables={job.completed_deliverable}
                             />
                           ))
                       )}           
@@ -141,6 +150,7 @@ const ClientManageJobs = () => {
                           .filter((job) => ['ONGOING'].includes(job.status))
                           .map((job, index) => (
                             <ClientJob
+                            passed_from={0}
                               key={index}
                               id={job.id}
                               title={job.title}
@@ -150,6 +160,8 @@ const ClientManageJobs = () => {
                               isLast={index === jobData.length - 1}
                               applicantcount={job.applicants}
                               status={job.status}
+                              total_deliverables={job.total_deliverables}
+                              completed_deliverables={job.completed_deliverable}
                             />
                           ))
                       )}    

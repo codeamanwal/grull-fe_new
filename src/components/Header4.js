@@ -14,7 +14,7 @@ import {
   Box,
   useMediaQuery,
 } from '@mui/material';
-import Logo from "../assets/Logo1.png";
+import Logo from "../assets/grullLogoPurple.svg";
 import mobilelogo from "../assets/grullPurpuleMobileLogo.svg"
 import { LuMenu } from "react-icons/lu";
 import BAPI from '../helper/variable'
@@ -64,6 +64,8 @@ export default function Header4() {
         setshowMangejobsDropdown((prev)=>(!prev));
     }
     const clickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('user')
         navigate('/')
     }
     const handleClickOutside = (e) => {
@@ -80,9 +82,6 @@ export default function Header4() {
         // optionally returning a func in useEffect runs like componentWillUnmount to cleanup
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-    const viewProfileClick = () => {
-        navigate('/freelancerprofile');
-    }
     const handlesettings =()=>{
         setChangeopts((prev)=>!prev);
   }
@@ -102,7 +101,7 @@ export default function Header4() {
                 <Grid item sx={{flex:{xs:'none',md:"1"}}} >
                         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap:{md:'20px',lg:'36px'}, alignItems: 'center' }}>
                             <Box sx={{display:{xs:'none',md:'block'}}}>
-                                <Button sx={{color:'#fff',fontSize:'16px'}} onClick={()=>navigate('/browsefreelancer')} endIcon={<RiArrowDropDownLine style={{fontSize:'30px',marginLeft:'-11px'}}/>}>Browse Freelancer</Button>
+                                <Button sx={{color:'#fff',fontSize:'16px'}} onClick={()=>navigate('/browsefreelancer')} >Browse Freelancer</Button>
                             </Box>
                             <Box sx={{display:{xs:'none',md:'block',position:'relative'}}} ref={container1}>
                                 <Button sx={{color:'#fff',fontSize:'16px'}} onClick={dropdownjobs} endIcon={<RiArrowDropDownLine style={{fontSize:'30px',marginLeft:'-11px'}}/>}>Manage Jobs</Button>
@@ -188,8 +187,9 @@ export default function Header4() {
                                                 </div>
                                             </div>
                                         </Box>
-                                        <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
-                                            <Button onClick={viewProfileClick} sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
+                                        <Link 
+        to= '/clientprofile' style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}} to="/clientprofile" >
+                                            <Button sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
                                         </Link>
                                         {
                                             !changeopts?(<> <Link component={NavLink} to="/client" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>

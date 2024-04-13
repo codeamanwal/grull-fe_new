@@ -57,7 +57,7 @@ const PostJob = () => {
             console.log(response)
             if (response.status===200) {
                 console.log('Job posted successfully');
-                navigate('/employerprofile');
+                navigate('/clientprofile');
             } else {
                 console.error('Error posting job:', response.data.error);
             }

@@ -14,7 +14,7 @@ import {
   Box,
   useMediaQuery,
 } from '@mui/material';
-import Logo from "../assets/Logo1.png";
+import Logo from "../assets/grullLogoPurple.svg";
 import mobilelogo from "../assets/grullPurpuleMobileLogo.svg"
 import { LuMenu } from "react-icons/lu";
 import { NavLink } from 'react-router-dom';
@@ -59,6 +59,8 @@ export default function Header2() {
         setShowDropdown((prevState) => (!prevState));
     }
     const clickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('user')
         navigate('/')
     }
     const handleClickOutside = (e) => {

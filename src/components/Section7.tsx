@@ -33,7 +33,7 @@ function Section7() {
             typography: { xs: "font_24_800", md: "font_64_800" },
           }}
         >
-          The next step in the freelance revolution
+          The next step in the <br />freelance revolution
           <Box
             sx={{
               width: { xs: "180px", md: "400px" },

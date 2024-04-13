@@ -14,7 +14,7 @@ import {
   Box,
   useMediaQuery,
 } from '@mui/material';
-import Logo from "../assets/Logo1.png";
+import Logo from "../assets/grullLogoPurple.svg";
 import mobilelogo from "../assets/grullPurpuleMobileLogo.svg"
 import { LuMenu } from "react-icons/lu";
 import BAPI from '../helper/variable'
@@ -27,7 +27,7 @@ export default function Header3() {
     const container = useRef();
     const container1=useRef()
     const [savedName,setSavedName]=useState('');
-    const [category,setcategory]=useState('')
+    const [category,setcategory]=useState('');
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     const navigate =useNavigate()
     const [showDropdown, setShowDropdown] = useState(false);
@@ -64,6 +64,8 @@ export default function Header3() {
         setshowMangejobsDropdown((prev)=>(!prev));
     }
     const clickLogout = () => {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('user')
         navigate('/')
     }
     const handleClickOutside = (e) => {
@@ -102,7 +104,7 @@ export default function Header3() {
                 <Grid item sx={{flex:{xs:'none',md:"1"}}} >
                         <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap:{md:'20px',lg:'36px'}, alignItems: 'center' }}>
                             <Box sx={{display:{xs:'none',md:'block'}}}>
-                                <Button sx={{color:'#fff',fontSize:'16px'}} onClick={()=>navigate('/browsejobs')} endIcon={<RiArrowDropDownLine style={{fontSize:'30px',marginLeft:'-11px'}}/>}>Browse Jobs</Button>
+                                <Button sx={{color:'#fff',fontSize:'16px'}} onClick={()=>navigate('/browsejobs')} >Browse Jobs</Button>
                             </Box>
                             <Box sx={{display:{xs:'none',md:'block',position:'relative'}}} ref={container1}>
                                 <Button sx={{color:'#fff',fontSize:'16px'}} onClick={dropdownjobs} endIcon={<RiArrowDropDownLine style={{fontSize:'30px',marginLeft:'-11px'}}/>}>Manage Jobs</Button>
@@ -189,8 +191,8 @@ export default function Header3() {
                                                 </div>
                                             </div>
                                         </Box>
-                                        <Link style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
-                                            <Button onClick={viewProfileClick} sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
+                                        <Link to='/freelancerprofile' style={{padding:'0',marginTop:'5px',':hover':{backgroundColor:'transparent',minHeight:'0'},backgroundColor:'#fff',}}>
+                                            <Button sx={{border: '1px solid #B27EE3',fontWeight:'600',color:'#B27EE3',width:'100%',borderRadius:'16px'}}>View Profile</Button>
                                         </Link>
                                         {
                                             !changeopts? (<>
@@ -206,7 +208,7 @@ export default function Header3() {
                                                 Logout
                                             </Link>
                                             </>):(<>
-                                        <Link to='/browsejobs' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Find Work</Link>
+                                        <Link to='/browsejobs' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Browse Jobs</Link>
                                         <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Learn</Link>
                                         <Link to='/coming-soon' style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Collaborate</Link>
                                             </>)

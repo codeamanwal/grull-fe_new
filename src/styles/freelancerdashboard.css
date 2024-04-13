@@ -50,14 +50,14 @@
  }
  @media only screen and (max-width:600px){
    .dashboard-navbar{
-     height: 95px!important;
+     height: 95px !important;
      justify-content: left !important;
      gap:5px !important
    }
    .dashboard-navbar-con{
-      flex-direction: column !important;
-      align-items: start !important;
-      padding: 0 !important;
+      /* flex-direction: column !important; */
+      /* align-items: start !important; */
+      /* padding: 0 !important; */
      /* padding-top: 10px !important; */
    }
    .dashboard-navbar-con p{
@@ -74,8 +74,8 @@
    .dashboard-navbar-buttons{
       gap:10px !important; 
    }
-
  }
+
  @media only screen and (max-width:600px){
     .css-k008qs{
      display: block !important;

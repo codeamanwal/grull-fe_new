@@ -30,6 +30,8 @@ import AboutUs from "../components/AboutUs.js";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import GoogleAuth from "../components/GoogleAuth.js";
+import FreelancerProfileShare from "../components/FreelancerProfileShare.js";
+import EmployerprofileShare from "../components/ClientProfileShare.js";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -74,6 +76,8 @@ export default function PageRoute() {
             <Route path='/coming-soon' element={<ComingSoon/>}/>
             <Route path='/about-us' element={<AboutUs/>}/>
             <Route path="/google" element={<GoogleAuth />} />
+            <Route path="/freelancer/:userid" element={<FreelancerProfileShare />}/>
+            <Route path="/client/:userid" element={<EmployerprofileShare />}/>
          </Routes>
  
        </BrowserRouter>

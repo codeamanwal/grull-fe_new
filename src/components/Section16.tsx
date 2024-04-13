@@ -9,6 +9,7 @@ import section6GreenTicks from "../assets/section6GreenTicks.svg";
 import Lottie from "react-lottie";
 import * as animationData from "../jsonAnimations/section16Animation.json";
 import useScrollToContactUsHook from "../customHooks/useScrollToContactUsHook";
+import { useNavigate } from "react-router-dom";
 
 function Section16() {
   const {
@@ -20,6 +21,7 @@ function Section16() {
 
   const isDesktop = useMediaQuery("(min-width:600px)");
   const scrollToSection = useScrollToContactUsHook();
+  const navigate=useNavigate()
 
   const defaultOptions = {
     loop: true,
@@ -186,7 +188,7 @@ function Section16() {
               typography:{xs:"font_12_600", md:"font_18_600"},
               cursor:'pointer'
             }}
-            onClick={scrollToSection}
+            onClick={()=>navigate('/home')}
           >
             Choose Plan
           </Box>
@@ -298,7 +300,7 @@ function Section16() {
               typography:{xs:"font_12_600", md:"font_18_600"},
               cursor:'pointer'
             }}
-            onClick={scrollToSection}
+            onClick={()=>navigate('/home')}
           >
             Choose Plan
           </Box>

@@ -11,11 +11,13 @@ import { IoWalletOutline } from "react-icons/io5";
 import { FiShoppingBag } from "react-icons/fi"
 import Avatar from '@mui/material/Avatar';
 import {useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import FreelancerHome from './FreelancerHome';
 import Freelancerwallet from './Freelancerwallet';
 import '../styles/freelancerdashboard.css';
 import { CiShare2 } from "react-icons/ci";
-import Logo from "../assets/Logo1.png";
+import Logo from "../assets/grullLogoPurple.svg";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import Header1 from './Header1';
@@ -44,7 +46,11 @@ export default function FreelancerDashboard(props: Props) {
   const container = windows !== undefined ? () => windows().document.body : undefined;
   const container1 = useRef();
   const navigate = useNavigate(); 
+  const [prof,setProf]=useState();
   const { pathname } = useLocation();
+  const [notifications,setNotifications]=useState([]);
+  const [notificationmodel,setNotificationmodel]=useState(false);
+  const container2 = useRef();
 
   useEffect(() => {
       window.scrollTo(0, 0);
@@ -71,6 +77,7 @@ export default function FreelancerDashboard(props: Props) {
           const responseData = await response.json();
           setFullname(responseData.full_name);
           setRole(responseData.role);
+          setProf(responseData.id)
           localStorage.setItem("user",JSON.stringify(responseData));
           console.log(localStorage.getItem("user"));
         } catch (error) {
@@ -79,6 +86,21 @@ export default function FreelancerDashboard(props: Props) {
        }
        infofetch();
   },[]);
+
+  const handleShareProfile = () => {
+    const url = `http://localhost:3000/freelancer/${prof}`;
+    console.log("User Profile is: ", url);
+
+    navigator.clipboard.writeText(url)
+        .then(() => {
+            console.log('URL copied to clipboard');
+            toast.success('URL copied to clipboard');
+        })
+        .catch(err => {
+            console.error('Could not copy URL: ', err);
+            toast.error('Could not copy URL');
+        });
+}
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -97,6 +119,9 @@ export default function FreelancerDashboard(props: Props) {
       if (container1.current && !container1.current.contains(e.target)) {
           setShowDropdown(false);
       }
+      if (container2.current && !container2.current.contains(e.target)) {
+        setNotificationmodel(false);
+    }
   };
 
   const handlesettings =()=>{
@@ -225,12 +250,39 @@ export default function FreelancerDashboard(props: Props) {
                     >Grull Premium
                   </Button>
                 </Box>
-                <Button
-                  sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}}> 
-                  {<CiShare2 style={{height:'1.5em',width:'1.3em'}}/>}Share Profile
-                </Button> */}
+                 */}
+                 <Button
+                  sx={{width: '160px',height: '40px',padding: '10px',gap: '10px',background: '#FFF',boxShadow: '0px 0px 4px 0px #00000040',borderRadius: '16px',color:'#000',textTransform: 'none', fontSize:'16px'}} onClick={()=>handleShareProfile()} > 
+
+                  {<CiShare2 style={{height:'1.5em',width:'1.3em'}}/>}  Share Profile
+                </Button>
+                <ToastContainer />
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/freelancerchat')} className='resdash' />
-                <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
+                <Box ref={container2} sx={{position:'relative'}} onClick={()=>{setNotificationmodel(!notificationmodel)}}>
+                     <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px',cursor:'pointer'}} className='resdash' />
+                     {
+                      notificationmodel && (
+                        <Box
+                           sx={{
+                                padding:'15px',
+                                display: notificationmodel?'block':'none',
+                                position:'absolute',
+                                backgroundColor:'#fff',
+                                zIndex:'1',
+                                top:{xs:'58px',sm:'65px'},
+                                right:{xs:'-55px',sm:'-80px',md:'-20px'},
+                                boxShadow: '0px 0px 4px 1px #00000040',
+                                borderRadius:{xs:'10px',sm:'20px'},
+                                width:{xs:'250px',sm:'280px'},
+                            }}>
+                              {
+                              notifications.length===0?(<p style={{textAlign:'center',color:'#000000'}}>No notifications received.</p>):(<p></p>)
+                              }
+                                  
+                            </Box>
+                      )
+                     }
+                </Box>
                 <Box ref={container1} sx={{position:'relative'}}>
                 <Avatar
                     className='resdash'

@@ -8,16 +8,101 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import BAPI from '../helper/variable';
 import grullLogo from "../assets/grullLogoPurple.svg"
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+
 
 const SignUp = () => {
     
     const navigate = useNavigate();
     const [isReceiveEmailsChecked, setReceiveEmailsChecked] = useState(false);
     const [isAgreeToTermsChecked, setAgreeToTermsChecked] = useState(false);
+    const [loading,setLoading]=useState("")
     const handleLoginClick = () => {
         navigate('/login');
     };
     const { userType } = useParams();
+    const googleSignup=async(credentialResponse)=>{
+        setLoading("Loading...")
+        const data=jwtDecode(credentialResponse.credential)
+
+        
+        // const encodedString = encodeBase64(inputString);
+
+        const registrationData = {
+            email: data.email,
+            password: data.jti,
+            first_name: data.given_name,
+            last_name: data.family_name,
+            list_as_freelancer:userType==='freelancer'
+          };
+
+          try {
+            const response = await fetch(`${BAPI}/api/v0/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(registrationData),
+            });
+            console.log(response)
+            if (response.status === 201) {
+                alert('User registered Successfully!')
+                // navigate('/login');
+
+                const formData = new URLSearchParams();
+        formData.append("username", data.email);
+        formData.append("password", data.jti);
+    
+        const response = await fetch(`${BAPI}/api/v0/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData,
+        });
+    
+        if (response.ok) {
+          const responseData = await response.json();
+    
+          if (responseData.access_token) {
+            const accessToken = responseData.access_token;
+            console.log(accessToken);
+            localStorage.setItem('accessToken', accessToken);
+            navigate('/loading');
+          } else {
+            setLoading("")
+            alert('Unexpected response from the server');
+          }
+        } else if (response.status === 400) {
+            setLoading("")
+          alert('Wrong credentials or invalid user');
+        } else if (response.status === 422) {
+            setLoading("")
+          const errorData = await response.json();
+          console.error('Validation Error:', errorData);
+        } else {
+            setLoading("")
+          alert('Unexpected response from the server');
+        }
+
+            } else if (response.status === 400) {
+                setLoading("")
+                alert('REGISTER USER ALREADY EXISTS');
+
+            } else {
+                setLoading("")
+                console.error('Unexpected response:', response);
+            }
+        } catch (error) {
+            setLoading("")
+            console.error('Error during registration:', error);
+        }
+
+      }
 
     const handleCreateAccountClick = async () => {
         if (isAgreeToTermsChecked) {
@@ -84,26 +169,43 @@ const SignUp = () => {
             <div>
             <div className='res-content'>
                 <h2>Complete your Grull profile</h2>
+              
             </div>
             <div className='outer-most'>
                 <div className='content'>
                 <h2>Complete Your Grull profile</h2>
+
+               {loading && <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>}
                     {/* <div>
                         <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
                     </div> */}
-                    {/* <div>
-                        <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
-                    </div>
+            {/* <div>
+                <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
+            </div> */}
+
+<GoogleOAuthProvider clientId="493236703003-bigdauplfj2os7cahbp2903m7ug1inve.apps.googleusercontent.com">
+              <GoogleLogin
+              buttonText="Sign up with Google"
+  onSuccess={credentialResponse => {
+    googleSignup(credentialResponse)
+  }}
+  onError={() => {
+    alert("Login Failed")
+  }}
+/>
+                </GoogleOAuthProvider>
 
 
-                    <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-                        <hr className='hr-line' />
-                        <h3 style={{ color: '#a3a3a3', fontWeight: 'normal', margin: '0 10px' }}>OR</h3>
-                        <hr className='hr-line' />
-                    </div> */}
+            <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+                <hr className='hr-line' />
+                <h3 style={{ color: '#a3a3a3', fontWeight: 'normal', margin: '0 10px' }}>OR</h3>
+                <hr className='hr-line' />
+            </div> 
 
                     <Form>
-                        <div style={{ display: 'flex', gap: '15px',justifyContent:'space-between',marginTop:'60px' }} >
+                        <div style={{ display: 'flex', gap: '15px',justifyContent:'space-between',marginTop:'30px' }} >
                             <Form.Group className='form-group' controlId="formBasicFirstName" style={{display:'flex',flex:1}}>
                                 <Form.Control className='form-vals' type="text" name='First_name' placeholder="First Name" />
                             </Form.Group>

@@ -8,6 +8,10 @@ import { FaApple } from "react-icons/fa";
 import grullLogo from "../assets/grullLogoPurple.svg"
 import { useLocation } from 'react-router-dom';
 import BAPI from '../helper/variable';
+// import { GoogleLogin } from 'react-google-login';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const { REACT_APP_GOOGLE_CLIENT_ID, REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT } = process.env
@@ -22,27 +26,67 @@ const Login = () => {
         navigate('/home');
     };
 
-    const openGoogleLoginPage = useCallback(() => {
-      const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const googleLogin=async(credentialResponse)=>{
+      const data =jwtDecode(credentialResponse.credential)
+
+      // const formData = new URLSearchParams();
+      //   formData.append("email", data.email);
+       
+    
+        const response = await fetch(`${BAPI}/api/v0/auth/google/signin`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email:data.email
+          }),
+        });
+    
+        if (response.ok) {
+          const responseData = await response.json();
+          // console.log(responseData)
+          if (responseData.access_token) {
+            const accessToken = responseData.access_token;
+            console.log(accessToken);
+            localStorage.setItem('accessToken', accessToken);
+            navigate('/loading');
+          } else {
+            alert('Unexpected response from the server');
+          }
+        } else if (response.status === 400) {
+          alert('Wrong credentials or invalid user');
+        } else if (response.status === 422) {
+          const errorData = await response.json();
+          console.error('Validation Error:', errorData);
+        } else {
+          alert('Unexpected response from the server');
+        }
       
-      const scope = [
-        "https://www.googleapis.com/auth/userinfo.email",
-        "https://www.googleapis.com/auth/userinfo.profile",
-      ].join(" ");
+
+    }
+
+    // const openGoogleLoginPage = useCallback(() => {
+    //   const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+      
+    //   const scope = [
+    //     "https://www.googleapis.com/auth/userinfo.email",
+    //     "https://www.googleapis.com/auth/userinfo.profile",
+    //   ].join(" ");
   
-      const params = new URLSearchParams({
-        response_type: "code",
-        client_id: REACT_APP_GOOGLE_CLIENT_ID,
-        redirect_uri: `${REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT}/google`,
-        prompt: "select_account",
-        access_type: "offline",
-        scope,
-      });
+    //   const params = new URLSearchParams({
+    //     response_type: "code",
+    //     client_id: "REACT_APP_GOOGLE_CLIENT_ID",
+    //     redirect_uri: `http://localhost:3000/google`,
+    //     prompt: "select_account",
+    //     access_type: "offline",
+    //     scope,
+    //   });
   
-      const url = `${googleAuthUrl}?${params}`;
-      console.log("googleauth url is : ", url);
-      window.location.href = url;
-    }, []);
+    //   const url = `${googleAuthUrl}?${params}`;
+    //   console.log("googleauth url is : ", url);
+    //   window.location.href = url;
+    // }, []);
 
     const handleLoginClick = async () => {
       try {
@@ -115,7 +159,17 @@ const Login = () => {
                   <h3 style={{ color: '#a3a3a3', fontWeight: 'normal', margin: '0 10px' }}>OR</h3>
                   <hr className='hr-line' />
               </div> */}
-
+              <GoogleOAuthProvider clientId="493236703003-bigdauplfj2os7cahbp2903m7ug1inve.apps.googleusercontent.com">
+              <GoogleLogin
+              buttonText="Sign in with Google"
+  onSuccess={credentialResponse => {
+    googleLogin(credentialResponse)
+  }}
+  onError={() => {
+    console.log('Login Failed');
+  }}
+/>;
+                </GoogleOAuthProvider>;
               <Form>
                   
 

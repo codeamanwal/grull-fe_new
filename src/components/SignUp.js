@@ -192,7 +192,7 @@ const SignUp = () => {
     googleSignup(credentialResponse)
   }}
   onError={() => {
-    alert("Login Failed")
+    alert("Signup Failed")
   }}
 />
                 </GoogleOAuthProvider>

@@ -81,7 +81,7 @@ useEffect(() => {
   return (
     <>
       <Grid
-        sx={{ background: "#121717", padding: { xs: "8px 0", md: "16px 0" } }}
+        sx={{ background: "#121717", padding: { xs: "8px 0", md: "14px 0" } }}
       >
         <Box
           sx={{
@@ -104,11 +104,11 @@ useEffect(() => {
               return (
                 <Typography
                   key={text}
-                  variant="font_20_500"
+                  variant={{md:"font_20_500",xs:'font_14_500'}}
                   sx={{
                     color: "white",
-                    margin: "0 16px",
-                    display: { xs: "none", md: "block" },
+                    margin: {sm:"0 16px",xs:"0 5px"},
+                    display: accessToken===null?'block':'none',
                     cursor:'pointer'
                   }}
                   onClick={() =>{ return text==='Company'?navigate('/about-us'):navigate('/coming-soon')}}
@@ -118,7 +118,7 @@ useEffect(() => {
               );
             })}
           </Box>
-          <Box
+          {/* <Box
             sx={{
               display: { xs: "flex", md: "none" },
               justifyContent: "center",
@@ -136,29 +136,27 @@ useEffect(() => {
               alt="logo"
               style={{ height: "20px", width: "20px" }}
             />
-            <img
-              src={navbarIcon3}
-              alt="logo"
-              style={{ height: "20px", width: "20px" }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              alignItems: "center",
-              gap: "24px",
-            }}
-          >
+            
+          </Box> */}
+          
             {
-              (accessToken===null)?(<><Box
+              (accessToken===null)?(<Box
+                sx={{
+                  display:'flex',
+                  alignItems: "center",
+                  gap: {sm:"24px",xs:"18px"},
+                  margin:'7px 0'
+                }}
+              ><Box
                 sx={{
                   border: "1px solid white",
                   color: "white",
-                  width: "200px",
+                  width: {sm:"200px",xs:'160px'},
                   textAlign: "center",
-                  padding: "12px 0",
+                  padding: "14px 0",
                   borderRadius: "16px",
-                  typography: "font_18_800",
+                  fontSize:{sm:"18px",xs:"14px"},
+                  fontWeight:"800",
                   cursor:'pointer'
                 }}
                 onClick={()=>{navigate('/home')}}
@@ -178,12 +176,13 @@ useEffect(() => {
                 sx={{
                   border: "1px solid white",
                   color: "white",
-                  width: "200px",
+                  width: {sm:"200px",xs:'160px'},
                   textAlign: "center",
-                  padding: "12px 0",
+                  padding: "14px 0",
                   borderRadius: "16px",
                   background: lavender,
-                  typography: "font_18_800",
+                  fontSize:{sm:"18px",xs:"14px"},
+                  fontWeight:"800",
                   cursor:'pointer'
                 }}
                 onClick={()=>{navigate('/home')}}
@@ -198,20 +197,28 @@ useEffect(() => {
                     margin: "0 8px",
                   }}
                 />
-              </Box></>):(<>
-                <Box ref={container} sx={{position:'relative'}}>
+              </Box>
+          </Box>):(<Box sx={{display:"flex",flexDirection:"row",gap:"24px",alignItems:'center'}}>
                                     <Avatar
                                         alt={userInfo?.full_name[0]}
                                         sx={{ backgroundColor: 'Grey',cursor:'pointer' }}
                                         // className='dashboardavatar profile'
-                                        onClick={()=>{clickProfileImage()
-                                            if (changeopts) {
-                                                handlesettings();
-                                              }
-                                        }}
+                                        onClick={()=>{navigate(userInfo?.list_as_freelancer?"/freelancer":"/client")
+                                      }}
                                     >
-                                       {userInfo?.full_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
-                                    </Avatar>
+                                    {userInfo?.full_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}</Avatar>
+                                    <Box ref={container} sx={{position:'relative'}}>
+                                    
+                                    <img
+                                                    src={navbarIcon3}
+                                                    alt="logo"
+                                                    style={{ height: "20px", width: "20px",cursor:'pointer' }}
+                                                    onClick={()=>{clickProfileImage()
+                                                        if (changeopts) {
+                                                            handlesettings();
+                                                          }
+                                                    }}
+                                                  />
                                     {showDropdown && (
                                         <Box
                                         sx={{
@@ -220,8 +227,8 @@ useEffect(() => {
                                               position:'absolute',
                                               backgroundColor:'#fff',
                                               zIndex:'1',
-                                              top:{xs:'58px',sm:'65px'},
-                                              right:{xs:'-55px',sm:'-80px',md:'-20px'},
+                                              top:{xs:'40px',sm:'48px'},
+                                              right:'-20px',
                                               boxShadow: '0px 0px 4px 1px #00000040',
                                               borderRadius:{xs:'10px',sm:'40px'},
                                               width:{xs:'250px',sm:'280px'},
@@ -270,9 +277,8 @@ useEffect(() => {
                                         </Box>
                                     )}
                                 </Box>
-              </>)
+              </Box>)
             }
-          </Box>
         </Box>
       </Grid>
     </>

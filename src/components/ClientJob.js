@@ -125,7 +125,7 @@ const ClientJob = ({ passed_from,id, title, companyLogoUrl, companyName, postedD
           </Box>
         </Box>
       </Box>
-      {!isLast && <Divider />}
+      {!isLast && !passed_from && <Divider />}
     </React.Fragment>
   );
 };

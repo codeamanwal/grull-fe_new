@@ -88,6 +88,9 @@ export default function Header3() {
     const handlesettings =()=>{
         setChangeopts((prev)=>!prev);
   }
+  const handleMangaeJobsClick = ()=>{
+    setshowMangejobsDropdown(false)
+  }
   return (
     <Grid container sx={{ background: '#000000', height:{xs:'60px', sm:'70px'}, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding : {xs:'0px 4%',md:'0 6%'}, flexWrap: 'nowrap',gap:'50px' }}>
                 <Grid item >
@@ -126,10 +129,12 @@ export default function Header3() {
                                               gap:'15px'
                                             }}
                                         >
-                                        <Link component={NavLink} to="/managejobs/applied" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Applied Jobs</Link>
-                                        <Link component={NavLink} to="/managejobs/saved" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Saved Jobs</Link>
-                                        <Link component={NavLink} to="/managejobs/ongoing" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Ongoing Jobs</Link>
-                                        <Link component={NavLink} to="/managejobs/completed" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Completed Jobs</Link>
+                                        <Link to="/managejobs/applied" onClick={handleMangaeJobsClick} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Applied Jobs</Link>
+                
+                                        <Link to="/managejobs/saved" onClick={handleMangaeJobsClick} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Saved Jobs</Link>
+                                        <Link to="/managejobs/ongoing" onClick={handleMangaeJobsClick} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Ongoing Jobs</Link>
+                                        <Link to="/managejobs/completed" onClick={handleMangaeJobsClick} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Completed Jobs</Link>
+
                                         
                                         </Box>
                                     )}

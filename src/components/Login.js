@@ -168,8 +168,8 @@ const Login = () => {
   onError={() => {
     console.log('Login Failed');
   }}
-/>;
-                </GoogleOAuthProvider>;
+/>
+                </GoogleOAuthProvider>
               <Form>
                   
 

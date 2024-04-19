@@ -85,6 +85,9 @@ export default function Header4() {
     const handlesettings =()=>{
         setChangeopts((prev)=>!prev);
   }
+  const handleMangaeJobsClick = ()=>{
+    setshowMangejobsDropdown(false)
+  }
   return (
     <Grid container sx={{ background: '#000000', height:{xs:'60px', sm:'70px'}, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding : {xs:'0px 4%',md:'0 6%'}, flexWrap: 'nowrap',gap:'50px' }}>
                 <Grid item >
@@ -123,9 +126,9 @@ export default function Header4() {
                                               gap:'15px'
                                             }}
                                         >
-                                        <Link component={NavLink} to="/clientmanagejobs/posted" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Posted Jobs</Link>
-                                        <Link component={NavLink} to="/clientmanagejobs/ongoing" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Ongoing Jobs</Link>
-                                        <Link component={NavLink} to="/clientmanagejobs/completed" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Completed Jobs</Link>
+                                        <Link  to="/clientmanagejobs/posted" onClick={handleMangaeJobsClick}  style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Posted Jobs</Link>
+                                        <Link  to="/clientmanagejobs/ongoing" onClick={handleMangaeJobsClick}  style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Ongoing Jobs</Link>
+                                        <Link  to="/clientmanagejobs/completed" onClick={handleMangaeJobsClick}  style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Completed Jobs</Link>
                                         
                                         </Box>
                                     )}
@@ -178,7 +181,7 @@ export default function Header4() {
                                                     alt={savedName}
                                                     style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
                                                 >
-                                                   {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+                                                   {savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
 
                                                 </Avatar>
                                                 <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>

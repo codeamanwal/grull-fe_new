@@ -207,7 +207,7 @@ const BrowseJobs = () => {
       <Header3 />
 
       {/* div 2 for box and browse, search bar */}
-      <div className='rectangle'></div>
+      {/* <div className='rectangle'></div> */}
       <div className='search-bar'>
         <h1 style={{ color: 'white'}}>Browse</h1>
         <div style={{display:'flex',flexDirection:'column'}}>
@@ -251,7 +251,7 @@ const BrowseJobs = () => {
         
         <div >
             <Button sx={{color:category==='projects'?'#fff':'#FFFFFFB2',borderBottom:category==='projects'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',fontSize:'16px'}} onClick={()=>setcategory('projects')}>Projects</Button >
-            <Button sx={{color:category==='contests'?'#fff':'#FFFFFFB2',borderBottom:category==='contests'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',marginLeft:'20px',fontSize:'16px'}} onClick={()=>setcategory('contests')}>Contest</Button >
+            {/* <Button sx={{color:category==='contests'?'#fff':'#FFFFFFB2',borderBottom:category==='contests'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',marginLeft:'20px',fontSize:'16px'}} onClick={()=>setcategory('contests')}>Contest</Button > */}
         </div>
       </div>
 

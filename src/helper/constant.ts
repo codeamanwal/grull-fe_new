@@ -92,26 +92,46 @@ export const section8FeatureArr = [
 ];
 
 export const section9Arr = [
-  {
+  [{
     step: "1",
     title: "Craft Your Professional Showcase",
     text: "Build a profile that becomes your digital portfolio, highlighting your skills and stellar works to attract potential clients.",
   },
   {
     step: "2",
-    title: "Craft Your Professional Showcase",
-    text: "Build a profile that becomes your digital portfolio, highlighting your skills and stellar works to attract potential clients.",
+    title: "Navigate Through Diverse Projects",
+    text: "Explore and select from a wide array of opportunities that align with your skills and career aspirations.",
   },
   {
     step: "3",
+    title: "Seamless Project Collaboration",
+    text: "Engage in smooth project workflows, ensuring efficient collaborations and timely deliveries through Grull’s robust management tools.",
+  },
+  {
+    step: "4",
+    title: "Secure Payments and Constructive Reviews",
+    text: "Enjoy timely remunerations and share your project experiences, contributing to the continuous enhancement of the Grull community.",
+  },],
+  [{
+    step: "1",
     title: "Craft Your Professional Showcase",
     text: "Build a profile that becomes your digital portfolio, highlighting your skills and stellar works to attract potential clients.",
   },
   {
-    step: "4",
-    title: "Craft Your Professional Showcase",
-    text: "Build a profile that becomes your digital portfolio, highlighting your skills and stellar works to attract potential clients.",
+    step: "2",
+    title: "Navigate Through Diverse Projects",
+    text: "Explore and select from a wide array of opportunities that align with your skills and career aspirations.",
   },
+  {
+    step: "3",
+    title: "Seamless Project Collaboration",
+    text: "Engage in smooth project workflows, ensuring efficient collaborations and timely deliveries through Grull’s robust management tools.",
+  },
+  {
+    step: "4",
+    title: "Secure Payments and Constructive Reviews",
+    text: "Enjoy timely remunerations and share your project experiences, contributing to the continuous enhancement of the Grull community.",
+  },]
 ];
 
 export const section11FeatureArr = [

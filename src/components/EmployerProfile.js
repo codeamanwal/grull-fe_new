@@ -74,7 +74,14 @@ const Employerprofile = () => {
     }
 
     const [inputAboutValue, setInputAboutValue] = useState('');
-    const [inputcompdesc,setInputCompDesc]=useState('');
+    const [inputcompdesc,setInputCompDesc]=useState({
+        "company_name":'',
+        "company_description":""
+    });
+    const [newinputcompdesc,setnewInputCompDesc]=useState({
+        "company_name":'',
+        "company_description":""
+    });
     const [newinputval,setnewinputval]= useState('');
 
     const handleAboutChange = (event) => {
@@ -82,7 +89,11 @@ const Employerprofile = () => {
         updateTextareaHeight(event.target);
     };
     const handlecompdesc= (event) => {
-        setInputCompDesc(event.target.value);
+        const { name, value } = event.target;
+        setnewInputCompDesc(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
         updateTextareaHeight(event.target);
     };
     const updateTextareaHeight = (element) => {
@@ -100,11 +111,13 @@ const Employerprofile = () => {
     const [rightButtonImage, setRightButtonImage] = useState(require('../assets/edit.jpg'));
     const [topButtonImage, setTopButtonImage] = useState(require('../assets/edit.jpg'));
 
-    const [newName, setNewName] = useState('');
+    const [newName, setNewName] = useState({"first_name":'',
+    "last_name": ''});
     const [newJobCategory, setNewJobCategory] = useState('');
     const [newLocation, setNewLocation] = useState('');
 
-    const [savedName, setSavedName] = useState('');
+    const [savedName, setSavedName] = useState({"first_name": '',
+    "last_name": ''});
     const [savedJobCategory, setSavedJobCategory] = useState('');
     const [savedLocation, setSavedLocation] = useState('');
 
@@ -145,18 +158,32 @@ const Employerprofile = () => {
     
             if (response.status === 200) {
               const { full_name, role, location,jobs_posted_count,average_rate_offered,description } = response.data;
-    
-              setSavedName(full_name);
-              setSavedJobCategory(role);
-              if(location){
-              setSavedLocation(location?.country);}
-              else{
-                setSavedLocation('Location Here')
-              }
+              setSavedName({"first_name": response.data.first_name,
+                    "last_name": response.data.last_name});
+                    setNewName({"first_name": response.data.first_name,
+                    "last_name": response.data.last_name});
+
+                    setNewJobCategory(response.data.role);
+                    setSavedJobCategory(response.data.role);
+                    setNewLocation(response.data.location?.country);
+                    if(response.data.location){
+                        setSavedLocation(response.data.location?.country);}
+                        else{
+                          setSavedLocation('Location Here')
+                    }
+
               setJobsPostedCount(jobs_posted_count);
               setAvgRateOffered(average_rate_offered);
               setInputAboutValue(description);
               setnewinputval(description);
+              setInputCompDesc({
+                "company_name":response.data.company_name,
+                "company_description":response.data.company_description
+              })
+              setnewInputCompDesc({
+                "company_name":response.data.company_name,
+                "company_description":response.data.company_description
+              })
             } else {
               console.error('Error fetching user profile:', response.data.error);
             }
@@ -194,7 +221,8 @@ const Employerprofile = () => {
     const updateUserProfile = async () => {
         try {
             const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
-                first_name: newName,
+                first_name: newName.first_name,
+                last_name:newName.last_name,
                 description: newJobCategory,
                 location: {
                     city: '',
@@ -212,10 +240,8 @@ const Employerprofile = () => {
             if (response.status === 200) {
                 const { jobs_posted_count, average_rate_offered } = response.data;
 
-                setSavedName(newName);
-                setNewJobCategory(newJobCategory);
-                setNewLocation(newLocation);
-                setNewName(newName);
+                setSavedName({"first_name": response.data.first_name,
+                "last_name": response.data.last_name});
                 setSavedJobCategory(newJobCategory);
                 setSavedLocation(newLocation);
                 setJobsPostedCount(jobs_posted_count);
@@ -239,6 +265,8 @@ const Employerprofile = () => {
         try {
             const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 description: newinputval,
+                company_name:newinputcompdesc.company_name,
+                company_description:newinputcompdesc.company_description
             },
                 {
                     headers: {
@@ -254,6 +282,14 @@ const Employerprofile = () => {
                 // Update the state with the response from the backend
                 setInputAboutValue(responseData.description);
                 setnewinputval(responseData.description);
+                setInputCompDesc({
+                    "company_name":response.data.company_name,
+                    "company_description":response.data.company_description
+                  })
+                  setnewInputCompDesc({
+                    "company_name":response.data.company_name,
+                    "company_description":response.data.company_description
+                  })
                 setRightBoxEditMode(false);
 
             } else {
@@ -268,24 +304,23 @@ const Employerprofile = () => {
 
     const handleSaveTop = async () => {
         setTopBoxEditMode(false);
-        // setSavedName(newName);
-        // setSavedJobCategory(newJobCategory);
-        // setSavedLocation(newLocation);
         await updateUserProfile();
         setTopButtonImage(require('../assets/edit.jpg'));
     }
 
     const handleCancelTop = () => {
         setTopBoxEditMode(false);
-        setNewName('');
-        setNewJobCategory('');
-        setNewLocation('');
+        setNewName(savedName);
+        setNewJobCategory(savedJobCategory);
+        setNewLocation(savedLocation);
+
         setTopButtonImage(require('../assets/edit.jpg'));
     }
 
     const handleCancelAbout = () => {
         setRightBoxEditMode(false);
-        setInputAboutValue(inputAboutValue);
+        setnewinputval(inputAboutValue);
+        setnewInputCompDesc(inputcompdesc);
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
@@ -405,12 +440,12 @@ const Employerprofile = () => {
                            <div style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}} className='profilesec-1'>
                                <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}} className='profilesec-4'>
                                     <div className='user-picture'>
-                                        <Avatar
+                                    <Avatar
                                             className='user-picture-img'
-                                            alt={savedName}
+                                            alt={savedName.first_name}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
-                                            {savedName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                            {(savedName.first_name + " " + savedName.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
                                             <label htmlFor="fileInput" className='camera-icon-label'>
                                                 <CiCamera className='camera-icon' />
@@ -428,27 +463,44 @@ const Employerprofile = () => {
                                 <>
                                     {!topBoxEditMode && (
                                         <div>
-                                            <p style={{ fontSize: '32px', fontWeight: '700' }} className='text-1'>{savedName}</p>
-                                            <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><MdWorkOutline style={{marginRight:'5px'}}/>{savedJobCategory}</p>
-                                            <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><CiLocationOn style={{marginRight:'5px'}}/>{savedLocation}</p>
-                                        </div>
+                                         <p style={{ fontSize: '32px', fontWeight: '700' }} className='text-1'>{savedName.first_name} {savedName.last_name}</p>
+                                                {
+                                                    savedJobCategory && (
+                                                        <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><MdWorkOutline style={{marginRight:'5px'}}/>{savedJobCategory}</p>)
+                                                }
+                                                {
+                                                    savedLocation && (
+                                                        <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><CiLocationOn style={{marginRight:'5px'}}/>{savedLocation}</p>)
+                                                }
+                                                </div>
                                     )}
                                     {topBoxEditMode && (
                                         <div style={{
                                             display:'flex',
                                             flexDirection:'column',
-                                            gap:'5px'
+                                            gap:'5px',
+                                            marginTop:'-50px',
                                         }}>
-                                            <div>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter your name"
-                                                    value={newName}
-                                                    className='profilesecinputs'
-                                                    onChange={(e) => setNewName(e.target.value)}
-                                                    style={{padding:'10px', width: '170px', borderRadius: '16px', border: '1px solid #DDD' }}
-                                                />
-                                            </div>
+                                             <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="First name"
+                                                        value={newName.first_name}
+                                                        onChange={(e) => setNewName({ ...newName, first_name: e.target.value })}
+                                                        className='profilesecinputs'
+                                                        style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Last name"
+                                                        value={newName.last_name}
+                                                        onChange={(e) => setNewName({ ...newName, last_name: e.target.value })}
+                                                        className='profilesecinputs'
+                                                        style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                    />
+                                                </div>
                                             <div>
                                                 <select
                                                     value={newJobCategory}
@@ -542,11 +594,22 @@ const Employerprofile = () => {
                             rows="3"
                             ref={(textarea) => textarea && updateTextareaHeight(textarea)}
                         />
-                        
+                    
+                    <input 
+                            type="text"
+                            placeholder="Company Name"
+                            name="company_name"
+                            value={newinputcompdesc.company_name}
+                            onChange={handlecompdesc}
+                            readOnly={!rightBoxEditMode}
+                            className={rightBoxEditMode ? 'first-box-three-editable' : 'first-box-three'}
+                            />
+                    
                     <textarea
                         type="text"
                         placeholder=""
-                        value={inputcompdesc}
+                        name="company_description"
+                        value={newinputcompdesc.company_description}
                         onChange={handlecompdesc}
                         className={`first-box-two ${rightBoxEditMode ? 'editable' : ''}`}
                         readOnly={!rightBoxEditMode}

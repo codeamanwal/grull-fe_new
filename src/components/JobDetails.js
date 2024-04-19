@@ -11,8 +11,10 @@ import { GiReceiveMoney } from "react-icons/gi";
 import { MdOutlineSettingsSuggest } from "react-icons/md"
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { CiLocationOn } from "react-icons/ci";
+import ClientDashboard from "./ClientDashboard";
 
 const JobDetails = () => {
+    const [clientDetails,setClientDetails]=useState(null);
 
     const navigate = useNavigate();
 
@@ -21,8 +23,29 @@ const JobDetails = () => {
     const [jobDetails, setJobDetails] = useState(null);
     const useR=localStorage.getItem('user');
     const userId=JSON.parse(useR)?.id
+
+    function convertTimestampToNormalTime(timestamp) {
+        // Create a new Date object from the provided timestamp
+        const date = new Date(timestamp);
+        
+        // Define an array of month names
+        const monthNames = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        
+        // Extract the year, month, and day components from the Date object
+        const year = date.getFullYear();
+        const month = monthNames[date.getMonth()];
+        const day = date.getDate();
+        
+        // Concatenate the components into the desired format
+        const formattedDate = `${month} ${day}, ${year}`;
+        
+        return formattedDate;
+    }
+
     const getTimeDifference = (modifiedAt) => {
-        console.log(modifiedAt)
         const now = new Date();
         const modifiedDate = new Date(modifiedAt);
         const differenceInMilliseconds = now - modifiedDate;
@@ -92,6 +115,7 @@ const JobDetails = () => {
                 });
     
                 if (response.status === 200) {
+                    console.log("job details : ",response.data)
                     setJobDetails(response.data);
                 } else {
                     console.error('Error fetching job details:', response.data.error);
@@ -104,7 +128,30 @@ const JobDetails = () => {
         fetchJobDetails();
     }, [jobid, accessToken]);
     
+    useEffect(()=>{
+      const fetchClientDetails=async()=>{
+        try {
+            const response = await axios.get(`${BAPI}/api/v0/users/public/${jobDetails?.posted_by.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
 
+            if (response.status === 200) {
+                console.log("client details : ",response.data)
+                setClientDetails(response.data)
+            } else {
+                console.error('Error fetching job details:', response.data.error);
+            }
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
+      }
+
+      if(jobDetails){
+        fetchClientDetails();
+      }
+    },[jobDetails])
 
     const handleApplyNow = () => {
         navigate(`/applyproposal/${jobid}`);
@@ -123,7 +170,7 @@ const JobDetails = () => {
                             <Typography sx={{fontWeight:'500',fontSize:'16px',color:'#454545'}}>Posted {getTimeDifference(jobDetails?.created_at)}</Typography>
                             <Typography sx={{ fontWeight:'500',fontSize:'16px',color:'#454545'}}><CiLocationOn /> {jobDetails?.location}</Typography>
                         </Box>
-                        <a href="" style={{ fontWeight:'500',fontSize:'16px', color: '#ED8335' }}>Download reference files</a>
+                        {/* <a href="" style={{ fontWeight:'500',fontSize:'16px', color: '#ED8335' }}>Download reference files</a> */}
                     </Box>
                 </Box>
 
@@ -131,6 +178,14 @@ const JobDetails = () => {
 
                 <Box sx={{padding:'25px 0 35px'}}>
                     <Typography sx={{fontWeight:'500',fontSize:'16px',color:'#454545'}}>{jobDetails?.description}</Typography>
+                    {
+                        jobDetails?.company_description!=='' && (
+                            <Box>
+                            <Typography  sx={{fontWeight:'700',fontSize:'18px',color:'#00000',marginTop:'30px'}}>About Company:</Typography>
+                            <Typography sx={{fontWeight:'500',fontSize:'16px',color:'#454545',marginTop:'8px'}}>{jobDetails?.company_description}</Typography>
+                            </Box>
+                        )
+                    }
                 </Box>
 
                 <Divider />
@@ -181,14 +236,17 @@ const JobDetails = () => {
                 <Box sx={{display:'flex',flexDirection:'column',gap:'8px',alignItems:'center',padding:'30px 0 20px'}}>
                     <Typography style={{ color: '#B27EE3', fontSize: '13px',}}>Non Negotiable</Typography>
                     {
-                        jobDetails?.employee?.id!==userId?(
-                            <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>):(
+                       jobDetails?.employee===null?(<Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>) :
+                       jobDetails?.employee?.id!==userId?(
+                            <Typography style={{ color: '#000',fontWeight:'600'}}>Job Closed or Expired</Typography>):(
                                 
                     <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={()=>{navigate('/freelancerchat')}}>Chat Now</Button>
                             )
                     }
-
-                    <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />} onClick={()=>handleSaveJob()} >Save Job</Button>
+                    {
+                        jobDetails?.employee===null?(
+                            <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />} onClick={()=>handleSaveJob()} >Save Job</Button>):''
+                    }
                     <Typography style={{ color: '#454545', fontSize: '16px',}}>Applicants : {jobDetails?.job_applicants_count }</Typography>
                 </Box>
                     
@@ -196,35 +254,38 @@ const JobDetails = () => {
 
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
                     <Typography style={{ color: '#000', fontSize: '26px',fontWeight:'700'}}>About the Client</Typography>
-                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}><CiLocationOn /> {jobDetails?.location}</Typography>
+                    {
+                        clientDetails?.location &&(
+                            <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}><CiLocationOn /> {clientDetails?.location.country}</Typography>)
+                    }
                     <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500',marginTop:'3px'}}>4.5 star of 1328 reviews</Typography>
-                    <Typography style={{ color: '#000000', fontSize: '16px',fontWeight:'400',marginTop:'7px'}}>{jobDetails?.company_description}</Typography>
+                    <Typography style={{ color: '#000000', fontSize: '16px',fontWeight:'400',marginTop:'7px'}}>{clientDetails?.description}</Typography>
                 </Box>
 
                 <hr style={{color:'#000000',height:'1px'}} />
 
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
-                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>38 jobs posted</Typography>
-                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>79% hire rate, 1 open job</Typography>
+                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>{clientDetails?.jobs_posted_count} jobs posted</Typography>
+                    {/* <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>79% hire rate, 1 open job</Typography> */}
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} />
-                <Box sx={{padding:'15px 10px 15px 20px'}}>
+                {/* <Box sx={{padding:'15px 10px 15px 20px'}}>
                     <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>$21K total spent</Typography>
                     <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>42 hires, 25 active</Typography>
                 </Box>
-                <hr style={{color:'#000000',height:'1px'}} />
+                <hr style={{color:'#000000',height:'1px'}} /> */}
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
-                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>$8.02 /hr avg hourly rate paid</Typography>
-                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>1815 hours</Typography>
+                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>${clientDetails?.rate_per_hour} /hr avg hourly rate paid</Typography>
+                    {/* <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>1815 hours</Typography> */}
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} />
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
-                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>Art & Design</Typography>
-                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>Small company (2-9 people)</Typography>
+                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>{clientDetails?.company_name}</Typography>
+                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>{clientDetails?.company_description}</Typography>
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} />
                 <Box sx={{padding:'75px 10px 15px 20px'}}>
-                     <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>Member since Oct 18, 2021</Typography>
+                     <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>Member since {convertTimestampToNormalTime(clientDetails?.created_at)}</Typography>
                 </Box>
             </Box>
         </Box>

@@ -131,6 +131,13 @@ const BrowseFreelancer = () => {
 
     setState(open);
   };
+
+  const handleShareProfile = (freelancerId) => {
+    const url = `https://grull.work/freelancer/${freelancerId}`;
+    window.open(url, "_blank");
+    // const url = `http://localhost:3000/freelancer/${prof}`;
+    
+}
   return (
     <div>
       {/* div 1 for header */}
@@ -138,7 +145,7 @@ const BrowseFreelancer = () => {
 
 
       {/* div 2 for box and browse, search bar */}
-      <div className='rectangle'></div>
+      {/* <div className='rectangle'></div> */}
       <div className='search-bar'>
       <h1 style={{ color: 'white'}}>Browse</h1>
       <div style={{display:'flex',flexDirection:'column'}}>
@@ -182,7 +189,7 @@ const BrowseFreelancer = () => {
 
         <div >
             <Button sx={{color:category==='freelancers'?'#fff':'#FFFFFFB2',borderBottom:category==='freelancers'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',fontSize:'16px'}} onClick={()=>setcategory('freelancers')}>Freelancers</Button >
-            <Button sx={{color:category==='projects'?'#fff':'#FFFFFFB2',borderBottom:category==='projects'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',marginLeft:'20px',fontSize:'16px'}} onClick={()=>setcategory('projects')}>Projects</Button >
+          {/* .  <Button sx={{color:category==='projects'?'#fff':'#FFFFFFB2',borderBottom:category==='projects'?'1px solid #fff':'1px solid transparent',outline:'none',background:'transparent',borderRadius:'0',marginLeft:'20px',fontSize:'16px'}} onClick={()=>setcategory('projects')}>Projects</Button > */}
         </div>
       </div>
 
@@ -495,7 +502,7 @@ const BrowseFreelancer = () => {
                       </ul>
                     </Box>
                     <Box sx={{marginTop:'5px'}}>
-                      <Button sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}}>Hire</Button>
+                      <Button onClick={()=>{handleShareProfile(freelancer.id)}} sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}}>Hire</Button>
                     </Box>
                   </Box>
               </Box>

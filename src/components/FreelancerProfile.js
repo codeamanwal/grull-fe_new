@@ -22,13 +22,6 @@ const FreelancerProfile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const avatarBackgroundColor = 'Grey';
-    const handleImage1Click = () => {
-        // logic for what will happen when clicked on messaging image
-    }
-
-    const handleImage2Click = () => {
-        // logic for what will happen when clicked on notifications image
-    }
     
     const switchToEmployerClick = () => {
         navigate('/clientprofile');
@@ -73,11 +66,13 @@ const FreelancerProfile = () => {
     const [rightButtonImage, setRightButtonImage] = useState(require('../assets/edit.jpg'));
     const [topButtonImage, setTopButtonImage] = useState(require('../assets/edit.jpg'));
 
-    const [newName, setNewName] = useState('');
+    const [newName, setNewName] = useState({"first_name":'',
+    "last_name": ''});
     const [newJobCategory, setNewJobCategory] = useState('');
     const [newLocation, setNewLocation] = useState('');
 
-    const [savedName, setSavedName] = useState('');
+    const [savedName, setSavedName] = useState({"first_name": '',
+    "last_name": ''});
     const [savedJobCategory, setSavedJobCategory] = useState('');
     const [savedLocation, setSavedLocation] = useState('');
 
@@ -176,7 +171,6 @@ const FreelancerProfile = () => {
                         },
                     });
                 setReviews(response.data)
-                console.log("REVIEWS ",response.data)
                 
             } catch (error) {
                 // Handle network error or other issues
@@ -199,29 +193,36 @@ const FreelancerProfile = () => {
 
                 if (response.status === 200) {
                     const responseData = response.data;
-                    console.log(responseData)
 
-                    setSavedName(responseData.full_name);
-                    setNewName(responseData.full_name);
-                    setNewLocation(responseData.location?.country);
+                    setSavedName({"first_name": responseData.first_name,
+                    "last_name": responseData.last_name});
+                    setNewName({"first_name": responseData.first_name,
+                    "last_name": responseData.last_name});
+
                     setNewJobCategory(responseData.role);
                     setSavedJobCategory(responseData.role);
+
+                    setNewLocation(responseData.location?.country);
                     if(responseData.location){
-                        console.log(responseData)
                         setSavedLocation(responseData.location?.country);}
                         else{
                           setSavedLocation('Location Here')
-                        }
-                    setJobsCompletedCount(responseData.jobs_completed_count);
-                    setRatePerHour(responseData.rate_per_hour);
+                    }
+
                     setSkills(responseData.skills);
-                    setLanguages(responseData.languages);
                     setTempSkills(responseData.skills);
+
                     setTempLanguages(responseData.languages);
+                    setLanguages(responseData.languages);
+
                     setInputAboutValue(responseData.description);
                     setnewinputval(responseData.description);
+
+                    setJobsCompletedCount(responseData.jobs_completed_count);
+                    setRatePerHour(responseData.rate_per_hour);
                     setProjects(responseData.work_sample_urls ? responseData.work_sample_urls : []);
                     setPortfolios(responseData.portfolio_urls ? responseData.portfolio_urls : []);
+
                     setTopBoxEditMode(false);
                     setLeftBoxEditMode(false);
                     setRightBoxEditMode(false);
@@ -246,17 +247,9 @@ const FreelancerProfile = () => {
     //updating user profile values
     const updateUserProfile = async () => {
         try {
-            const data={
-                first_name: newName,
-                role: newJobCategory,
-                location: {
-                    city: '',
-                    state: '',
-                    country: newLocation,
-                }}
-            console.log(data)
             const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
-                first_name: newName,
+                first_name: newName.first_name,
+                last_name:newName.last_name,
                 role: newJobCategory,
                 location: {
                     city: '',
@@ -273,8 +266,10 @@ const FreelancerProfile = () => {
 
             if (response.status === 200) {
                 const responseData = response.data;
-                console.log(response)
-                setSavedName(responseData.full_name);
+                setNewName({"first_name": responseData.first_name,
+                "last_name": responseData.last_name})
+                setSavedName({"first_name": responseData.first_name,
+                "last_name": responseData.last_name});
                 setSavedJobCategory(responseData.role);
                 if(responseData.location){
                    setSavedLocation(responseData.location?.country);}
@@ -379,9 +374,10 @@ const FreelancerProfile = () => {
 
     const handleCancelTop = () => {
         setTopBoxEditMode(false);
-        setNewName('');
-        setNewJobCategory('');
-        setNewLocation('');
+        setNewName(savedName);
+        setNewJobCategory(savedJobCategory);
+        setNewLocation(savedLocation);
+
         setTopButtonImage(require('../assets/edit.jpg'));
     }
 
@@ -447,21 +443,13 @@ const FreelancerProfile = () => {
     ];
 
     const formatDate = (timestamp) => {
+        console.log(timestamp)
         const date = new Date(timestamp);
-        const daySuffix = (day) => {
-            switch (day % 10) {
-                case 1: return day + "st";
-                case 2: return day + "nd";
-                case 3: return day + "rd";
-                default: return day + "th";
-            }
-        };
 
-        const options = { year: 'numeric', month: 'short' };
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
         const formattedDate = date.toLocaleDateString('en-US', options);
-        const day = daySuffix(date.getDate());
 
-        return `${day} ${formattedDate}`;
+        return formattedDate;
     };
 
     return (
@@ -497,10 +485,10 @@ const FreelancerProfile = () => {
                                     <div className='user-picture'>
                                         <Avatar
                                             className='user-picture-img'
-                                            alt={savedName}
+                                            alt={savedName.first_name}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
-                                            {savedName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                            {(savedName.first_name + " " + savedName.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
                                         <label htmlFor="fileInput" className='camera-icon-label'>
                                             <CiCamera className='camera-icon' />
@@ -518,9 +506,15 @@ const FreelancerProfile = () => {
                                     <>
                                         {!topBoxEditMode && (
                                             <div>
-                                                <p style={{ fontSize: '32px', fontWeight: '700' }} className='text-1'>{savedName}</p>
-                                                <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><MdWorkOutline style={{marginRight:'5px'}}/>{savedJobCategory}</p>
-                                                <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><CiLocationOn style={{marginRight:'5px'}}/>{savedLocation}</p>
+                                                <p style={{ fontSize: '32px', fontWeight: '700' }} className='text-1'>{savedName.first_name} {savedName.last_name}</p>
+                                                {
+                                                    savedJobCategory && (
+                                                        <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><MdWorkOutline style={{marginRight:'5px'}}/>{savedJobCategory}</p>)
+                                                }
+                                                {
+                                                    savedLocation && (
+                                                        <p style={{ fontSize: '18px',marginTop:'3px' }} className='text-2'><CiLocationOn style={{marginRight:'5px'}}/>{savedLocation}</p>)
+                                                }
                                             </div>
                                         )}
                                         {topBoxEditMode && (
@@ -528,14 +522,24 @@ const FreelancerProfile = () => {
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 gap: '5px',
-                                                marginBottom:'10px'
+                                                marginTop:'-50px',
                                             }}>
                                                 <div>
                                                     <input
                                                         type="text"
-                                                        placeholder="Enter your name"
-                                                        value={newName}
-                                                        onChange={(e) => setNewName(e.target.value)}
+                                                        placeholder="First name"
+                                                        value={newName.first_name}
+                                                        onChange={(e) => setNewName({ ...newName, first_name: e.target.value })}
+                                                        className='profilesecinputs'
+                                                        style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Last name"
+                                                        value={newName.last_name}
+                                                        onChange={(e) => setNewName({ ...newName, last_name: e.target.value })}
                                                         className='profilesecinputs'
                                                         style={{ padding: '10px', width: '190px', borderRadius: '16px', border: '1px solid #DDD' }}
                                                     />

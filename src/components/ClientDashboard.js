@@ -43,6 +43,31 @@ export default function ClientDashboard(props: Props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [prof,setProf]=useState();
   const { pathname } = useLocation();
+  const [notifications,setNotifications]=useState([]);
+  const [notificationmodel,setNotificationmodel]=useState(false);
+  const container2 = useRef();
+  
+  useEffect(()=>{
+    const getNotifications=async()=>{
+     try {
+       const response = await fetch(
+         `${BAPI}/api/v0/notifications/get-notification`,
+         {
+           method: 'GET',
+           headers: {
+             'Content-Type': 'application/json',
+             'Authorization': `Bearer ${accessToken}`,
+           },
+         }
+       );
+       const responseData = await response.json();
+       setNotifications(responseData)
+     } catch (error) {
+       console.error('Error during fetching notifications:', error);
+     }
+    }
+    getNotifications();
+   },[])
 
   useEffect(() => {
       window.scrollTo(0, 0);
@@ -56,13 +81,15 @@ export default function ClientDashboard(props: Props) {
   const clickLogout = () => {
     localStorage.clear();
     navigate("/");
-    console.log("Logging out...");
   }
 
   const handleClickOutside = (e) => {
-      if (container1.current && !container1.current.contains(e.target)) {
-          setShowDropdown(false);
-      }
+    if (container1.current && !container1.current.contains(e.target)) {
+      setShowDropdown(false);
+  }
+  if (container2.current && !container2.current.contains(e.target)) {
+    setNotificationmodel(false);
+}
   };
 
   const handlesettings =()=>{
@@ -103,8 +130,8 @@ export default function ClientDashboard(props: Props) {
 },[]);
 
 const handleShareProfile = () => {
-  const url = `http://localhost:3000/client/${prof}`;
-  console.log("User Profile is: ", url);
+  const url = `https://grull.work/client/${prof}`;
+  // const url = `http://localhost:3000/client/${prof}`;
 
   navigator.clipboard.writeText(url)
       .then(() => {
@@ -250,7 +277,43 @@ const handleShareProfile = () => {
                 </Button>
                 <ToastContainer />
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/clientchat')}  className='resdash' />
-                <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px'}} className='resdash' />
+                <Box ref={container2} sx={{position:'relative'}} onClick={()=>{setNotificationmodel(!notificationmodel)}}>
+                     <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px',cursor:'pointer'}} className='resdash' />
+                     {
+                      notificationmodel && (
+                        <Box
+                           sx={{
+                                padding:'15px',
+                                display: notificationmodel?'block':'none',
+                                position:'absolute',
+                                backgroundColor:'#fff',
+                                zIndex:'1',
+                                top:{xs:'58px',sm:'65px'},
+                                right:{xs:'-55px',sm:'-80px',md:'-20px'},
+                                boxShadow: '0px 0px 4px 1px #00000040',
+                                borderRadius:'10px',
+                                width:{xs:'250px',sm:'280px'},
+                                maxHeight:'250px',
+                                overflow:'auto'
+                            }}>
+                              {
+                              notifications.length===0?(<p style={{textAlign:'center',color:'#000000'}}>No notifications received.</p>):(
+                              <Box>{notifications.map((notification,index)=>(
+                                <>
+                                   <Box key={index} sx={{padding:'5px'}}>
+                                      <Typography sx={{fontSize:'14px',fontWeight:'600',color:'#000',}}>{notification.title}</Typography>
+                                      <Typography sx={{fontSize:'12px',fontWeight:'400',color:'#000',}}>{notification.content}</Typography>
+                                   </Box>
+                                    <Divider />
+                                    </>
+                                  ))}
+                                </Box>)
+                              }
+                                  
+                            </Box>
+                      )
+                     }
+                </Box>
                 <Box ref={container1} sx={{position:'relative'}}>
                 <Avatar
                     className='resdash'

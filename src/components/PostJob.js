@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Header3 from './Header3';
+import Header4 from './Header4';
 
 const PostJob = () => {
     const [selectedSkills, setSelectedSkills] = useState([]);
@@ -150,17 +151,17 @@ const PostJob = () => {
     return (
         <div>
             {/* div 1 for header */}
-            <Header3 />
+            <Header4 />
             <div className='input-form'>
                     <Form className='jobposting-form'>
                         <h2>Job Description</h2>
                         <Form.Group className='form-group' controlId="formBasicTitle">
-                            <h4>Title</h4>
+                            <h4>Title *</h4>
                             <Form.Control  className='form-val' type="text" name='Title' placeholder="Title" />
                         </Form.Group>
 
                         <Form.Group className="form-group" controlId="formJobCategory">
-                            <h4>Job Category</h4>
+                            <h4>Job Category *</h4>
                             <Select
                                 options={JobCategoryOptions} placeholder="Select" name="Job_Category"
                                 className='form-val-two'
@@ -170,7 +171,7 @@ const PostJob = () => {
 
                         <div style={{ display: 'flex', gap: '25px' }} className='loc-form'>
                             <Form.Group className="form-group" controlId="formLocation">
-                                <h4>Location</h4>
+                                <h4>Location *</h4>
                                 <Select
                                     options={LocationOptions} placeholder="Select" name="Location"
                                     styles={{ control: (provided) => ({ ...provided,border:'none'}) }}
@@ -179,7 +180,7 @@ const PostJob = () => {
                             </Form.Group>
 
                             <Form.Group className="form-group" controlId="formDuration">
-                                <h4>Duration</h4>
+                                <h4>Duration *</h4>
                                 <Select
                                     options={DurationOptions} placeholder="Select" name="Duration"
                                     styles={{ control: (provided) => ({ ...provided,border:'none'}) }}
@@ -191,7 +192,7 @@ const PostJob = () => {
 
                         <div>
                             <div>
-                                <h4>Budget</h4>
+                                <h4>Budget *</h4>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }} className='bud-form'>
                             
@@ -222,7 +223,7 @@ const PostJob = () => {
                         
 
                         <Form.Group className="form-group" controlId="formJobDescription">
-                            <h4>Job Description</h4>
+                            <h4>Job Description *</h4>
                             <Form.Control 
                                     as="textarea"
                                     rows="6"
@@ -235,7 +236,7 @@ const PostJob = () => {
                         </Form.Group>
 
                         <Form.Group className="form-group" controlId="formSkills">
-                            <h4>Add Skills</h4>
+                            <h4>Add Skills *</h4>
                             <Select
                                 isMulti={true}
                                 options={SkillOptions}
@@ -248,9 +249,9 @@ const PostJob = () => {
 
                         </Form.Group>
 
-                        <h4>Reference files</h4>
+                        {/* <h4>Reference files</h4>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            {/* <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <input
                                     type="text"
                                     placeholder="Upload here"
@@ -260,7 +261,7 @@ const PostJob = () => {
                                 <button onClick={handleArrowClick}>
                                     <FontAwesomeIcon icon={faArrowUp} />
                                 </button>
-                            </div> */}
+                            </div>
 
                            <input
                                 name="Reference_Files"
@@ -288,10 +289,10 @@ const PostJob = () => {
                                     </ul>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
 
                         <Form.Group className="form-group" controlId="formCompanyName">
-                            <h4>Company Name (Optional)</h4>
+                            <h4>Company Name *</h4>
                             <Form.Control className='form-val' type="text" name="Company_Name" placeholder="Enter Name" />
                         </Form.Group>
 

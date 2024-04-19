@@ -188,7 +188,7 @@ function Section16() {
               typography:{xs:"font_12_600", md:"font_18_600"},
               cursor:'pointer'
             }}
-            onClick={()=>navigate('/home')}
+            onClick={scrollToSection}
           >
             Choose Plan
           </Box>
@@ -300,7 +300,7 @@ function Section16() {
               typography:{xs:"font_12_600", md:"font_18_600"},
               cursor:'pointer'
             }}
-            onClick={()=>navigate('/home')}
+            onClick={scrollToSection}
           >
             Choose Plan
           </Box>

@@ -63,9 +63,9 @@ const JobApplications = () => {
             'Authorization': `Bearer ${accessToken}`,
           },
         });
-         console.log(response.data.results)
+         console.log("applications", response.data.results)
         if (response.status === 200) {
-          console.log('Freelancers Fetched successfully');
+          // console.log('Freelancers Fetched successfully');
 
           // Set all freelancers
           setAllFreelancers(response.data.results);
@@ -85,24 +85,7 @@ const JobApplications = () => {
     // updaterefs();
   }, [allFreelancers]);
   
-  const handleAccept=async(applicationId)=>{
-      try{
-        const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/accept`, {
-          
-        },{
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-          }
-        });
-         console.log(response);
-         navigate("/clientchat")
-        
-      }
-      catch (error) {
-        console.error('Error occurred while accepting :', error);
-      }
-  }
+
 
   const handleReject=async(applicationId)=>{
     try{
@@ -120,6 +103,36 @@ const JobApplications = () => {
     catch (error) {
       console.error('Error occurred while rejecting :', error);
     }
+}
+
+const handleAccept=async(applicationId)=>{
+  try{
+    const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/accept`, {
+      
+    },{
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    });
+     await rejectAllRemainingFreelancers(applicationId);
+     navigate("/clientchat")
+  }
+  catch (error) {
+    console.error('Error occurred while accepting :', error);
+  }
+}
+
+const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
+  try {
+    for (const freelancer of allFreelancers) {
+      if (freelancer.id !== acceptedFreelancerId) {
+        await handleReject(freelancer.id);
+      }
+    }
+  } catch (error) {
+    console.error('Error occurred while rejecting all remaining freelancers:', error);
+  }
 }
 
   const createrefs = (Freelancers) => {
@@ -160,7 +173,7 @@ const JobApplications = () => {
     <div>
       <Header2 />
       {/* div 2 for box and browse, search bar */}
-      <div className='rectangle'></div>
+      {/* <div className='rectangle'></div> */}
       <div className='search-bar'>
       <h1 style={{ color: 'white'}}>Browse</h1>
       <div style={{display:'flex',flexDirection:'column'}}>

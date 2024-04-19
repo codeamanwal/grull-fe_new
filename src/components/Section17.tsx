@@ -8,9 +8,19 @@ function Section17() {
   const navigate = useNavigate();
   const { black } = shades;
   const bloglinks = [
-    'https://blog.fiverr.com/post/getting-in-buyers-heads-as-told-by-top-buyers',
-    'https://blog.fiverr.com/post/the-psychology-behind-discounts-and-how-it-can-benefit-your-business',
-    'https://blog.fiverr.com/post/put-your-skills-to-the-test-in-fiverrs-new-ai-art-contest'
+    {
+      "link":'https://blog.fiverr.com/post/getting-in-buyers-heads-as-told-by-top-buyers',
+      "title":"Getting in buyers’ heads, as told by top buyers",
+      "imgsrc":"https://assets-global.website-files.com/606a802fcaa89bc357508cad/64e62d602ee42d68c9b65e28_image2.jpg"
+    },{
+      "link":'https://blog.fiverr.com/post/the-psychology-behind-discounts-and-how-it-can-benefit-your-business',
+      "title":"The psychology behind discounts and how it can benefit your business",
+      "imgsrc":"https://assets-global.website-files.com/606a802fcaa89bc357508cad/64e62e20ee2ef482d3e618ce_image2%20(1).jpg"
+    },{
+      "link":'https://blog.fiverr.com/post/put-your-skills-to-the-test-in-fiverrs-new-ai-art-contest',
+      "title":"Put your skills to the test in Fiverr’s new AI Art Contest",
+      "imgsrc":"https://assets-global.website-files.com/606a802fcaa89bc357508cad/64d3d92681493e4875d6858e_header%20image-p-1080.png"
+    }
   ];
 
   const handleBoxClick = (link: string) => {
@@ -55,10 +65,10 @@ function Section17() {
             paddingRight: { xs: "24px", md: "0" }
           }}
         >
-          {bloglinks.map((link, i) => (
+          {bloglinks.map((blog, i) => (
             <Box
               key={i}
-              onClick={() => handleBoxClick(link)}
+              onClick={() => handleBoxClick(blog.link)}
               sx={{
                 border: `1px solid ${black}`,
                 borderRadius: "24px",
@@ -71,7 +81,7 @@ function Section17() {
               }}
             >
               <img
-                src={section17TextIcon}
+                src={blog.imgsrc}
                 alt="logo"
                 style={{ width: "100%", objectFit: "contain" }}
               />
@@ -79,13 +89,29 @@ function Section17() {
                 <Typography
                   sx={{ color: black, margin: "0", typography: { xs: "font_12_500", md: "font_20_600" } }}
                 >
-                  How to make a typography poster in Adobe Illustrator
+                  {blog.title}
                 </Typography>
-                <Typography variant="font_12_400" sx={{ paddingBottom: "8px" }}>20 min Read</Typography>
+                <Typography variant="font_12_400" sx={{ paddingBottom: "8px" }}>5 min Read</Typography>
               </Box>
             </Box>
           ))}
         </Box>
+        <Box
+          sx={{
+            width:{xs:"100px", md:"200px"},
+            border: "1px solid black",
+            borderRadius: "16px",
+            textAlign: "center",
+            padding:{xs:"8px 0", md:"16px 0"},
+            margin: "auto",
+            typography:{xs:"font_12_500", md:"font_20_600"},
+            display: "block",
+            cursor:'pointer'
+          }}
+          onClick={()=>handleBoxClick('https://blog.fiverr.com/category/freelancers')}
+        >
+          Read More
+          </Box>
       </Grid>
     </Grid>
   );

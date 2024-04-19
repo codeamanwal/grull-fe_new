@@ -11,6 +11,9 @@ import { MdWorkOutline } from "react-icons/md";
 import Header2 from './Header2';
 import BAPI from '../helper/variable'
 import Navbar from './Navbar';
+import Footer from "./Footer";
+import { RiStarSFill } from "react-icons/ri";
+
 const EmployerprofileShare = () => {
     const {userid}=useParams();
     const navigate = useNavigate();
@@ -36,18 +39,12 @@ const EmployerprofileShare = () => {
     }, []);
 
 
-    const [inputAboutValue, setInputAboutValue] = useState('');
-    const [inputcompdesc,setInputCompDesc]=useState('');
+    const [inputcompdesc,setInputCompDesc]=useState({
+        "company_name":'',
+        "company_description":""
+    });
     const [newinputval,setnewinputval]= useState('');
 
-    const handleAboutChange = (event) => {
-        setnewinputval(event.target.value);
-        updateTextareaHeight(event.target);
-    };
-    const handlecompdesc= (event) => {
-        setInputCompDesc(event.target.value);
-        updateTextareaHeight(event.target);
-    };
     const updateTextareaHeight = (element) => {
         element.style.height = 'auto';
         element.style.height = `${element.scrollHeight}px`;
@@ -56,17 +53,42 @@ const EmployerprofileShare = () => {
     const [rightBoxEditMode, setRightBoxEditMode] = useState(false);
     const [topBoxEditMode, setTopBoxEditMode] = useState(false);
 
-    const [newName, setNewName] = useState('');
-    const [newJobCategory, setNewJobCategory] = useState('');
-    const [newLocation, setNewLocation] = useState('');
-
     const [savedName, setSavedName] = useState('');
     const [savedJobCategory, setSavedJobCategory] = useState('');
     const [savedLocation, setSavedLocation] = useState('');
 
     const [jobsPostedCount, setJobsPostedCount] = useState('');
     const [avgRateOffered, setAvgRateOffered] = useState('');
+    const [reviews,setReviews]=useState([]);
 
+    const formatDate = (timestamp) => {
+        console.log(timestamp)
+        const date = new Date(timestamp);
+
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        const formattedDate = date.toLocaleDateString('en-US', options);
+
+        return formattedDate;
+    };
+
+    useEffect(() => {
+      const fetchUserReviews = async () => {
+          try {
+              const response = await axios.get(`${BAPI}/api/v0/reviews/${userid}`,
+                  {
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                  });
+              setReviews(response.data)
+              
+          } catch (error) {
+              // Handle network error or other issues
+              console.error('Network error:', error);
+          }
+      };
+      fetchUserReviews()
+  }, []);
     //giving initial values to the variables
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -87,8 +109,11 @@ const EmployerprofileShare = () => {
               }
               setJobsPostedCount(jobs_posted_count);
               setAvgRateOffered(average_rate_offered);
-              setInputAboutValue(description);
               setnewinputval(description);
+              setInputCompDesc({
+                "company_name":response.data.company_name,
+                "company_description":response.data.company_description
+              })
             } else {
               console.error('Error fetching user profile:', response.data.error);
             }
@@ -137,7 +162,7 @@ const EmployerprofileShare = () => {
         };
 
         fetchPostedJobs();
-    }, [accessToken]);
+    }, []);
 
     return (
         <div style={{ overflowX: 'hidden' }}>
@@ -223,24 +248,31 @@ const EmployerprofileShare = () => {
                             type="text"
                             placeholder="Write something about you....."
                             value={newinputval}
-                            onChange={handleAboutChange}
                             className={`first-box-one ${rightBoxEditMode ? 'editable' : ''}`}
                             readOnly={!rightBoxEditMode}
                             rows="3"
                             ref={(textarea) => textarea && updateTextareaHeight(textarea)}
                         />
                         
+                        <input 
+                            type="text"
+                            placeholder="Company Name"
+                            name="company_name"
+                            value={inputcompdesc.company_name}
+                            readOnly={!rightBoxEditMode}
+                            className={rightBoxEditMode ? 'first-box-three-editable' : 'first-box-three'}
+                            />
+                    
                     <textarea
                         type="text"
                         placeholder=""
-                        value={inputcompdesc}
-                        onChange={handlecompdesc}
+                        name="company_description"
+                        value={inputcompdesc.company_description}
                         className={`first-box-two ${rightBoxEditMode ? 'editable' : ''}`}
                         readOnly={!rightBoxEditMode}
                         rows="2"
                         ref={(textarea) => textarea && updateTextareaHeight(textarea)}
                     />
-
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginTop:'40px'}}>
                         <h2 style={{fontSize:'28px' }} className='profilesec-subheading'>Posted Jobs</h2>
                     </div>
@@ -288,12 +320,66 @@ const EmployerprofileShare = () => {
                 </div>
                 <div className='review-box'>
                     <h2 style={{fontSize:'28px'}} className='profilesec-subheading'>Reviews</h2>
-                    <p style={{marginTop:'10px'}}>You have no reviews yet.</p>
+                    {
+                        reviews.length===0? 
+                        (<p style={{marginTop:'10px'}}>You have no reviews yet.</p>):
+                        (reviews.map((review,index)=>(
+                                <Box key={index} sx={{
+                                    margin:'15px 0',
+                                    borderRadius:'16px',
+                                    boxShadow: '0px 0px 4px 0px #00000040',
+                                    width:'100%',
+                                    padding:'20px',
+                                    display:'flex',
+                                    flexDirection:'row',
+                                    alignItems:'center'
+                                }}>
+                                    <Box sx={{
+                                        width:{md:'180px',sm:"150px",xs:'100px'},
+                                        display:'flex',flexDirection:'column',alignItems:'center',padding:'10px',justifyContent:'center'
+                                    }}>
+                                        <Avatar
+                                        alt={savedName}
+                                        sx={{ backgroundColor: '#B27EE3',width:{sm:'65px',xs:'40px'},height:{sm:'65px',xs:'40px'} }}
+                                    >
+                                       {/* {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()} */}
+                                       {review.posted_by_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+                                    </Avatar>
+                                        <Typography sx={{color:'#000000',fontSize:{sm:'16px',xs:'13px'},textAlign:'center',marginTop:'5px'}}>{review.posted_by_name}</Typography>
+
+                                    </Box>
+                                    <Box sx={{
+                                        display:'flex',
+                                        flexDirection:'column',
+                                        width:'auto',
+                                        gap:'14px',
+                                        justifyContent:'space-between',
+                                        marginLeft:{sm:'50px',xs:'10px'}
+                                    }}>
+                                         <Box sx={{
+                                        display:'flex',
+                                        flexDirection:'row'
+                                        }}>
+                                            <Box sx={{display:'flex',
+                                        flexDirection:'row',alignItems:'center',gap:'5px'}}>
+                                            <RiStarSFill style={{color:'#B27EE3',fontSize:{sm:'20px',xs:'14px'}}} />  {review.stars}
+                                            </Box>
+                                            <Typography sx={{color:'#000000',fontSize:{sm:'16px',xs:'13px'},marginLeft:'16px'}}>Reviewed on {formatDate(review.created_at)}</Typography>
+                                        </Box>
+                                    <Box>
+                                        <Typography sx={{color:'#454545',fontSize:{sm:'20px',xs:'15px'}}}>{review.review}</Typography>
+                                    </Box>
+                                    </Box>
+                                </Box>
+                            )))
+                    }
                 </div>
             </div>
 
             {/* foruth div for reviews */}
-            
+            {
+                accessToken===null?(''):(<Footer />)
+            }
         </div>
     )
 };

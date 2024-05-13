@@ -262,9 +262,19 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
         <Box sx={{ padding: { sm: '30px', xs: '18px 16px' } }}>
           <Box style={{ display: 'flex', flexDirection: 'column' }}>
             <Box style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-              <Avatar variant="square" sx={{ textTransform: 'uppercase', width: { sm: '200px', xs: '120px' }, height: { sm: '200px', xs: '120px' }, borderRadius: '16px' }}>
-                {freelancer.employee.full_name[0]}
-              </Avatar>
+            {(freelancer.employee.photo_url && freelancer.employee.photo_url!=='') ? (
+                                        <img
+                                            className='user-picture-img'
+                                            alt={freelancer.employee.first_name[0]}
+                                            src={freelancer.employee.photo_url}
+                                            style={{ borderRadius:'16px',objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                      <Avatar variant="square" sx={{ textTransform: 'uppercase', width: { sm: '200px', xs: '120px' }, height: { sm: '200px', xs: '120px' }, borderRadius: '16px' }}>
+                                         {(freelancer.employee.first_name + " " + freelancer.employee.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                   </Avatar>
+                                      
+                                    )}
               <Box style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '100%', height: 'auto' }} key={indx * indx}>
                 <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Box style={{ display: 'flex', flexDirection: 'column' }}>
@@ -272,7 +282,7 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
                     <Typography sx={{ fontWeight: '600', fontSize: { sm: '17px', xs: '15px' } }}>{freelancer.employee.role}</Typography>
                     <Typography sx={{ fontWeight: '600', fontSize: { sm: '17px', xs: '15px' } }}>${freelancer.employee.rate_per_hour}/hr</Typography>
                   </Box>
-                  <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                  {/* <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
                     <img
                       src={require('../assets/dislikeIcon.png')}
                       alt="Dislike"
@@ -285,11 +295,14 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
                       style={{ cursor: 'pointer', height: '50px', width: '50px', borderRadius: '50%' }}
                       onClick={() => handleLikeClick(freelancer.freelancer_id)}
                     />
-                  </Box>
+                  </Box> */}
                 </Box>
                 <Box>
                   <Typography sx={{ fontWeight: '500', fontSize: { sm: '17px', xs: '15px' }, color: '#454545' }}>
                   {/* Your description rendering logic */}
+                  {
+                    freelancer.employee.description
+                  }
                 </Typography>
               </Box>
             </Box>

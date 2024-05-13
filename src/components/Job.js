@@ -76,7 +76,7 @@ useEffect(() => {
                       <Typography sx={{ color: "#656565", fontSize: '15px' }} className='job-con3'>Applied on {dayOfWeek}</Typography>)
                   }
                   {
-                    status==="SAVED" && (
+                    (status==="SAVED" || status==="HIRED") && (
                       <Typography sx={{ color: "#656565", fontSize: '15px' }} className='job-con3'>Saved on {dayOfWeek}</Typography>)
                   }
                 </Box>

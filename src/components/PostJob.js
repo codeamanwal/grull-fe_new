@@ -28,6 +28,7 @@ const PostJob = () => {
             const location = document.querySelector('[name="Location"]').value; 
             const duration = document.querySelector('[name="Duration"]').value;
             const rate_per_hour = document.querySelector('[name="Budget"]').value;
+            const curropts = document.querySelector('[name="curropts"]').value;
             // const negotiableCheckbox = document.querySelector('[name="Negotiable"]');
             // const negotiable = negotiableCheckbox ? negotiableCheckbox.checked : false;
             const description = document.querySelector('[name="Job_Description"]').value;
@@ -47,6 +48,7 @@ const PostJob = () => {
                 "rate_per_hour": rate_per_hour,
                 "required_skills": required_skills,
                 "title": title,
+                "currency_type": curropts
             };
             console.log(requestData)
             const response = await axios.post(`${BAPI}/api/v0/jobs`, requestData, {
@@ -96,6 +98,9 @@ const PostJob = () => {
     ];
 
     const DurationOptions = [
+        { value: '6', label: '<1 Week' },
+        { value: '7', label: '1 Week' },
+        { value: '10', label: '10 Days' },
         { value: '30', label: '30 Days' },
         { value: '60', label: '60 Days' },
         { value: '3M', label: '3 Months' },
@@ -103,12 +108,12 @@ const PostJob = () => {
         { value: '1Y', label: '1 Year' },
     ];
     const CurrencyOptions = [
-        { value: 'India', label: 'INR' },
-        { value: 'USA', label: 'USD' },
-        { value: 'Canada', label: 'CAD' },
-        { value: 'England', label: 'GBP' },
-        { value: 'China', label: 'CNY' },
-        { value: 'Russia', label: 'RUB' },
+        { value: 'INR', label: 'INR' },
+        { value: 'USD', label: 'USD' },
+        { value: 'CAD', label: 'CAD' },
+        { value: 'GBP', label: 'GBP' },
+        { value: 'CNY', label: 'CNY' },
+        { value: 'RUB', label: 'RUB' },
     ];
     const SkillOptions = [
         { value: 'Reactjs', label:'Reactjs' },
@@ -202,7 +207,7 @@ const PostJob = () => {
 
                             <Form.Group className="form-group" controlId="formCurrency">
                                 <Select
-                                    options={CurrencyOptions} placeholder="Select"
+                                    options={CurrencyOptions} placeholder="Select" name="curropts"
                                     styles={{ control: (provided) => ({ ...provided,border:'none',outline:'none'}) }}
                                     className='form-val-4'
                                 />

@@ -74,6 +74,8 @@ export default function Clientchat() {
   const container1 = useRef();
   const container2 = useRef();
   const [filteredFreelancers, setFilteredFreelancers] = useState([]);
+  const [freelancerphotoUrl,setFreelancerPhotoUrl] =useState(null);
+  const [clientphotoUrl, setClientPhotoUrl]=useState(null)
 
   const handleClickOutside = (e) => {
     if (container1.current && !container1.current.contains(e.target)) {
@@ -94,7 +96,8 @@ useEffect(() => {
 
   useEffect(()=>{
       const user=localStorage.getItem('user');
-      setClientname(JSON.parse(user).full_name)
+      setClientname(JSON.parse(user).full_name);
+      setClientPhotoUrl(JSON.parse(user).photo_url)
   },[])
   useEffect(() => {
     // Generate a unique client ID
@@ -509,6 +512,21 @@ const createnotification=async(title, content)=>{
     setuserMessage('');
     sendMessageSocket();
   };
+
+  const getFreelancerDetails=async(freelancer_id)=>{
+    try{
+        const response=await axios.get(`${BAPI}/api/v0/users/${freelancer_id}`,{
+            headers:{
+                Authorization:`Bearer ${accessToken}`
+            }
+           });
+        //    console.log(response)
+        setFreelancerPhotoUrl(response.data.photo_url)
+    }
+    catch(err){
+        console.log("Error while fetching client details : ", err)
+    }
+  }
   
   useEffect(()=>{
     const getChatInfo=async()=>{
@@ -519,6 +537,7 @@ const createnotification=async(title, content)=>{
             }
            });
            setSelectedChatInfo(response.data);
+           getFreelancerDetails(response.data.freelancer_id)
         }
         catch(err){
             console.log("Error while fetching chat : ", err)
@@ -534,7 +553,8 @@ const createnotification=async(title, content)=>{
       "stars": reviewfeedback.stars,
       "review": reviewfeedback.feedback,
       "review_for": selectedChatInfo.freelancer_id,
-      "job_application_id": selectedChatInfo.application_id
+      "job_application_id": selectedChatInfo.application_id,
+      "is_freelancer":true
     }
     try{
         const response=await axios.post(`${BAPI}/api/v0/reviews/create-reviews`, review, {
@@ -668,7 +688,7 @@ useEffect(() => {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                         <IconButton type="button" sx={{p: '10px'}} aria-label="filter">
-                            <CiFilter />
+                            {/* <CiFilter /> */}
                         </IconButton>
                     </Box>
                 </Box>
@@ -702,9 +722,20 @@ useEffect(() => {
                 {selectedChat!=null && <div className='chat-container'>
                     <div className='chat_Profile_frnd'>
                         <Box>
-                            <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
-                            {clientname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                            </Avatar>
+                        {
+                                (clientphotoUrl && clientphotoUrl !=='' )?(
+                                    <img
+                                    // className='user-picture-img'
+                                    alt={clientname[0]}
+                                    src={clientphotoUrl}
+                                    style={{ borderRadius:'50%',width:'50px',height:'50px',objectFit: 'cover'  }}
+                                />
+                                ):(
+                                    <Avatar sx={{ textTransform: 'uppercase', width: '50px', height: '50px' }}>
+                                    {clientname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                    </Avatar>
+                                )
+                            }
                            {freeLancerOnline ? <div className='chat_Profile_Online'></div> : null}
                         </Box>
                         <div className='chat_Profile_frnd_Name'>
@@ -726,9 +757,18 @@ useEffect(() => {
                     <Divider />
                     <div className='chat-container_client'>
                         <Box>
-                            <Avatar sx={{ textTransform: 'uppercase', width: '70px', height: '70px' }}>
-                            {freelancername?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                            </Avatar>
+                        {(freelancerphotoUrl && freelancerphotoUrl!=='') ? (
+                                                  <img
+                                                      // className='user-picture-img'
+                                                      alt={freelancername[0]}
+                                                      src={freelancerphotoUrl}
+                                                      style={{ borderRadius:'50%',width:'70px',height:'70px',objectFit: 'cover'  }}
+                                                  />
+                                              ) : (
+                                                <Avatar sx={{ textTransform: 'uppercase', width: '70px', height: '70px' }}>
+                                                {freelancername?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                                </Avatar>
+                                              )}
                             {clientOnline ? <div className='chat_container_client_Online'></div> : null}
                         </Box>
                         <div className='chat-container_client_Name'>
@@ -776,11 +816,48 @@ useEffect(() => {
                                         // width:'60%'
                                     }}>
                                         {index === 0 || messages[index - 1].sent_by !== message.sent_by ? (
-                                        <Avatar sx={{ textTransform: 'uppercase', width: '40px', height: '40px'}}>
-                                          {/* {message.username[0]} */}
-                                          {(message.sent_by!==selectedChatInfo?.freelancer_id ?(clientname):(freelancername))?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                
-                                        </Avatar>
+                                          <>
+                                          {
+                                              message.sent_by!==selectedChatInfo?.manager_id &&(
+                                                  <>
+                                                  {(freelancerphotoUrl && freelancerphotoUrl!=='') ? (
+                                                      <img
+                                                          // className='user-picture-img'
+                                                          alt={freelancername[0]}
+                                                          src={freelancerphotoUrl}
+                                                          style={{ borderRadius:'50%',width:'40px',height:'40px',objectFit: 'cover'  }}
+                                                      />
+                                                  ) : (
+                                                      <Avatar sx={{ textTransform: 'uppercase', width: '40px', height: '40px'}}>
+                                                      {/* {message.username[0]} */}
+                                                      {(message.sent_by!==selectedChatInfo?.manager_id?(freelancername):(clientname))?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                                    </Avatar>
+                                                  )}
+                                                  </>
+                                              )
+                                          }
+                                          {
+                                              message.sent_by===selectedChatInfo?.manager_id &&(
+                                                  <>{
+                                                      (clientphotoUrl && clientphotoUrl !=='' )?(
+                                                          <img
+                                                          // className='user-picture-img'
+                                                          alt={clientname[0]}
+                                                          src={clientphotoUrl}
+                                                          style={{ borderRadius:'50%',width:'40px',height:'40px' ,objectFit: 'cover' }}
+                                                      />
+                                                      ):(
+                                                          <Avatar sx={{ textTransform: 'uppercase', width: '40px', height: '40px'}}>
+                                                    {/* {message.username[0]} */}
+                                                    {(message.sent_by!==selectedChatInfo?.manager_id?(freelancername):(clientname))?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                                  </Avatar>
+                                                      )
+                                                  }
+                                                  
+                                                  </>
+                                              )
+                                          }
+                                          </>
                                       ) : <div style={{width:'40px'}}></div>}    
                                       {(message.status === 'DELIVERABLE_IMAGE' || message.status === 'DELIVERABLE_IMAGE_ACCEPTED' ||message.status === 'DELIVERABLE_IMAGE_REJECTED' ) && (
                     <Box sx={{display:'flex',justifyContent:'flex-end',flexDirection:'column',marginBottom:'5px'}}>

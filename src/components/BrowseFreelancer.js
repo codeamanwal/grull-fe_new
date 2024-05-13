@@ -13,6 +13,8 @@ import { Box, Button, Divider, Typography } from "@mui/material";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { VscChromeClose } from "react-icons/vsc";
 import { LiaFilterSolid } from "react-icons/lia";
+import { IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import BAPI from '../helper/variable'
 
 import Avatar from '@mui/material/Avatar';
@@ -44,6 +46,41 @@ const BrowseFreelancer = () => {
 
   //fetch all freelancers
   const accessToken = localStorage.getItem('accessToken');
+  const [postedJobs,setPostedJobs]=useState({});
+  useEffect(() => {
+    const fetchPostedJobs = async () => {
+        try {
+            const response = await axios.get(`${BAPI}/api/v0/users/me/jobs`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                params: {
+                  status:"PENDING"
+                },
+            });
+
+            if (response.status === 200) {
+                console.log(response.data)
+                const transformedJobs = response.data.results.map(job => ({
+                  value: job.id,
+                  label: job.title
+              }));
+                const postjobs={
+                  postedJobsOpts:transformedJobs,
+                  postedJobsVal:response.data.results
+                }
+                setPostedJobs(postjobs); 
+            } else {
+                console.error('Error fetching posted jobs:', response.data.error);
+            }
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
+    };
+
+    fetchPostedJobs();
+}, [accessToken]);
+
   useEffect(() => {
     const getFreelancers = async () => {
       try {
@@ -56,9 +93,11 @@ const BrowseFreelancer = () => {
 
         if (response.status === 200) {
           console.log('Freelancers Fetched successfully',response.data.results);
-          
-          createrefs(response.data.results);
-          setAllFreelancers(response.data.results);          
+          const client_id=JSON.parse(localStorage.getItem('user'))?.id
+          const freelancers_data=response.data.results.filter((free)=>free.id!==client_id)
+          console.log('Freelancers Fetched successfully',freelancers_data);
+          createrefs(freelancers_data);
+          setAllFreelancers(freelancers_data);          
           // console.log(boxRefs);
 
         } else {
@@ -112,10 +151,59 @@ const BrowseFreelancer = () => {
   const handleLikeClick=()=>{
 
   }
+  const [selectedJobs, setSelectedJobs] = useState({});
 
-  const handleHire=()=>{
+  const handleJobSelection = (freelancerId, selectedJob) => {
+    setSelectedJobs(prevState => ({
+      ...prevState,
+      [freelancerId]: selectedJob
+    }));
+  };
 
-  }
+  const handleHire = async (freelancerId) => {
+    try {
+      // Get the selected job for the freelancer
+      const selectedJob = selectedJobs[freelancerId];
+      if (!selectedJob) {
+        alert('No job selected for the freelancer');
+        return;
+      }
+      const correspondingJob = postedJobs.postedJobsVal.find(job => job.id === selectedJob.value);
+      if (!correspondingJob) {
+        console.error('Corresponding job data not found');
+        return;
+      }
+      // Prepare the data for the API call
+      const hireData = {
+        freelancer_id: freelancerId,
+        job_id: selectedJob.value, // Assuming the job ID is stored in the value property
+        title: selectedJob.label, // Assuming the job title is stored in the label property
+        location: correspondingJob.location, // Replace "loc" with the actual location property name
+        company_name: correspondingJob.company_name
+      };
+  
+      // Make the API call
+      const response = await axios.post(`${BAPI}/api/v0/jobs/hire-freelancer`, hireData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+  
+      if (response.status === 200) {
+        console.log(response.data)
+        alert('Sent Job request to Freelancer successfully');
+        // Handle success as needed
+      } else {
+        console.error('Error hiring freelancer:', response.data.error);
+        // Handle error as needed
+      }
+    } catch (error) {
+      console.error('Error occurred while hiring freelancer:', error);
+      // Handle error as needed
+    }
+  };
+  
 
   const [category,setcategory]=useState('freelancers');
   const [state, setState] = useState(false);
@@ -132,12 +220,7 @@ const BrowseFreelancer = () => {
     setState(open);
   };
 
-  const handleShareProfile = (freelancerId) => {
-    const url = `https://grull.work/freelancer/${freelancerId}`;
-    window.open(url, "_blank");
-    // const url = `http://localhost:3000/freelancer/${prof}`;
-    
-}
+
   return (
     <div>
       {/* div 1 for header */}
@@ -229,7 +312,7 @@ const BrowseFreelancer = () => {
            <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between'}} onClick={toggleCategory} >
               Category
               <div>{
-              categoryExpanded ? '⮙' : '⮛'
+              categoryExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
 
@@ -296,7 +379,7 @@ const BrowseFreelancer = () => {
             <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleExperience} >
             Experience Level
                 <div>{
-                experienceExpanded ? '⮙' : '⮛'
+                experienceExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
                 }</div>
               </Box>
             {experienceExpanded && (
@@ -333,7 +416,7 @@ const BrowseFreelancer = () => {
           <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleJob} >
               Job Type
               <div>{
-              jobExpanded ? '⮙' : '⮛'
+              jobExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             {jobExpanded && (
@@ -403,7 +486,7 @@ const BrowseFreelancer = () => {
               <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleLocation} >
               Location
               <div>{
-              locationExpanded ? '⮙' : '⮛'
+              locationExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             {locationExpanded && (
@@ -455,9 +538,20 @@ const BrowseFreelancer = () => {
                 <Box sx={{padding:{sm:'30px',xs:'18px 16px'}}}>
                   <Box style={{ display: 'flex',flexDirection:'column'}}>
                     <Box style={{ display: 'flex',flexDirection:'row',gap:'20px'}}>
-                      <Avatar variant="square" sx={{textTransform:'uppercase',width:{sm:'200px',xs:'120px'},height:{sm:'200px',xs:'120px'},borderRadius:'16px'}}>
-                        {freelancer.full_name[0]}
-                      </Avatar>
+                    {(freelancer.photo_url && freelancer.photo_url!=='') ? (
+                                        <img
+                                            className='user-picture-img'
+                                            alt={freelancer.first_name}
+                                            src={freelancer.photo_url}
+                                            style={{ borderRadius:'16px'}}
+                                        />
+                                    ) : (
+                                      <Avatar variant="square" sx={{textTransform:'uppercase',width:{sm:'200px',xs:'120px'},height:{sm:'200px',xs:'120px'},borderRadius:'16px'}}>
+
+                                        {(freelancer.first_name + " " + freelancer.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                      </Avatar>
+                                      
+                                    )}
                       <Box style={{ display: 'flex',flexDirection:'column',gap:'5px',width:'100%',height:'auto'}} ref={ref => boxRefs.current[indx] = ref} key={indx*indx} >
                           <Box style={{ display: 'flex',flexDirection:'row',justifyContent:'space-between'}}>
                                <Box style={{ display: 'flex',flexDirection:'column'}}>
@@ -466,7 +560,7 @@ const BrowseFreelancer = () => {
                                    <Typography sx={{fontWeight:'600',fontSize:{sm:'17px',xs:'15px'}}}>${freelancer.rate_per_hour}/hr</Typography>
                                </Box>
                                <Box style={{ display: 'flex',flexDirection:'row',gap:'10px'}}>
-                               <img
+                               {/* <img
                                   src={require('../assets/dislikeIcon.png')} 
                                   alt="Dislike"
                                   style={{ cursor: 'pointer', height:'50px', width:'50px', borderRadius:'50%' }}
@@ -477,7 +571,7 @@ const BrowseFreelancer = () => {
                                   alt="Like"
                                   style={{ cursor: 'pointer',height:'50px', width:'50px', borderRadius:'50%' }}
                                   onClick={() => handleLikeClick(freelancer.freelancer_id)}  
-                                />
+                                /> */}
                                </Box>
                           </Box>
                           <Box>
@@ -501,18 +595,26 @@ const BrowseFreelancer = () => {
                         
                       </ul>
                     </Box>
-                    <Box sx={{marginTop:'5px'}}>
-                      <Button onClick={()=>{handleShareProfile(freelancer.id)}} sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}}>Hire</Button>
+                    <Box sx={{marginTop:'15px',display:'flex',flexDirection:'row',gap:'20px',flexWrap:'wrap'}}>
+                    <Select
+                             options={postedJobs.postedJobsOpts} placeholder="Select" name="Job_Category"
+                              onChange={(selectedOption) => handleJobSelection(freelancer.id, selectedOption)}
+                                className='form-val-two_brfre'
+                                styles={{ control: (provided) => ({ ...provided, border:'none',cursor:'pointer' }) }}
+                            />
+                      <Button onClick={()=>{handleHire(freelancer.id)}} sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}}>Hire</Button>
                     </Box>
                   </Box>
               </Box>
-              {(indx !== allFreelancers.length - 1 || allFreelancers.length===1) && <Divider />}
+              {
+              // (indx !== allFreelancers.length - 1 || allFreelancers.length===1) && 
+              <Divider />}
             </Box>
           ))}
         </div>
       </div>
 
-    // </div>
+     </div>
   )
 }
 export default BrowseFreelancer;

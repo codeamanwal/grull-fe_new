@@ -49,7 +49,7 @@ const ManageJobs = () => {
           //   return [...prevApplications, ...newApplications];
           // });
           setApplications(response.data.results)
-          console.log(response.data.results)
+          // console.log(response.data.results)
           // if (response.data.next) {
           //   await getApplications(page + 1);
           // }
@@ -80,7 +80,7 @@ const ManageJobs = () => {
             'Authorization': `Bearer ${accessToken}`,
           },
         });
-        console.log(response.data)
+        // console.log(response.data)
         response.data['applied_on']=application.modified_at;
         if(application.status==="REJECTED"){
           response.data['status']="REJECTED";
@@ -130,7 +130,72 @@ const ManageJobs = () => {
     setSavedJobs(updatedSavedJobs);
   };
   
+  const [requestJobs,setRequestJobs]=useState([]);
+
+  const handleRequestedjobs = async(req_j) => {
+    const updatedReqJobs = [];
+    for (let i = 0; i < req_j.length; i++) {
+      const ReqJob = req_j[i];
+      const jobId = ReqJob.job_id;
+      const matchingJob = jobData.find((job) => job.id === jobId);
+      if (matchingJob) {
+        ReqJob.status = 'APPLIED';
+        updatedReqJobs.push(ReqJob);
+      } else {
+        try {
+          const jobDetailsResponse = await axios.get(`${BAPI}/api/v0/jobs/${jobId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
   
+          if (jobDetailsResponse.status === 200) {
+            const jobDetails = jobDetailsResponse.data;
+            console.log(jobDetails)
+            if (!jobDetails.employee) {
+              ReqJob.status = 'HIRED';
+            } else {
+              ReqJob.status = 'CLOSED';
+            }
+            updatedReqJobs.push(ReqJob);
+          }
+        } catch (error) {
+          console.error('Error fetching job details:', error);
+        }
+      }
+    }
+    console.log("up: ",updatedReqJobs)
+    setRequestJobs(updatedReqJobs);
+  };
+  useEffect(() => {
+    const getRequestedjobs = async (page = 1) => {
+      try {
+        const response = await axios.get(`${BAPI}/api/v0/jobs/hired-jobs/freelancer`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          // params: {
+          //   page: page,
+          //   per_page: 8,
+          // },
+        });
+
+        if (response.status === 200) {
+          // await handleSavedjobs(response.data)
+          // setRequestJobs(response.data)
+          console.log(response.data)
+          await handleRequestedjobs(response.data)
+        }
+      } catch (error) {
+        console.error('Error occurred:', error);
+      }
+    };
+
+    getRequestedjobs();
+  }, [jobData]);
+
 
   useEffect(() => {
     const getsavedjobs = async (page = 1) => {
@@ -177,6 +242,8 @@ const ManageJobs = () => {
                onClick={()=>{handleButtonClick('ongoing')}}>Ongoing Jobs</Button>
                <Button sx={{fontSize:'17px',backgroundColor:section==='completed'?'#d7d7d7':'#e3e3e3',color:section!=='completed'?'rgba(0,0,0,0.5)':'#000',borderRadius:'16px',padding:'9px 12px',textTransform:'none',':hover':{backgroundColor:section==='completed'?'#d7d7d7':'#e3e3e3',color:section!=='completed'?'rgba(0,0,0,0.5)':'#000',}}}
                onClick={()=>{handleButtonClick('completed')}}>Completed Jobs</Button>
+               <Button sx={{fontSize:'17px',backgroundColor:section==='hired'?'#d7d7d7':'#e3e3e3',color:section!=='hired'?'rgba(0,0,0,0.5)':'#000',borderRadius:'16px',padding:'9px 12px',textTransform:'none',':hover':{backgroundColor:section==='hired'?'#d7d7d7':'#e3e3e3',color:section!=='hired'?'rgba(0,0,0,0.5)':'#000',}}}
+               onClick={()=>{handleButtonClick('hired')}}>Requested Jobs</Button>
             </Box>
             <Box sx={{  width: '850px',padding:'0 0px 0 90px' }} className='managejobs-display'>
                {selectedSection==='applied' && (
@@ -295,6 +362,37 @@ const ManageJobs = () => {
                           isLast={index === savedJobs.length - 1}
                           status="SAVED"
                           status_saved={job.status}
+                          job_id={job.job_id}
+                          total_deliverables={0}
+                          completed_deliverables={0}
+                        />
+                      )))}
+                      
+                    </Box>
+                  </Box>
+               )
+               }
+                {selectedSection==='hired' && (
+                  <Box>
+                    <Box sx={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                        <Typography className='jobs-category' sx={{fontSize:'28px',fontWeight:'600',letterSpacing:'-1px'}}>Requested Jobs</Typography>
+                        <Link style={{color:'#ED8335',marginLeft:'10px',fontSize:'24px',fontWeight:'600'}} className='manageprofilelink' to='/freelancerprofile'>Manage Profile</Link>
+                    </Box>
+                    <Box sx={{marginTop:'25px',boxShadow: '0px 0px 4px 0.5px #00000040',borderRadius:'16px'}}>
+                    {requestJobs.length === 0 ? (
+                        <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No requested jobs found.</Typography>
+                      ) : (requestJobs.map((job, index) => (
+                        <Job
+                          passed_from={0}
+                          key={index}
+                          position={job.title}
+                          companyName={job.company_name}
+                          companyLogoUrl={job.companyLogoUrl}
+                          location={job.location}
+                          startDate={job.created_at}
+                          isLast={index === savedJobs.length - 1}
+                          status="SAVED"
+                          status_saved="SAVED"
                           job_id={job.job_id}
                           total_deliverables={0}
                           completed_deliverables={0}

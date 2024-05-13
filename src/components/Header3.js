@@ -35,6 +35,7 @@ export default function Header3() {
     
     const avatarBackgroundColor = 'Grey';
     const accessToken = localStorage.getItem('accessToken');
+    const [profileImage,setProfileImage]=useState(null);
     useEffect(()=>{
         const infofetch=async()=>{
          try {
@@ -51,6 +52,9 @@ export default function Header3() {
            const responseData = await response.json();
            setSavedName(responseData.full_name)
            setcategory(responseData.role);
+           if(responseData.photo_url && responseData.photo_url!==''){
+            setProfileImage(responseData.photo_url);
+          }
          } catch (error) {
            console.error('Error during fetching data:', error);
          }
@@ -150,19 +154,32 @@ export default function Header3() {
                                    <IoMdNotificationsOutline style={{ color: '#fff'}} />
                                 </IconButton> */}
                                 <Box ref={container} sx={{position:'relative'}}>
+                                {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            alt={savedName}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',cursor:'pointer',height:'45px',width:'45px',objectFit: 'cover'  }}
+                                            onClick={()=>{clickProfileImage()
+                                                if (changeopts) {
+                                                    handlesettings();
+                                                  }
+                                            }}
+                                        />
+                                    ) : (
+                                        
                                     <Avatar
-                                        alt={savedName}
-                                        sx={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
-                                        // className='dashboardavatar profile'
-                                        onClick={()=>{clickProfileImage()
-                                            if (changeopts) {
-                                                handlesettings();
-                                              }
-                                        }}
-
-                                    >
-                                       {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
-                                    </Avatar>
+                                    alt={savedName}
+                                    sx={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
+                                    // className='dashboardavatar profile'
+                                    onClick={()=>{clickProfileImage()
+                                        if (changeopts) {
+                                            handlesettings();
+                                          }
+                                    }}
+                                >
+                                   {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+                                </Avatar>
+                                    )}
                                     {showDropdown && (
                                         <Box
                                         sx={{
@@ -183,13 +200,21 @@ export default function Header3() {
                                         >
                                         <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Avatar
+                                            {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            alt={savedName}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',width:'80px',height:'80px',marginRight:'10px',objectFit: 'cover'   }}
+                                            
+                                        />
+                                    ) : (
+                                        <Avatar
                                                     alt={savedName}
                                                     style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
                                                 >
                                                    {typeof savedName === 'string' && savedName.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
-
                                                 </Avatar>
+                                    )}
                                                 <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                                                     <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px'}}>{savedName}</Typography>
                                                     <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{category}</Typography>
@@ -202,7 +227,7 @@ export default function Header3() {
                                         {
                                             !changeopts? (<>
                                             <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
-                                            <Link component={NavLink} to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                            <Link component={NavLink} to="/freelancer/wallet" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
                                             <Link onClick={()=>setChangeopts(!changeopts)} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
                                             <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
                                             <Link

@@ -24,17 +24,22 @@ import { IoMdNotificationsOutline } from "react-icons/io"
 import Header1 from './Header1';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 interface Props {
   window?: () => Window;
 }
 
 export default function ClientDashboard(props: Props) {
-
-  const [activeButton, setActiveButton] = useState('home');
+  
+  let { '*' : section } = useParams();
+  if(!section){
+    section=''
+  }
   const [fullname,setFullname]=useState('');
   const [role,setRole]=useState('');
   const navigate = useNavigate();
   const avatarBackgroundColor = 'Grey';
+  const [profileImage,setProfileImage]=useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const container1 = useRef();
   const [changeopts,setChangeopts]=useState(false);
@@ -97,7 +102,13 @@ export default function ClientDashboard(props: Props) {
   }
 
   const handleButtonClick = (button) => {
-    setActiveButton(button);
+    // setActiveButton(button);
+    if(button === 'home'){
+      navigate('/client')
+    }
+    if(button==='wallet'){
+      navigate('/client/wallet')
+    }
     if (button === 'manageJobs') {
       navigate('/clientmanagejobs/posted');
     }
@@ -119,7 +130,10 @@ export default function ClientDashboard(props: Props) {
        const responseData = await response.json();
        setFullname(responseData.full_name);
        setRole(responseData.role);
-       setProf(responseData.id)
+       setProf(responseData.id);
+       if(responseData.photo_url && responseData.photo_url!==''){
+        setProfileImage(responseData.photo_url);
+      }
        localStorage.setItem("user",JSON.stringify(responseData));
        console.log(localStorage.getItem("user"));
      } catch (error) {
@@ -130,7 +144,7 @@ export default function ClientDashboard(props: Props) {
 },[]);
 
 const handleShareProfile = () => {
-  const url = `https://grull.work/client/${prof}`;
+  const url = `https://grull.work/client/profile/${prof}`;
   // const url = `http://localhost:3000/client/${prof}`;
 
   navigator.clipboard.writeText(url)
@@ -182,14 +196,22 @@ const handleShareProfile = () => {
       </Box>
       <Box sx={{marginTop:'100px'}}>
       <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
-      <Avatar
-        alt={fullname}
-        style={{ backgroundColor: avatarBackgroundColor }}
-        onClick={() => { navigate('/freelancerprofile') }}
-      >
-        {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-
-      </Avatar>
+      {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            // className='user-picture-img'
+                                            alt={fullname[0]}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',width:'50px',height:'50px',objectFit: 'cover'  }}
+                                        />
+                                    ) : (
+                                        <Avatar
+                                            // className='user-picture-img'
+                                            alt={fullname}
+                                            style={{ backgroundColor: avatarBackgroundColor }}
+                                        >
+                                            {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                        </Avatar>
+                                    )}
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
                <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>{fullname}</Typography>
                <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>{role}</Typography>
@@ -204,13 +226,13 @@ const handleShareProfile = () => {
           />
          <Box sx={{padding:'30px 7px 0',display:'flex',flexDirection:'column',gap:'14px'}}>
              <Button 
-                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: activeButton === 'home' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: activeButton === 'home' ? '#7C7C7C' : 'transparent',},}} 
+                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: section === '' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: section === '' ? '#7C7C7C' : 'transparent',},}} 
                 startIcon={<FiHome />} onClick={() => handleButtonClick('home')} >Home</Button>
              <Button 
-                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: activeButton === 'wallet' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: activeButton === 'wallet' ? '#7C7C7C' : 'transparent',},}} 
+                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: section === 'wallet' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: section === 'wallet' ? '#7C7C7C' : 'transparent',},}} 
                 startIcon={<IoWalletOutline />} onClick={() => handleButtonClick('wallet')} >Wallet</Button>
              <Button
-                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: activeButton === 'manageJobs' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: activeButton === 'manageJobs' ? '#7C7C7C' : 'transparent',},}} 
+                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: section === 'manageJobs' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: section === 'manageJobs' ? '#7C7C7C' : 'transparent',},}} 
                 startIcon={<FiShoppingBag />} onClick={() => handleButtonClick('manageJobs')} >Manage Jobs</Button>
          </Box>
       </Box>
@@ -315,19 +337,36 @@ const handleShareProfile = () => {
                      }
                 </Box>
                 <Box ref={container1} sx={{position:'relative'}}>
-                <Avatar
-                    className='resdash'
-                    alt={fullname}
-                    style={{ backgroundColor: avatarBackgroundColor, cursor: 'pointer' }}
-                    onClick={() => { 
-                      setShowDropdown(!showDropdown); 
-                      if (changeopts) {
-                        handlesettings();
-                      }
-                    }}
-                  >
-                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                  </Avatar>
+                {(profileImage && profileImage!=='') ? (
+                                        <img
+                                        className='resdash'
+                                            // className='user-picture-img'
+                                            alt={fullname[0]}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',cursor:'pointer',width:'50px',height:'50px',objectFit: 'cover'  }}
+                                            onClick={() => { 
+                                              setShowDropdown(!showDropdown); 
+                                              if (changeopts) {
+                                                handlesettings();
+                                              }
+                                            }}
+                                        />
+                                    ) : (
+                                        <Avatar
+                                        className='resdash'
+                                            // className='user-picture-img'
+                                            onClick={() => { 
+                                              setShowDropdown(!showDropdown); 
+                                              if (changeopts) {
+                                                handlesettings();
+                                              }
+                                            }}
+                                            alt={fullname[0]}
+                                            style={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
+                                        >
+                                            {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                        </Avatar>
+                                    )}
                 {showDropdown && (
                                         <Box
                                         sx={{
@@ -348,12 +387,22 @@ const handleShareProfile = () => {
                                         >
                                         <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Avatar
-                                                    alt={fullname[0]}
-                                                    style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
-                                                >
-                                                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                                                </Avatar>
+                                            {(profileImage && profileImage!=='') ? (
+                                                  <img
+                                                      // className='user-picture-img'
+                                                      alt={fullname[0]}
+                                                      src={profileImage}
+                                                      style={{ borderRadius:'50%',width:'80px',height:'80px',marginRight:'10px',objectFit: 'cover'   }}
+                                                  />
+                                              ) : (
+                                                  <Avatar
+                                                      // className='user-picture-img'
+                                                      alt={fullname}
+                                                      style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px'  }}
+                                                  >
+                                                      {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                                  </Avatar>
+                                              )}
                                                 <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                                                     <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px',color:'#000000'}}>{fullname}</Typography>
                                                     <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{role}</Typography>
@@ -367,7 +416,7 @@ const handleShareProfile = () => {
                                           !changeopts? 
                                           (<>
                                         <Link to="/client" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
-                                        <Link to="/client" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                        <Link to="/client/wallet" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
                                         <Link onClick={handlesettings} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
                                         <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
                                         <Link to="/"
@@ -432,10 +481,10 @@ const handleShareProfile = () => {
         sx={{ py:3, width: { sm: `calc(100% - ${getDrawerWidth()}px)` } }}
       >
         <Toolbar />
-        {activeButton === 'home' && (
+        {section === '' && (
           <ClientHome />
         )}
-        {activeButton === 'wallet' && (
+        {section === 'wallet' && (
           <Freelancerwallet />
         )}
       </Box>

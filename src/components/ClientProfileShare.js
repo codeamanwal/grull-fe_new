@@ -80,7 +80,7 @@ const EmployerprofileShare = () => {
                           'Content-Type': 'application/json',
                       },
                   });
-              setReviews(response.data)
+                  setReviews(response.data.filter(item => !item.is_freelancer));
               
           } catch (error) {
               // Handle network error or other issues
@@ -90,6 +90,8 @@ const EmployerprofileShare = () => {
       fetchUserReviews()
   }, []);
     //giving initial values to the variables
+    
+    const [profileImage,setProfileImage]=useState(null);
     useEffect(() => {
         const fetchUserProfile = async () => {
           try {
@@ -99,7 +101,8 @@ const EmployerprofileShare = () => {
             if (response.status === 200) {
               const { full_name, role, location,jobs_posted_count,average_rate_offered,description } = response.data;
               console.log(response.data)
-    
+              setProfileImage(response.data.photo_url && response.data.photo_url !== '' ? response.data.photo_url : null);
+                    
               setSavedName(full_name);
               setSavedJobCategory(role);
               if(location){
@@ -129,30 +132,48 @@ const EmployerprofileShare = () => {
 
     //view posted jobs
     const [postedJobs, setPostedJobs] = useState([]);
-    const [weeksAgoMap, setWeeksAgoMap] = useState({});
+    const TimeDiff = (created_at) => {
+        const createdat = new Date(created_at);
+        const timeDifference = new Date() - createdat;
+        const secondsDifference = Math.floor(timeDifference / 1000);
+        const minutesDifference = Math.floor(secondsDifference / 60);
+        const hoursDifference = Math.floor(minutesDifference / 60);
+        const daysDifference = Math.floor(hoursDifference / 24);
+        const weeksDifference = Math.floor(daysDifference / 7);
+        const monthsDifference = Math.floor(daysDifference / 30);
+        const yearsDifference = Math.floor(daysDifference / 365);
+    
+        if (yearsDifference > 0) {
+            return yearsDifference === 1 ? "1 year ago" : `${yearsDifference} years ago`;
+        } else if (monthsDifference > 0) {
+            return monthsDifference === 1 ? "1 month ago" : `${monthsDifference} months ago`;
+        } else if (weeksDifference > 0) {
+            return weeksDifference === 1 ? "1 week ago" : `${weeksDifference} weeks ago`;
+        } else if (daysDifference > 0) {
+            return daysDifference === 1 ? "1 day ago" : `${daysDifference} days ago`;
+        } else if (hoursDifference > 0) {
+            return hoursDifference === 1 ? "1 hour ago" : `${hoursDifference} hours ago`;
+        } else if (minutesDifference > 0) {
+            return minutesDifference === 1 ? "1 minute ago" : `${minutesDifference} minutes ago`;
+        } else {
+            return "Just now";
+        }
+    };
+    
     useEffect(() => {
         const fetchPostedJobs = async () => {
             try {
-                const response = await axios.get(`${BAPI}/api/v0/users/me/jobs`, {
+                const response = await axios.get(`${BAPI}/api/v0/jobs/public/posted-jobs/${userid}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
+                    },
+                    params: {
+                      status:"ONGOING,PENDING,COMPLETED"
                     },
                 });
 
                 if (response.status === 200) {
-                    setPostedJobs(response.data.results); // Assuming the API response is an array of jobs
-
-                    // Calculate weeks ago for each job
-                    const newWeeksAgoMap = {};
-                    response.data.results.forEach((job) => {
-                        const created_at = new Date(job.created_at);
-                        const timeDifference = new Date() - created_at;
-                        const weeksDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
-                        newWeeksAgoMap[job.job_id] = weeksDifference;
-                    });
-
-                    // Update weeksAgoMap state
-                    setWeeksAgoMap(newWeeksAgoMap);
+                    setPostedJobs(response.data.results); 
                 } else {
                     console.error('Error fetching posted jobs:', response.data.error);
                 }
@@ -185,13 +206,22 @@ const EmployerprofileShare = () => {
                            <div style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}} className='profilesec-1'>
                                <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}} className='profilesec-4'>
                                     <div className='user-picture'>
+                                    {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            className='user-picture-img'
+                                            alt={savedName.first_name}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',objectFit: 'cover'  }}
+                                        />
+                                    ) : (
                                         <Avatar
                                             className='user-picture-img'
-                                            alt={savedName}
+                                            alt={savedName.first_name}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
-                                            {savedName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                            {(savedName.first_name + " " + savedName.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
+                                    )}
                                           
                                     </div>
                                 <>
@@ -279,7 +309,7 @@ const EmployerprofileShare = () => {
 
                     { (
                         <div className='inside-posted-jobs'>
-                            {postedJobs.map((job) => (
+                            {postedJobs?.map((job) => (
                                 <Box key={job.job_id} sx={{ borderRadius: '16px', border: 'none',  padding: '16px 20px',boxShadow: '0px 0px 4px 0px #00000040',display:'flex',flexDirection:'column',gap:{xs:'6px',sm:'10px'}  }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography sx={{ fontSize:{ xs:'18px',sm:'24px'}, fontWeight: '700', flex: '70%', margin: '0' }}>{job.title}</Typography>
@@ -288,7 +318,7 @@ const EmployerprofileShare = () => {
 
                                     <div style={{  display: 'flex', alignItems: 'center',marginTop:'2px' }}>
                                         <Typography sx={{ fontSize:{ xs:'15px',sm:'19px'} ,fontWeight:'500'}}>Budget: $ {job.rate_per_hour}</Typography>
-                                        <Typography sx={{ fontSize: '14px', color: '#00000080', marginLeft: '20px' }}>Posted {weeksAgoMap[job.job_id] !== undefined ? `${weeksAgoMap[job.job_id]} weeks` : 'loading...'} ago</Typography>
+                                        <Typography sx={{ fontSize: '14px', color: '#00000080', marginLeft: '20px' }}>Posted {TimeDiff(job.created_at)}</Typography>
                                     </div>
                                     <Typography sx={{ fontSize:{xs:'12px',sm:'15px'}, color: '#B27EE3', flex: '30%', margin: '2px 0 0 0',display:{xs:'block',md:'none'} }}>{job.job_applicants_count} FREELANCERS APPLIED</Typography>
                                     <div style={{ display: 'flex', alignItems: 'center',gap:'7px',marginTop:'5px',flexWrap:'wrap' }}>
@@ -378,7 +408,7 @@ const EmployerprofileShare = () => {
 
             {/* foruth div for reviews */}
             {
-                accessToken===null?(''):(<Footer />)
+                !accessToken && (<Footer />)
             }
         </div>
     )

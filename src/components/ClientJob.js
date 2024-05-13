@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -12,6 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
 import BAPI from '../helper/variable'
 import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const MilestonePoint = ({ completed, i }) => {
   return (
@@ -29,7 +30,19 @@ const MilestonePoint = ({ completed, i }) => {
   );
 };
 const ClientJob = ({ passed_from,id, title, companyLogoUrl, companyName, postedDate, isLast, applicantcount, status,total_deliverables,completed_deliverables}) => {
-  
+  const container = useRef();
+  const [showopts,setShowopts]=useState(false);
+  const handleClickOutside = (e) => {
+    if (container.current && !container.current.contains(e.target)) {
+        setShowopts(false);
+    }
+};
+
+useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
   const accessToken = localStorage.getItem('accessToken');
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
@@ -121,7 +134,31 @@ const ClientJob = ({ passed_from,id, title, companyLogoUrl, companyName, postedD
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center',gap:'30px' }} className='job-opts'>
                 <FaHeart style={{fontSize:'20px',display:status==='Saved'?'block':'none'}} />
-                <HiDotsVertical style={{ fontSize: '22px' }} className='job-dots' />
+                <Box sx={{display:{position:'relative'}}} ref={container}>
+                <HiDotsVertical style={{ fontSize: '22px',cursor:'pointer' }} className='job-dots' onClick={()=>{setShowopts(!showopts)}} />
+                {
+                  showopts && (<Box
+                    sx={{
+                          padding:'15px 20px 15px 20px',
+                          display: showopts?'block':'none',
+                          position:'absolute',
+                          backgroundColor:'#fff',
+                          zIndex:'1',
+                          top:{xs:'58px',sm:'40px'},
+                          right:{xs:'-55px',sm:'-80px',md:'-25px'},
+                          boxShadow: '0px 0px 4px 1px #00000040',
+                          borderRadius:{xs:'10px',sm:'10px'},
+                          width:{xs:'250px',sm:'170px'},
+                          display:'flex',
+                          flexDirection:'column',
+                          gap:'15px'
+                        }}
+                    >
+                      <Link component={NavLink} to={`/jobdetails/${id}`} style={{ backgroundColor:'#fff', textDecoration: 'none', color: 'black', fontWeight:'500', padding:'2px 0', marginTop:'5px', ':hover':{ backgroundColor:'transparent' }, minHeight:'0' }}>View Job Details</Link>
+                    </Box>
+                  )
+                }
+                </Box>
           </Box>
         </Box>
       </Box>

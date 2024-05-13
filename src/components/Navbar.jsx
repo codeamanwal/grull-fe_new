@@ -41,10 +41,6 @@ function Navbar() {
     }
   }, [accessToken]);
 
-  if (userInfo !== null) {
-    console.log(userInfo.full_name);
-  }
-  
   const { lavender } = shades;
   const isDesktop = useMediaQuery("(min-width:500px)");
   const { pathname } = useLocation();
@@ -97,7 +93,7 @@ useEffect(() => {
             <img
               src={isDesktop ? grullLogo : grullPurpleMobileLogo}
               alt="grullLogo"
-              style={{ height: "40px", objectFit: "contain", margin: "0 12px",cursor:'pointer' }}
+              style={{ height: "40px", objectFit: "contain", margin: "0 12px",cursor:'pointer'  }}
               onClick={() => navigate('/')}
             />
             {["Academy", "Community", "Company"].map((text) => {
@@ -123,7 +119,7 @@ useEffect(() => {
               display: { xs: "flex", md: "none" },
               justifyContent: "center",
               alignItems: "center",
-              gap: "12px",
+              gap: "12px"
             }}
           >
             <img
@@ -199,14 +195,26 @@ useEffect(() => {
                 />
               </Box>
           </Box>):(<Box sx={{display:"flex",flexDirection:"row",gap:"24px",alignItems:'center'}}>
-                                    <Avatar
-                                        alt={userInfo?.full_name[0]}
-                                        sx={{ backgroundColor: 'Grey',cursor:'pointer' }}
-                                        // className='dashboardavatar profile'
-                                        onClick={()=>{navigate(userInfo?.list_as_freelancer?"/freelancer":"/client")
-                                      }}
-                                    >
-                                    {userInfo?.full_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}</Avatar>
+          {(userInfo?.photo_url && userInfo?.photo_url!=='') ? (
+                                        <img
+                                            // className='user-picture-img'
+                                            alt={userInfo?.full_name[0]}
+                                            src={userInfo?.photo_url}
+                                            style={{ borderRadius:'50%',cursor:'pointer',width:'40px',height:'40px',objectFit: 'cover'  }}
+                                            onClick={()=>{navigate(userInfo?.list_as_freelancer?"/freelancer":"/client")}}
+                                        />
+                                    ) : (
+                                      <Avatar
+                                      alt={userInfo?.full_name[0]}
+                                      sx={{ backgroundColor: 'Grey',cursor:'pointer' }}
+                                      // className='dashboardavatar profile'
+                                      onClick={()=>{navigate(userInfo?.list_as_freelancer?"/freelancer":"/client")
+                                    }}
+                                  >
+                                  {userInfo?.full_name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}</Avatar>
+                                  
+                                    )}
+                                    
                                     <Box ref={container} sx={{position:'relative'}}>
                                     
                                     <img
@@ -239,14 +247,23 @@ useEffect(() => {
                                         >
                                         <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Avatar
-                                                    alt={userInfo?.full_name}
-                                                    style={{ backgroundColor:'Grey',width:'80px',height:'80px',marginRight:'10px' }}                    
-                                                >
-                                                   {userInfo?.full_name?.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
+                                            {(userInfo?.photo_url && userInfo?.photo_url!=='') ? (
+                                        <img
+                                            // className='user-picture-img'
+                                            alt={userInfo?.full_name[0]}
+                                            src={userInfo?.photo_url}
+                                            style={{ borderRadius:'50%',cursor:'pointer',width:'80px',height:'80px',marginRight:'10px',objectFit: 'cover'  }}
+                                        />
+                                    ) : (
+                                         
+                                      <Avatar
+                                      alt={userInfo?.full_name[0]}
+                                      style={{ backgroundColor:'Grey',width:'80px',height:'80px',marginRight:'10px' }}                    
+                                  >
+                                     {userInfo?.full_name?.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase()}
 
-                                                </Avatar>
-                                                <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
+                                  </Avatar>
+                                    )}                                                <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                                                     <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px'}}>{userInfo?.full_name}</Typography>
                                                     <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{userInfo?.role}</Typography>
                                                 </div>

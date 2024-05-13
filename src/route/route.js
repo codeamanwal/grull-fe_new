@@ -32,6 +32,8 @@ import { useEffect } from "react";
 import GoogleAuth from "../components/GoogleAuth.js";
 import FreelancerProfileShare from "../components/FreelancerProfileShare.js";
 import EmployerprofileShare from "../components/ClientProfileShare.js";
+import Freelancerwallet from "../components/Freelancerwallet.js";
+import FreelancerWalletPage from "../components/FreelancerWalletPage.js";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -60,9 +62,9 @@ export default function PageRoute() {
             <Route path="/browsejobs" element={<BrowseJobs/>}/>
             <Route path="/jobdetails/:jobid" element={<JobDetails/>}/>
             <Route path="/paymentbyclient" element={<PaymentByClient/>}/>
-            <Route path="/freelancer" element={<FreelancerDashboard/>}/>
+            <Route path="/freelancer/*" element={<FreelancerDashboard/>}/>
             <Route path="/managejobs/:section" element={<FreelancerManagerJobs/>}/>
-            <Route path="/client" element={<ClientDashboard />} />
+            <Route path="/client/*" element={<ClientDashboard />} />
             <Route path="/clientmanagejobs/:section" element={<ClientManageJobs />} />
             <Route path="/jobapplications/:jobid" element={<JobApplications />} />
             <Route path="/transactions" element={<Transactions />} />
@@ -76,8 +78,8 @@ export default function PageRoute() {
             <Route path='/coming-soon' element={<ComingSoon/>}/>
             <Route path='/about-us' element={<AboutUs/>}/>
             <Route path="/google" element={<GoogleAuth />} />
-            <Route path="/freelancer/:userid" element={<FreelancerProfileShare />}/>
-            <Route path="/client/:userid" element={<EmployerprofileShare />}/>
+            <Route path="/freelancer/profile/:userid" element={<FreelancerProfileShare />}/>
+            <Route path="/client/profile/:userid" element={<EmployerprofileShare />}/>
          </Routes>
  
        </BrowserRouter>

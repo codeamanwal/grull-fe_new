@@ -26,22 +26,85 @@ const FreelancerProfile = () => {
     const switchToEmployerClick = () => {
         navigate('/clientprofile');
     }
+    
+    const [cloudinaryImage,setCloudinaryImage]=useState(null);
+    const uploadImage = async () => {
+        if(!cloudinaryImage){ return '';}
+        const data = new FormData();
+        data.append("file", cloudinaryImage);
+        data.append("upload_preset", 'er103mfg');
+        data.append("cloud_name", 'dlpcihcmz');
+        const response = await fetch('https://api.cloudinary.com/v1_1/dlpcihcmz/image/upload', {
+          method: "post",
+          body: data,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+              console.log(data)
+              return data.url;
+            })
+          .catch((err) => {
+            console.log(err);
+            return '';
+          });
+        return response;
+      }
+      const updateUserPhoto = async () => {
+       
+        try { 
+            let photourl;
+            if(cloudinaryImage){
+                photourl = await uploadImage();
+                setCloudinaryImage(null);
+            }
+            // console.log("photo url is : ",photourl)
+            const data_send={
+                
+                photo_url:photourl
+            }
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`,data_send,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
 
-    const handleFileChange = (event) => {
+            if (response.status === 200) {
+                const responseData = response.data;
+                
+                setProfileImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);
+                setSavedImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);                     
+             
+
+            } else if (response.status === 400) {
+                // Handle error (e.g., show error message)
+                alert('A user with this email already exists');
+                console.error('Failed to update user profile');
+            }
+            else if (response.status === 401) {
+                alert('Missing token or inactive value');
+            }
+        } catch (error) {
+            // Handle network error or other issues
+            console.error('Network error:', error);
+        }
+    };
+      const handleFileChange = (event) => {
         const fileInput = event.target;
         const file = fileInput.files[0];
-
-        if (file) {
-            //  with the selected file, set it as the current profile picture
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const profileImage = document.querySelector('.user-picture-img');
-                profileImage.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
+        setCloudinaryImage(file);
+        updateUserPhoto();
+        // if (file) {
+        //     const reader = new FileReader();
+        //     reader.onloadend = () => {
+        //         const imageDataUrl = reader.result; 
+        //         setProfileImage(imageDataUrl);
+        //     };
+    
+        //     reader.readAsDataURL(file);
+        // }
     }
-
 
     const [newSkill, setNewSkill] = useState('');
     const [newLanguage, setNewLanguage] = useState('');
@@ -70,13 +133,16 @@ const FreelancerProfile = () => {
     "last_name": ''});
     const [newJobCategory, setNewJobCategory] = useState('');
     const [newLocation, setNewLocation] = useState('');
+    const [profileImage,setProfileImage]=useState(null);
 
     const [savedName, setSavedName] = useState({"first_name": '',
     "last_name": ''});
     const [savedJobCategory, setSavedJobCategory] = useState('');
     const [savedLocation, setSavedLocation] = useState('');
+    const [savedImage,setSavedImage]=useState(null);
 
     const [jobsCompletedCount, setJobsCompletedCount] = useState('');
+    const [newratePerHour, setnewRatePerHour] = useState('');
     const [ratePerHour, setRatePerHour] = useState('');
 
     const [inputAboutValue, setInputAboutValue] = useState('');
@@ -149,7 +215,7 @@ const FreelancerProfile = () => {
     const handleAddProject = () => {
         if (newProject) {
             setTempProjects([...tempProjects, newProject]);
-            console.log(tempProjects);
+            // console.log(tempProjects);
             setNewProject('');
         }
     };
@@ -170,7 +236,7 @@ const FreelancerProfile = () => {
                             'Authorization': `Bearer ${accessToken}`,
                         },
                     });
-                setReviews(response.data)
+                    setReviews(response.data.filter(item => item.is_freelancer));
                 
             } catch (error) {
                 // Handle network error or other issues
@@ -193,7 +259,7 @@ const FreelancerProfile = () => {
 
                 if (response.status === 200) {
                     const responseData = response.data;
-
+                    console.log(responseData)
                     setSavedName({"first_name": responseData.first_name,
                     "last_name": responseData.last_name});
                     setNewName({"first_name": responseData.first_name,
@@ -208,7 +274,8 @@ const FreelancerProfile = () => {
                         else{
                           setSavedLocation('Location Here')
                     }
-
+                    setProfileImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);
+                    setSavedImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);                    
                     setSkills(responseData.skills);
                     setTempSkills(responseData.skills);
 
@@ -219,10 +286,12 @@ const FreelancerProfile = () => {
                     setnewinputval(responseData.description);
 
                     setJobsCompletedCount(responseData.jobs_completed_count);
+                    setnewRatePerHour(responseData.rate_per_hour);
                     setRatePerHour(responseData.rate_per_hour);
                     setProjects(responseData.work_sample_urls ? responseData.work_sample_urls : []);
                     setPortfolios(responseData.portfolio_urls ? responseData.portfolio_urls : []);
-
+                    setTempProjects(responseData.work_sample_urls ? responseData.work_sample_urls : [])
+                    setTempPortfolios(responseData.portfolio_urls ? responseData.portfolio_urls : [])
                     setTopBoxEditMode(false);
                     setLeftBoxEditMode(false);
                     setRightBoxEditMode(false);
@@ -246,8 +315,10 @@ const FreelancerProfile = () => {
 
     //updating user profile values
     const updateUserProfile = async () => {
-        try {
-            const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
+       
+        try { 
+            // console.log("photo url is : ",photourl)
+            const data_send={
                 first_name: newName.first_name,
                 last_name:newName.last_name,
                 role: newJobCategory,
@@ -256,7 +327,9 @@ const FreelancerProfile = () => {
                     state: '',
                     country: newLocation,
                 },
-            },
+                rate_per_hour:newratePerHour,
+            }
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`,data_send,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -266,6 +339,7 @@ const FreelancerProfile = () => {
 
             if (response.status === 200) {
                 const responseData = response.data;
+                console.log(responseData)
                 setNewName({"first_name": responseData.first_name,
                 "last_name": responseData.last_name})
                 setSavedName({"first_name": responseData.first_name,
@@ -277,8 +351,9 @@ const FreelancerProfile = () => {
                       setSavedLocation('Location Here')
                     }
                 setJobsCompletedCount(responseData.jobs_completed_count);
+                setnewRatePerHour(responseData.rate_per_hour);
                 setRatePerHour(responseData.rate_per_hour);
-                setTopBoxEditMode(false);
+               setTopBoxEditMode(false);
 
             } else if (response.status === 400) {
                 // Handle error (e.g., show error message)
@@ -311,7 +386,7 @@ const FreelancerProfile = () => {
 
             if (response.status === 200) {
                 const responseData = response.data;
-                console.log(response)
+                // console.log(response)
                 // Update the state with the response from the backend
                 setSkills(responseData.skills || []);
                 setLanguages(responseData.languages || []);
@@ -330,11 +405,12 @@ const FreelancerProfile = () => {
 
     // updating about and projects
     const updateProjectsAndAbout = async () => {
+        console.log(tempProjects)
         try {
             const response = await axios.patch(`${BAPI}/api/v0/users/me`, {
                 description: newinputval,
-                work_sample_urls: [...projects, ...tempProjects],
-                portfolio_urls: [...portfolios, ...tempPortfolios],
+                work_sample_urls: [...tempProjects],
+                portfolio_urls: [...tempPortfolios],
             },
                 {
                     headers: {
@@ -346,12 +422,14 @@ const FreelancerProfile = () => {
 
             if (response.status === 200) {
                 const responseData = response.data;
-                console.log(response)
+                // console.log(response)
                 // Update the state with the response from the backend
                 setInputAboutValue(responseData.description);
                 setnewinputval(responseData.description);
                 setProjects(responseData.work_sample_urls || []);
                 setPortfolios(responseData.portfolio_urls || []);
+                setTempProjects(responseData.work_sample_urls ? responseData.work_sample_urls : [])
+                setTempPortfolios(responseData.portfolio_urls ? responseData.portfolio_urls : [])
                 setRightBoxEditMode(false);
 
             } else {
@@ -377,7 +455,9 @@ const FreelancerProfile = () => {
         setNewName(savedName);
         setNewJobCategory(savedJobCategory);
         setNewLocation(savedLocation);
-
+        setnewRatePerHour(ratePerHour);
+        setProfileImage(savedImage);
+        setCloudinaryImage(null);
         setTopButtonImage(require('../assets/edit.jpg'));
     }
 
@@ -405,18 +485,16 @@ const FreelancerProfile = () => {
         await updateProjectsAndAbout();
         // setProjects([...projects, ...tempProjects, newProject]); // Add the new project
         setNewProject('');
-        setTempProjects([]); 
         setNewPortfolio('');
-        setTempPortfolios([]);
         setRightButtonImage(require('../assets/edit.jpg'));
     };
 
     const handleCancelRight = () => {
         setRightBoxEditMode(false);
-        // setNewProject('');
-        // setTempProjects([]);
-        // setNewPortfolio('');
-        // setTempPortfolios([]);
+        setNewProject('');
+        setTempProjects(projects);
+        setNewPortfolio('');
+        setTempPortfolios(portfolios);
         setnewinputval(inputAboutValue)
         setRightButtonImage(require('../assets/edit.jpg'));
     };
@@ -461,7 +539,7 @@ const FreelancerProfile = () => {
             {/* second div for profile bg */}
             <div className='profilepage'>
                 <div className='firstcompprofile'>
-                    <button className='switch-to-employer-button' onClick={switchToEmployerClick}>SWITCH TO AN EMPLOYER</button>
+                    <button className='switch-to-employer-button'  style={{cursor:'pointer'}} onClick={switchToEmployerClick}>SWITCH TO AN EMPLOYER</button>
 
                     <div style={{ position: 'relative' }}>
                         <img src={require('../assets/profileBg.png')} alt="" className='profile-background-image' />
@@ -483,6 +561,14 @@ const FreelancerProfile = () => {
                             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} className='profilesec-1'>
                                 <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }} className='profilesec-4'>
                                     <div className='user-picture'>
+                                    {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            className='user-picture-img'
+                                            alt={savedName.first_name}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',objectFit: 'cover' }}
+                                        />
+                                    ) : (
                                         <Avatar
                                             className='user-picture-img'
                                             alt={savedName.first_name}
@@ -490,10 +576,11 @@ const FreelancerProfile = () => {
                                         >
                                             {(savedName.first_name + " " + savedName.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
+                                    )}
                                         <label htmlFor="fileInput" className='camera-icon-label'>
                                             <CiCamera className='camera-icon' />
                                         </label>
-                                        {topBoxEditMode && (
+                                        {/* {topBoxEditMode && ( */}
                                             <input
                                                 type="file"
                                                 id="fileInput"
@@ -501,7 +588,7 @@ const FreelancerProfile = () => {
                                                 style={{ display: 'none' }}
                                                 onChange={handleFileChange}
                                             />
-                                        )}
+                                        {/* )} */}
                                     </div>
                                     <>
                                         {!topBoxEditMode && (
@@ -598,12 +685,27 @@ const FreelancerProfile = () => {
                                         </div>
                                     )}
                                     {topBoxEditMode && (
-                                        <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' }} className='edit-buttons-container'>
-                                            <div>
-                                                <button className='cancel-button' onClick={handleCancelTop}>Cancel</button>
+                                        <div style={{ display: 'flex', gap: '10px', flexDirection: 'column', }}>
+                                            <div style={{ display: 'flex',flexDirection:'row',alignItems:'center' }}>
+                                            <input
+                                             type="text"
+                                             placeholder="500"
+                                             value={newratePerHour}
+                                             onChange={(e) => setnewRatePerHour(e.target.value)}
+                                             className='profilesecinputs'
+                                             style={{ padding: '10px', width: '120px', textAlign:'center', borderRadius: '16px', border: '1px solid #DDD' }}
+                                           />
+                                           <p style={{color:'#000',fontWeight:'800'}}>
+                                             $/hour
+                                           </p>
                                             </div>
-                                            <div>
-                                                <button className='save-button' onClick={handleSaveTop}>Save</button>
+                                            <div style={{ display: 'flex', gap: '10px', flexDirection: 'row' }} className='edit-buttons-container'>
+                                                <div>
+                                                    <button className='cancel-button' onClick={handleCancelTop}>Cancel</button>
+                                                </div>
+                                                <div>
+                                                    <button className='save-button' onClick={handleSaveTop}>Save</button>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -750,7 +852,7 @@ const FreelancerProfile = () => {
                                     value={newProject}
                                     onChange={(e) => setNewProject(e.target.value)}
                                 />
-                                <button style={{height:'20px',width:'20px',marginLeft:'10px',marginTop:'10px'}} onClick={handleAddProject}>+</button>
+                                <button style={{height:'20px',width:'20px',marginLeft:'10px',marginTop:'10px',color:'#000',backgroundColor:'#ffff'}} onClick={handleAddProject}>+</button>
                             </div>
                         )}
 
@@ -758,10 +860,31 @@ const FreelancerProfile = () => {
                         <div style={{ marginTop: '20px', marginBottom: '30px' }}>
                             {/* Displaying the projects */}
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px',gap:'20px'}}>
-                                {projects.map((project, index) => (
-                                    <div style={{
+                            { rightBoxEditMode && tempProjects.map((project, index) => (
+                                    <div 
+                                    style={{
                                          minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
-                                        borderRadius: '16px'
+                                        borderRadius: '16px',cursor:'pointer'
+                                    }}>
+                                        <div key={index} style={{ margin:'105px 12px 12px' }}>
+                                            <div className="portfolio" style={{
+                                                textAlign: 'center',
+                                                lineHeight: '30px',
+                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px'
+                                                , fontWeight: 'bold', padding:'0 12px'
+                                            }}>
+                                                {project}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                { !rightBoxEditMode && projects.map((project, index) => (
+                                    <div onClick={()=>{
+                                         window.open(project,'_blank')
+                                    }}
+                                    style={{
+                                         minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
+                                        borderRadius: '16px',cursor:'pointer'
                                     }}>
                                         <div key={index} style={{ margin:'105px 12px 12px' }}>
                                             <div className="portfolio" style={{
@@ -795,7 +918,24 @@ const FreelancerProfile = () => {
 
                             {/* Displaying the portfolio values */}
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px',gap:'20px' }}>
-                                {portfolios.map((portfolio, index) => (
+                            {rightBoxEditMode && tempPortfolios.map((portfolio, index) => (
+                                    <div style={{
+                                        minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
+                                        borderRadius: '16px',margin: '10px 0'
+                                    }}>
+                                        <div key={index} style={{ margin:'105px 12px 12px' }}>
+                                            <div className="portfolio" style={{
+                                                textAlign: 'center',
+                                                lineHeight: '30px',
+                                                color: 'white', backgroundColor: '#B27EE3', borderRadius: '16px'
+                                                , fontWeight: 'bold', padding:'0 12px'
+                                            }}>
+                                                {portfolio}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {!rightBoxEditMode && portfolios.map((portfolio, index) => (
                                     <div style={{
                                         minWidth: '150px', height: '150px', boxShadow: '0px 0px 4px 0px #00000040 ',
                                         borderRadius: '16px',margin: '10px 0'

@@ -13,6 +13,8 @@ import Header3 from "./Header3";
 import { LiaFilterSolid } from "react-icons/lia";
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { VscChromeClose } from "react-icons/vsc";
+import { IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import BAPI from '../helper/variable'
 const BrowseJobs = () => {
   const accessToken = localStorage.getItem('accessToken');
@@ -125,6 +127,7 @@ const BrowseJobs = () => {
       return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
     }
   };
+  
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -297,7 +300,7 @@ const BrowseJobs = () => {
            <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between'}} onClick={toggleCategory} >
               Category
               <div>{
-              categoryExpanded ? '⮙' : '⮛'
+              categoryExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             
@@ -367,7 +370,7 @@ const BrowseJobs = () => {
           <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleExperience} >
           Experience Level
               <div>{
-              experienceExpanded ? '⮙' : '⮛'
+              experienceExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
 
@@ -405,7 +408,7 @@ const BrowseJobs = () => {
               <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleJob} >
               Job Type
               <div>{
-              jobExpanded ? '⮙' : '⮛'
+              jobExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             {jobExpanded && (
@@ -475,7 +478,7 @@ const BrowseJobs = () => {
               <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleLocation} >
               Location
               <div>{
-              locationExpanded ? '⮙' : '⮛'
+              locationExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             {locationExpanded && (
@@ -532,7 +535,7 @@ const BrowseJobs = () => {
            <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between'}} onClick={toggleCategory} >
               Category
               <div>{
-              categoryExpanded ? '⮙' : '⮛'
+              categoryExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             
@@ -602,7 +605,7 @@ const BrowseJobs = () => {
           <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleExperience} >
           Experience Level
               <div>{
-              experienceExpanded ? '⮙' : '⮛'
+              experienceExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
 
@@ -640,7 +643,7 @@ const BrowseJobs = () => {
               <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleJob} >
               Job Type
               <div>{
-              jobExpanded ? '⮙' : '⮛'
+              jobExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             {jobExpanded && (
@@ -710,7 +713,7 @@ const BrowseJobs = () => {
               <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleLocation} >
               Location
               <div>{
-              locationExpanded ? '⮙' : '⮛'
+              locationExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
               }</div>
             </Box>
             {locationExpanded && (
@@ -765,7 +768,7 @@ const BrowseJobs = () => {
                 <Box sx={{display:'flex',flexDirection:'column',gap:{sm:'10px',xs:'7px'}}}>
                   <Typography sx={{fontSize:{sm:'28px',xs:'23px'},fontWeight:'700',letterSpacing:'-1px'}}>{job.title}</Typography>
                   <Box sx={{display:'flex',flexDirection:'row',gap:{sm:'15px',xs:'10px'},alignItems:'center'}}>
-                    <Typography sx={{fontSize:{sm:'20px',xs:'17px'},fontWeight:'500',letterSpacing:'-1px'}}>Budget {job.rate_per_hour}</Typography>
+                    <Typography sx={{fontSize:{sm:'20px',xs:'17px'},fontWeight:'500',letterSpacing:'-1px'}}>Budget {job.rate_per_hour} {job.currency_type}</Typography>
                     <Typography sx={{fontSize:{sm:'15px',xs:'13px'},fontWeight:'500',letterSpacing:'-1px',color:'#00000080'}}>Posted {getTimeDifference(job.modified_at)}</Typography>
                   </Box>
                 </Box>

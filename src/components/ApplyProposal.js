@@ -47,7 +47,7 @@ const ApplyProposal = () => {
       
           if (jobDetailsResponse.status === 200) {
             const jobDetails = jobDetailsResponse.data;
-            const url = `https://grull.work/client/${jobDetails?.posted_by?.id}`;
+            const url = `https://grull.work/client/profile/${jobDetails?.posted_by?.id}`;
             window.open(url, "_blank");
           }
         } catch (error) {

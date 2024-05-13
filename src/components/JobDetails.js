@@ -17,7 +17,10 @@ const JobDetails = () => {
     const [clientDetails,setClientDetails]=useState(null);
 
     const navigate = useNavigate();
-
+    const [clientReviews,setClientReviews]=useState({
+        average:null,
+        total:null
+    })
     const accessToken = localStorage.getItem('accessToken');
     const { jobid } = useParams();
     const [jobDetails, setJobDetails] = useState(null);
@@ -74,10 +77,13 @@ const JobDetails = () => {
 
       const getDuration = (duration) => {
         const durations = Math.floor(duration/30);
-        if (duration > 1){
+        if (durations > 1){
             return `${durations} ${durations === 1 ? 'month' : 'months'}`
         }
         else {
+            if(duration<7){
+                return "< 1 Week"
+            }
           return `${duration} days`;
         }
       };
@@ -127,6 +133,35 @@ const JobDetails = () => {
     
         fetchJobDetails();
     }, [jobid, accessToken]);
+
+    const fetchClientReviews=async(Id)=>{
+        try {
+            const response = await axios.get(`${BAPI}/api/v0/reviews/${Id}`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (response.status === 200) {
+                let stars=0;
+                for (let i=0; i<response.data.length;i++){
+                    stars+=response.data[i].stars;
+                }
+                if(stars!==0){
+                    const averageStars = stars / response.data.length;
+                    setClientReviews({
+                        average: averageStars,
+                        total: response.data.length
+                    });
+                }
+                // console.log("client reviews : ",response.data)
+            } else {
+                console.error('Error fetching job details:', response.data.error);
+            }
+        } catch (error) {
+            console.error('Error occurred while getting reviews:', error);
+        }
+    }
     
     useEffect(()=>{
       const fetchClientDetails=async()=>{
@@ -139,7 +174,8 @@ const JobDetails = () => {
 
             if (response.status === 200) {
                 console.log("client details : ",response.data)
-                setClientDetails(response.data)
+                setClientDetails(response.data);
+                fetchClientReviews(response.data.id);
             } else {
                 console.error('Error fetching job details:', response.data.error);
             }
@@ -191,24 +227,24 @@ const JobDetails = () => {
                 <Divider />
 
                 <Box sx={{ display: 'flex',flexDirection:'row',flexWrap:'wrap',padding:'25px 0 45px',gap:'20px' }}>
-                        <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px', border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px' }}>
+                        {/* <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px', border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px' }}>
                             <LuClock4 style={{color:'#fff',fontSize:'24px',marginLeft:'5px'}} />
                             <Typography sx={{color:'#fff',fontWeight:'600',fontSize:{sm:'19px',xs:'16px'}}}>30+ Hours a week</Typography>
-                        </Box>
+                        </Box> */}
 
                         <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px',border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px'  }}>
                             <SlCalender style={{color:'#fff',fontSize:'24px',marginLeft:'5px'}} />
                             <Typography sx={{color:'#fff',fontWeight:'600',fontSize:{sm:'19px',xs:'16px'}}}>{getDuration(jobDetails?.duration)}</Typography>
                         </Box>
 
-                        <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px',border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px'  }}>
+                        {/* <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px',border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px'  }}>
                             <MdOutlineSettingsSuggest style={{color:'#fff',fontSize:'24px',marginLeft:'5px'}} />
                             <Typography sx={{color:'#fff',fontWeight:'600',fontSize:{sm:'19px',xs:'16px'}}}>Intermediate</Typography>
-                        </Box>
+                        </Box> */}
 
                         <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px',border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px'  }}>
                             <GiReceiveMoney style={{color:'#fff',fontSize:'24px',marginLeft:'5px'}} />
-                            <Typography sx={{color:'#fff',fontWeight:'600',fontSize:{sm:'19px',xs:'16px'}}}>${jobDetails?.rate_per_hour}/hr</Typography>
+                            <Typography sx={{color:'#fff',fontWeight:'600',fontSize:{sm:'19px',xs:'16px'}}}>{jobDetails?.rate_per_hour} {jobDetails?.currency_type}</Typography>
                         </Box>
                 </Box>
 
@@ -236,16 +272,20 @@ const JobDetails = () => {
                 <Box sx={{display:'flex',flexDirection:'column',gap:'8px',alignItems:'center',padding:'30px 0 20px'}}>
                     <Typography style={{ color: '#B27EE3', fontSize: '13px',}}>Non Negotiable</Typography>
                     {
-                       jobDetails?.employee===null?(<Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>) :
+                       jobDetails?.posted_by.id!==userId? jobDetails?.employee===null?
+                    //    when no employee is there
+                       (<Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>) :
                        jobDetails?.employee?.id!==userId?(
-                            <Typography style={{ color: '#000',fontWeight:'600'}}>Job Closed or Expired</Typography>):(
-                                
-                    <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={()=>{navigate('/freelancerchat')}}>Chat Now</Button>
-                            )
+                    //    when some employee else is selected
+                       <Typography style={{ color: '#000',fontWeight:'600'}}>Job Closed or Expired</Typography>):
+                       (
+                        // when he is the selected
+                        <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={()=>{navigate('/freelancerchat')}}>Chat Now</Button>
+                            ) :''
                     }
                     {
-                        jobDetails?.employee===null?(
-                            <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />} onClick={()=>handleSaveJob()} >Save Job</Button>):''
+                        jobDetails?.posted_by.id!==userId? (jobDetails?.employee===null?(
+                            <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />} onClick={()=>handleSaveJob()} >Save Job</Button>):''):''
                     }
                     <Typography style={{ color: '#454545', fontSize: '16px',}}>Applicants : {jobDetails?.job_applicants_count }</Typography>
                 </Box>
@@ -258,7 +298,11 @@ const JobDetails = () => {
                         clientDetails?.location &&(
                             <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}><CiLocationOn /> {clientDetails?.location.country}</Typography>)
                     }
-                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500',marginTop:'3px'}}>4.5 star of 1328 reviews</Typography>
+                    {
+                        clientReviews.average && clientReviews.total &&(
+                            <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500',marginTop:'3px'}}>{clientReviews.average} star of {clientReviews.total} reviews</Typography>
+                        )
+                    }
                     <Typography style={{ color: '#000000', fontSize: '16px',fontWeight:'400',marginTop:'7px'}}>{clientDetails?.description}</Typography>
                 </Box>
 
@@ -275,7 +319,7 @@ const JobDetails = () => {
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} /> */}
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
-                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>${clientDetails?.rate_per_hour} /hr avg hourly rate paid</Typography>
+                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>${clientDetails?.average_rate_offered} /hr avg hourly rate paid</Typography>
                     {/* <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>1815 hours</Typography> */}
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} />

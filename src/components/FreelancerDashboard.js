@@ -12,6 +12,7 @@ import { FiShoppingBag } from "react-icons/fi"
 import Avatar from '@mui/material/Avatar';
 import {useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import navbarIcon2 from "../assets/navbarIcon2.svg";
 import 'react-toastify/dist/ReactToastify.css';
 import FreelancerHome from './FreelancerHome';
 import Freelancerwallet from './Freelancerwallet';
@@ -26,6 +27,8 @@ import { Link } from 'react-router-dom';
 import { MdArrowOutward } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
 import BAPI from '../helper/variable'
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 interface Props {
   window?: () => Window;
@@ -33,10 +36,15 @@ interface Props {
 
 export default function FreelancerDashboard(props: Props) {
 
+  let { '*' : section } = useParams();
+  if(!section){
+    section=''
+  }
+
   const { windows } = props;
   const [fullname,setFullname]=useState('');
   const [role,setRole]=useState('');
-  const [activeButton, setActiveButton] = useState('home');
+  const [profileImage,setProfileImage]=useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [changeopts,setChangeopts]=useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -51,7 +59,31 @@ export default function FreelancerDashboard(props: Props) {
   const [notifications,setNotifications]=useState([]);
   const [notificationmodel,setNotificationmodel]=useState(false);
   const container2 = useRef();
+  const [notificationsSeen,setNotificationsSeen]=useState(true);
 
+  const UpdateNotificationStatus = async () => {
+      try {
+          for (let i = 0; i < notifications.length; i++) {
+              const notification = notifications[i];
+              if (!notification.isSeen) {
+                  await axios.post(
+                      `${BAPI}/api/v0/notifications/update-notification-status?notification_id=${notification.id}`,
+                      {}, // empty data object
+                      {
+                          headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${accessToken}`,
+                          }
+                      }
+                  );
+              }
+          }
+          setNotificationsSeen(true);
+      } catch (error) {
+          console.error('Error during updating notifications:', error);
+      }
+  }
+  
   useEffect(()=>{
     const getNotifications=async()=>{
      try {
@@ -66,13 +98,22 @@ export default function FreelancerDashboard(props: Props) {
          }
        );
        const responseData = await response.json();
-       setNotifications(responseData)
+       setNotifications(responseData);
+       for (let i = 0; i < responseData.length; i++) {
+        if (responseData[i].isSeen === false) {
+            setNotificationsSeen(false);
+            break; 
+        }
+    }
+      
      } catch (error) {
        console.error('Error during fetching notifications:', error);
      }
     }
     getNotifications();
-   },[])
+   },[]);
+
+
 
   useEffect(() => {
       window.scrollTo(0, 0);
@@ -99,7 +140,10 @@ export default function FreelancerDashboard(props: Props) {
           const responseData = await response.json();
           setFullname(responseData.full_name);
           setRole(responseData.role);
-          setProf(responseData.id)
+          setProf(responseData.id);
+          if(responseData.photo_url && responseData.photo_url!==''){
+            setProfileImage(responseData.photo_url);
+          }
           localStorage.setItem("user",JSON.stringify(responseData));
         } catch (error) {
           console.error('Error during fetching data:', error);
@@ -109,7 +153,7 @@ export default function FreelancerDashboard(props: Props) {
   },[]);
 
   const handleShareProfile = () => {
-    const url = `https://grull.work/freelancer/${prof}`;
+    const url = `https://grull.work/freelancer/profile/${prof}`;
     // const url = `http://localhost:3000/freelancer/${prof}`;
     
     navigator.clipboard.writeText(url)
@@ -122,7 +166,12 @@ export default function FreelancerDashboard(props: Props) {
 }
 
   const handleButtonClick = (button) => {
-    setActiveButton(button);
+    if(button === 'home'){
+      navigate('/freelancer')
+    }
+    if(button==='wallet'){
+      navigate('/freelancer/wallet')
+    }
     if (button === 'manageJobs') {
       navigate('/managejobs/applied');
     }
@@ -180,13 +229,29 @@ export default function FreelancerDashboard(props: Props) {
       </Box>
       <Box sx={{marginTop:'100px'}}>
          <Box sx={{padding:'10px 0px 25px',display:'flex',flexDirection:'row',gap:'18px',alignItems:'center',justifyContent:'center' }}>
-         <Avatar
+         {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            // className='user-picture-img'
+                                            alt={fullname[0]}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',width:'50px',height:'50px',objectFit: 'cover'  }}
+                                        />
+                                    ) : (
+                                        <Avatar
+                                            // className='user-picture-img'
+                                            alt={fullname}
+                                            style={{ backgroundColor: avatarBackgroundColor }}
+                                        >
+                                            {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                        </Avatar>
+                                    )}
+         {/* <Avatar
         alt={fullname}
         style={{ backgroundColor: avatarBackgroundColor }}
-        onClick={() => { navigate('/freelancerprofile') }}
+        // onClick={() => { navigate('/freelancerprofile') }}
       >
         {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-      </Avatar>
+      </Avatar> */}
              <Grid sx={{display:'flex', flexDirection:'column',gap:'0px'}}>
                <Typography sx={{fontSize:'18px',fontWeight:'500',color:'#fff'}}>{fullname}</Typography>
                <Typography sx={{fontSize:'15px',fontWeight:'500',color:'#fff',opacity:'0.8'}}>{role}</Typography>
@@ -201,13 +266,13 @@ export default function FreelancerDashboard(props: Props) {
           />
          <Box sx={{padding:'30px 7px 0',display:'flex',flexDirection:'column',gap:'14px'}}>
              <Button 
-                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: activeButton === 'home' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: activeButton === 'home' ? '#7C7C7C' : 'transparent',},}} 
+                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: section === '' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: section === '' ? '#7C7C7C' : 'transparent',},}} 
                 startIcon={<FiHome />} onClick={() => handleButtonClick('home')} >Home</Button>
              <Button 
-                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: activeButton === 'wallet' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: activeButton === 'wallet' ? '#7C7C7C' : 'transparent',},}} 
+                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: section === 'wallet' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: section === 'wallet' ? '#7C7C7C' : 'transparent',},}} 
                 startIcon={<IoWalletOutline />} onClick={() => handleButtonClick('wallet')} >Wallet</Button>
              <Button
-                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: activeButton === 'manageJobs' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: activeButton === 'manageJobs' ? '#7C7C7C' : 'transparent',},}} 
+                sx={{color:'#fff',textTransform:'none',fontSize:'17px',fontWeight:'500',borderRadius:'16px',justifyContent:'left',paddingLeft:'16px',backgroundColor: section === 'manageJobs' ? '#7C7C7C' : 'transparent','&:hover': {backgroundColor: section === 'manageJobs' ? '#7C7C7C' : 'transparent',},}} 
                 startIcon={<FiShoppingBag />} onClick={() => handleButtonClick('manageJobs')} >Manage Jobs</Button>
          </Box>
       </Box>
@@ -276,8 +341,22 @@ export default function FreelancerDashboard(props: Props) {
                 </Button>
                 <ToastContainer />
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/freelancerchat')} className='resdash' />
-                <Box ref={container2} sx={{position:'relative'}} onClick={()=>{setNotificationmodel(!notificationmodel)}}>
+                <Box ref={container2} sx={{position:'relative'}} onClick={()=>{setNotificationmodel(!notificationmodel);UpdateNotificationStatus()}}>
+                  
                      <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px',cursor:'pointer'}} className='resdash' />
+                     {!notificationsSeen && ( // Render red dot if notificationSeen is false
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '5px', // Adjust the position of the dot as needed
+                                right: '5px',
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '50%',
+                                backgroundColor: 'red',
+                            }}
+                        />
+                    )}
                      {
                       notificationmodel && (
                         <Box
@@ -314,19 +393,37 @@ export default function FreelancerDashboard(props: Props) {
                      }
                 </Box>
                 <Box ref={container1} sx={{position:'relative'}}>
-                <Avatar
-                    className='resdash'
-                    alt={fullname}
-                    style={{ backgroundColor: avatarBackgroundColor, cursor: 'pointer' }}
-                    onClick={() => { 
-                      setShowDropdown(!showDropdown); 
-                      if (changeopts) {
-                        handlesettings();
-                      }
-                    }}
-                  >
-                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                  </Avatar>
+
+                {(profileImage && profileImage!=='') ? (
+                                        <img
+                                        className='resdash'
+                                            // className='user-picture-img'
+                                            alt={fullname[0]}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',cursor:'pointer',width:'50px',height:'50px',objectFit: 'cover'  }}
+                                            onClick={() => { 
+                                              setShowDropdown(!showDropdown); 
+                                              if (changeopts) {
+                                                handlesettings();
+                                              }
+                                            }}
+                                        />
+                                    ) : (
+                                        <Avatar
+                                        className='resdash'
+                                            // className='user-picture-img'
+                                            onClick={() => { 
+                                              setShowDropdown(!showDropdown); 
+                                              if (changeopts) {
+                                                handlesettings();
+                                              }
+                                            }}
+                                            alt={fullname[0]}
+                                            style={{ backgroundColor: avatarBackgroundColor,cursor:'pointer' }}
+                                        >
+                                            {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                        </Avatar>
+                                    )}
                 {showDropdown && (
                                         <Box
                                         sx={{
@@ -347,12 +444,29 @@ export default function FreelancerDashboard(props: Props) {
                                         >
                                         <Box sx={{padding:'2px 0',':hover':{backgroundColor:'transparent'},backgroundColor:'#fff',}}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Avatar
-                                                    alt={fullname[0]}
-                                                    style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px' }}                    
-                                                >
-                                                    {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
-                                                </Avatar>
+                                            {(profileImage && profileImage!=='') ? (
+                                                  <img
+                                                      // className='user-picture-img'
+                                                      alt={fullname[0]}
+                                                      src={profileImage}
+                                                      style={{ borderRadius:'50%',width:'80px',height:'80px',marginRight:'10px',objectFit: 'cover'   }}
+                                                  />
+                                              ) : (
+                                                  <Avatar
+                                                      // className='user-picture-img'
+                                                      alt={fullname}
+                                                      style={{ backgroundColor: avatarBackgroundColor,width:'80px',height:'80px',marginRight:'10px'  }}
+                                                  >
+                                                      {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                                  </Avatar>
+                                              )}
+                                              {/* <Avatar
+                                              alt={fullname}
+                                              style={{ backgroundColor: avatarBackgroundColor }}
+                                              // onClick={() => { navigate('/freelancerprofile') }}
+                                            >
+                                              {fullname?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                            </Avatar> */}
                                                 <div style={{ marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                                                     <Typography style={{ margin: '0', fontWeight:'700',fontSize:'20px',color:'#000000'}}>{fullname}</Typography>
                                                     <Typography style={{ margin: '0',color:'#454545',fontWeight:'500',fontSize:'16px'}}>{role}</Typography>
@@ -366,7 +480,7 @@ export default function FreelancerDashboard(props: Props) {
                                           !changeopts? 
                                           (<>
                                         <Link to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:{xs:'2px 0'},marginTop:'5px',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Dashboard</Link>
-                                        <Link to="/freelancer" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
+                                        <Link to="/freelancer/wallet" style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Wallet</Link>
                                         <Link onClick={handlesettings} style={{backgroundColor:'#fff', textDecoration: 'none', color: 'black',fontWeight:'500',padding:'2px 0',':hover':{backgroundColor:'transparent'},minHeight:'0' }}>Settings</Link>
                                         <Divider style={{ width: '100%',height:'2px',backgroundColor:'#0000004D' }} />
                                         <Link to="/"
@@ -432,10 +546,10 @@ export default function FreelancerDashboard(props: Props) {
         sx={{ py:3, width: { sm: `calc(100% - ${getDrawerWidth()}px)` } }}
       >
         <Toolbar />
-        {activeButton === 'home' && (
+        {section === '' && (
           <FreelancerHome />
         )}
-        {activeButton === 'wallet' && (
+        {section === 'wallet' && (
           <Freelancerwallet />
         )}
       </Box>

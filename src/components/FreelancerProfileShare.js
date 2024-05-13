@@ -62,6 +62,7 @@ const FreelancerProfileShare = () => {
 
     const [inputAboutValue, setInputAboutValue] = useState('');
     const [newinputval,setnewinputval]= useState('');
+    const [profileImage,setProfileImage]=useState(null);
 
     const filters=['All','UI/UX','3d Visualization','Graphic Design','Video Editing']
 
@@ -83,7 +84,7 @@ const FreelancerProfileShare = () => {
                             'Content-Type': 'application/json',
                         },
                     });
-                setReviews(response.data)
+                    setReviews(response.data.filter(item => item.is_freelancer));
                 
             } catch (error) {
                 // Handle network error or other issues
@@ -126,6 +127,7 @@ const FreelancerProfileShare = () => {
                     setInputAboutValue(responseData.description);
                     setnewinputval(responseData.description);
                     setProjects(responseData.work_sample_urls ? responseData.work_sample_urls : []);
+                    setProfileImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);
                     setPortfolios(responseData.portfolio_urls ? responseData.portfolio_urls : []);
                     setTopBoxEditMode(false);
                     setLeftBoxEditMode(false);
@@ -172,13 +174,22 @@ const FreelancerProfileShare = () => {
                             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} className='profilesec-1'>
                                 <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }} className='profilesec-4'>
                                     <div className='user-picture'>
+                                    {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            className='user-picture-img'
+                                            alt={savedName.first_name}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',objectFit: 'cover'  }}
+                                        />
+                                    ) : (
                                         <Avatar
                                             className='user-picture-img'
-                                            alt={savedName}
+                                            alt={savedName.first_name}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
-                                            {savedName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
+                                            {(savedName.first_name + " " + savedName.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
+                                    )}
                                     </div>
                                     <>
                                         {!topBoxEditMode && (
@@ -398,7 +409,9 @@ const FreelancerProfileShare = () => {
                 </div>
             </div>
 
-            {!accessToken && <Footer />}
+            {
+                !accessToken && (<Footer />)
+            }
         </div>
     )
 };

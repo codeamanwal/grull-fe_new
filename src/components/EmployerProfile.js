@@ -13,6 +13,7 @@ import { MdWorkOutline } from "react-icons/md";
 import Header2 from './Header2';
 import BAPI from '../helper/variable'
 import { RiStarSFill } from "react-icons/ri";
+import { GrFormView } from "react-icons/gr";
 
 const Employerprofile = () => {
     const navigate = useNavigate();
@@ -58,21 +59,6 @@ const Employerprofile = () => {
         navigate('/freelancerprofile');
     }
 
-    const handleFileChange = (event) => {
-        const fileInput = event.target;
-        const file = fileInput.files[0];
-
-        if (file) {
-            //  with the selected file, set it as the current profile picture
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const profileImage = document.querySelector('.user-picture-img');
-                profileImage.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
     const [inputAboutValue, setInputAboutValue] = useState('');
     const [inputcompdesc,setInputCompDesc]=useState({
         "company_name":'',
@@ -82,6 +68,8 @@ const Employerprofile = () => {
         "company_name":'',
         "company_description":""
     });
+    const [profileImage,setProfileImage]=useState(null);
+    const [savedImage,setSavedImage]=useState(null);
     const [newinputval,setnewinputval]= useState('');
 
     const handleAboutChange = (event) => {
@@ -135,7 +123,8 @@ const Employerprofile = () => {
                             'Authorization': `Bearer ${accessToken}`,
                         },
                     });
-                setReviews(response.data)
+                    // console.log(response.data)
+                    setReviews(response.data.filter(item => !item.is_freelancer));
                 
             } catch (error) {
                 // Handle network error or other issues
@@ -183,7 +172,10 @@ const Employerprofile = () => {
               setnewInputCompDesc({
                 "company_name":response.data.company_name,
                 "company_description":response.data.company_description
-              })
+              });
+              setProfileImage(response.data.photo_url && response.data.photo_url !== '' ? response.data.photo_url : null);
+              setSavedImage(response.data.photo_url && response.data.photo_url !== '' ? response.data.photo_url : null);                    
+              
             } else {
               console.error('Error fetching user profile:', response.data.error);
             }
@@ -216,6 +208,84 @@ const Employerprofile = () => {
         }
     };
 
+    const [cloudinaryImage,setCloudinaryImage]=useState(null);
+    const uploadImage = async () => {
+        if(!cloudinaryImage){ return '';}
+        const data = new FormData();
+        data.append("file", cloudinaryImage);
+        data.append("upload_preset", 'er103mfg');
+        data.append("cloud_name", 'dlpcihcmz');
+        const response = await fetch('https://api.cloudinary.com/v1_1/dlpcihcmz/image/upload', {
+          method: "post",
+          body: data,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+              console.log(data)
+              return data.url;
+            })
+          .catch((err) => {
+            console.log(err);
+            return '';
+          });
+        return response;
+      }
+      const updateUserPhoto = async () => {
+       
+        try { 
+            let photourl;
+            if(cloudinaryImage){
+                photourl = await uploadImage();
+                setCloudinaryImage(null);
+            }
+            // console.log("photo url is : ",photourl)
+            const data_send={
+                
+                photo_url:photourl
+            }
+            const response = await axios.patch(`${BAPI}/api/v0/users/me`,data_send,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+
+            if (response.status === 200) {
+                const responseData = response.data;
+                
+                setProfileImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);
+                setSavedImage(responseData.photo_url && responseData.photo_url !== '' ? responseData.photo_url : null);                     
+             
+
+            } else if (response.status === 400) {
+                // Handle error (e.g., show error message)
+                alert('A user with this email already exists');
+                console.error('Failed to update user profile');
+            }
+            else if (response.status === 401) {
+                alert('Missing token or inactive value');
+            }
+        } catch (error) {
+            // Handle network error or other issues
+            console.error('Network error:', error);
+        }
+    };
+      const handleFileChange = (event) => {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+        setCloudinaryImage(file);
+        updateUserPhoto();
+        // if (file) {
+        //     const reader = new FileReader();
+        //     reader.onloadend = () => {
+        //         const imageDataUrl = reader.result; 
+        //         setProfileImage(imageDataUrl);
+        //     };
+    
+        //     reader.readAsDataURL(file);
+        // }
+    }
 
     // change user details
     const updateUserProfile = async () => {
@@ -246,6 +316,7 @@ const Employerprofile = () => {
                 setSavedLocation(newLocation);
                 setJobsPostedCount(jobs_posted_count);
                 setAvgRateOffered(average_rate_offered);
+               
                 setTopBoxEditMode(false); // Exit edit mode
 
             } else if (response.status === 400) {
@@ -313,7 +384,8 @@ const Employerprofile = () => {
         setNewName(savedName);
         setNewJobCategory(savedJobCategory);
         setNewLocation(savedLocation);
-
+        setProfileImage(savedImage);
+        setCloudinaryImage(null);
         setTopButtonImage(require('../assets/edit.jpg'));
     }
 
@@ -333,7 +405,34 @@ const Employerprofile = () => {
 
     //view posted jobs
     const [postedJobs, setPostedJobs] = useState([]);
-    const [weeksAgoMap, setWeeksAgoMap] = useState({});
+    const TimeDiff = (created_at) => {
+        const createdat = new Date(created_at);
+        const timeDifference = new Date() - createdat;
+        const secondsDifference = Math.floor(timeDifference / 1000);
+        const minutesDifference = Math.floor(secondsDifference / 60);
+        const hoursDifference = Math.floor(minutesDifference / 60);
+        const daysDifference = Math.floor(hoursDifference / 24);
+        const weeksDifference = Math.floor(daysDifference / 7);
+        const monthsDifference = Math.floor(daysDifference / 30);
+        const yearsDifference = Math.floor(daysDifference / 365);
+    
+        if (yearsDifference > 0) {
+            return yearsDifference === 1 ? "1 year ago" : `${yearsDifference} years ago`;
+        } else if (monthsDifference > 0) {
+            return monthsDifference === 1 ? "1 month ago" : `${monthsDifference} months ago`;
+        } else if (weeksDifference > 0) {
+            return weeksDifference === 1 ? "1 week ago" : `${weeksDifference} weeks ago`;
+        } else if (daysDifference > 0) {
+            return daysDifference === 1 ? "1 day ago" : `${daysDifference} days ago`;
+        } else if (hoursDifference > 0) {
+            return hoursDifference === 1 ? "1 hour ago" : `${hoursDifference} hours ago`;
+        } else if (minutesDifference > 0) {
+            return minutesDifference === 1 ? "1 minute ago" : `${minutesDifference} minutes ago`;
+        } else {
+            return "Just now";
+        }
+    };
+    
     useEffect(() => {
         const fetchPostedJobs = async () => {
             try {
@@ -347,19 +446,8 @@ const Employerprofile = () => {
                 });
 
                 if (response.status === 200) {
-                    setPostedJobs(response.data.results); // Assuming the API response is an array of jobs
-
-                    // Calculate weeks ago for each job
-                    const newWeeksAgoMap = {};
-                    response.data.results.forEach((job) => {
-                        const created_at = new Date(job.created_at);
-                        const timeDifference = new Date() - created_at;
-                        const weeksDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
-                        newWeeksAgoMap[job.job_id] = weeksDifference;
-                    });
-
-                    // Update weeksAgoMap state
-                    setWeeksAgoMap(newWeeksAgoMap);
+                    console.log(response.data)
+                    setPostedJobs(response.data.results); 
                 } else {
                     console.error('Error fetching posted jobs:', response.data.error);
                 }
@@ -417,7 +505,7 @@ const Employerprofile = () => {
             {/* second div for profile bg */}
             <div className='profilepage'>
                <div className='firstcompprofile'>
-                <button className='switch-to-employer-button' onClick={handleFreelancerClick}>SWITCH TO FREELANCER</button>
+                <button className='switch-to-employer-button' style={{cursor:'pointer'}} onClick={handleFreelancerClick}>SWITCH TO FREELANCER</button>
 
                 <div style={{ position: 'relative' }}>
                     <img src={require('../assets/profileBg.png')} alt="" className='profile-background-image'></img>
@@ -440,17 +528,27 @@ const Employerprofile = () => {
                            <div style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}} className='profilesec-1'>
                                <div style={{display:'flex',flexDirection:'row',gap:'30px',alignItems:'center'}} className='profilesec-4'>
                                     <div className='user-picture'>
-                                    <Avatar
+                                    {(profileImage && profileImage!=='') ? (
+                                        <img
+                                            className='user-picture-img'
+                                            alt={savedName.first_name}
+                                            src={profileImage}
+                                            style={{ borderRadius:'50%',objectFit: 'cover'  }}
+                                        />
+                                    ) : (
+                                        <Avatar
                                             className='user-picture-img'
                                             alt={savedName.first_name}
                                             style={{ backgroundColor: avatarBackgroundColor }}
                                         >
                                             {(savedName.first_name + " " + savedName.last_name)?.split(' ').slice(0, 2).map(part => part[0]).join('')}
                                         </Avatar>
+                                    )}
+                                    
                                             <label htmlFor="fileInput" className='camera-icon-label'>
                                                 <CiCamera className='camera-icon' />
                                             </label>
-                                            {topBoxEditMode && (
+                                            
                                                 <input
                                                     type="file"
                                                     id="fileInput"
@@ -458,7 +556,7 @@ const Employerprofile = () => {
                                                     style={{ display: 'none' }}
                                                     onChange={handleFileChange}
                                                 />
-                                            )}
+                                           
                                     </div>
                                 <>
                                     {!topBoxEditMode && (
@@ -607,7 +705,7 @@ const Employerprofile = () => {
                     
                     <textarea
                         type="text"
-                        placeholder=""
+                        placeholder="Company Description"
                         name="company_description"
                         value={newinputcompdesc.company_description}
                         onChange={handlecompdesc}
@@ -621,7 +719,7 @@ const Employerprofile = () => {
                         <h2 style={{fontSize:'28px' }} className='profilesec-subheading'>Posted Jobs</h2>
 
                         {!rightBoxEditMode && (
-                            <a href="#" style={{ marginRight: '80px', color: '#b27ee3', fontWeight: 'bold' }} className='profileseclink'>Edit Jobs</a>
+                            <a href="/clientmanagejobs/posted" style={{ marginRight: '80px', color: '#b27ee3', fontWeight: 'bold' }} className='profileseclink'>Edit Jobs</a>
                         )}
                     </div>
 
@@ -630,15 +728,16 @@ const Employerprofile = () => {
                             {postedJobs.map((job) => (
                                 <Box key={job.job_id} sx={{ borderRadius: '16px', border: 'none',  padding: '16px 20px',boxShadow: '0px 0px 4px 0px #00000040',display:'flex',flexDirection:'column',gap:{xs:'6px',sm:'10px'}  }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Typography sx={{ fontSize:{ xs:'18px',sm:'24px'}, fontWeight: '700', flex: '70%', margin: '0' }}>{job.title}</Typography>
-                                        <Typography sx={{ fontSize: '15px', color: '#B27EE3', flex: '30%', margin: '0',display:{xs:'none',md:'block'} }}>{job.job_applicants_count} FREELANCERS APPLIED</Typography>
+                                        <Typography sx={{ fontSize:{ xs:'18px',sm:'24px'}, fontWeight: '700', flex: '50%', margin: '0' }}>{job.title}</Typography>
+                                        <Typography sx={{ fontSize: '15px', color: '#B27EE3', margin: '0',display:{xs:'none',md:'block'} }}>{job.job_applicants_count} Freelancers Applied</Typography>
+                                        <Button sx={{display:{xs:'none',md:'block'},marginLeft:'10px', color: '#B27EE3',display:'flex',flexDirection:'row'}} onClick={()=>navigate(`/jobdetails/${job.id}`)} startIcon={<GrFormView style={{marginRight:'-8px'}}  />} >View Job</Button>
                                     </div>
 
                                     <div style={{  display: 'flex', alignItems: 'center',marginTop:'2px' }}>
-                                        <Typography sx={{ fontSize:{ xs:'15px',sm:'19px'} ,fontWeight:'500'}}>Budget: $ {job.rate_per_hour}</Typography>
-                                        <Typography sx={{ fontSize: '14px', color: '#00000080', marginLeft: '20px' }}>Posted {weeksAgoMap[job.job_id] !== undefined ? `${weeksAgoMap[job.job_id]} weeks` : 'loading...'} ago</Typography>
+                                        <Typography sx={{ fontSize:{ xs:'15px',sm:'19px'} ,fontWeight:'500'}}>Budget:  {job.rate_per_hour} {job.currency_type}</Typography>
+                                        <Typography sx={{ fontSize: '14px', color: '#00000080', marginLeft: '20px' }}>Posted {TimeDiff(job.created_at)}</Typography>
                                     </div>
-                                    <Typography sx={{ fontSize:{xs:'12px',sm:'15px'}, color: '#B27EE3', flex: '30%', margin: '2px 0 0 0',display:{xs:'block',md:'none'} }}>{job.job_applicants_count} FREELANCERS APPLIED</Typography>
+                                    <Typography sx={{ fontSize:{xs:'12px',sm:'15px'}, color: '#B27EE3', flex: '30%', margin: '2px 0 0 0',display:{xs:'block',md:'none'} }}>{job.job_applicants_count} Freelancers Applied</Typography>
                                     <div style={{ display: 'flex', alignItems: 'center',gap:'7px',marginTop:'5px',flexWrap:'wrap' }}>
                                         {/* <p> {job.required_skills.join(', ')}</p> */}
                                         {job.required_skills.map((skill, index) => (

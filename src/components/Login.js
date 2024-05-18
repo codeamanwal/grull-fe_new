@@ -12,6 +12,7 @@ import BAPI from '../helper/variable';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
+import { signInWithGooglePopup } from '../utils/firebase.utils';
 
 const Login = () => {
   const { REACT_APP_GOOGLE_CLIENT_ID, REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT } = process.env
@@ -27,7 +28,9 @@ const Login = () => {
     };
 
     const googleLogin=async(credentialResponse)=>{
-      const data =jwtDecode(credentialResponse.credential)
+      const data =(credentialResponse.user)
+      console.log(data.email);
+      // return
 
       // const formData = new URLSearchParams();
       //   formData.append("email", data.email);
@@ -133,7 +136,13 @@ const Login = () => {
         console.error('Error during login:', error);
       }
     };
-    
+
+    const logGoogleUser = async () => {
+      const response = await signInWithGooglePopup();
+      // console.log(response);
+      await googleLogin(response)
+  }
+
     return (
       <div>
       <div className='headerStyle'>
@@ -146,11 +155,12 @@ const Login = () => {
       <div className='outer-most'>
           <div className='content'>
           <h2>Login to your Grull profile</h2>
+          {/* <button onClick={logGoogleUser}>Sign In With Google</button> */}
               {/* <div>
                   <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
               </div> */}
-              {/* <div>
-                  <Button className='google-button' onClick={openGoogleLoginPage} startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
+              <div>
+                  <Button className='google-button' onClick={logGoogleUser} startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
               </div>
 
 
@@ -158,8 +168,8 @@ const Login = () => {
                   <hr className='hr-line' />
                   <h3 style={{ color: '#a3a3a3', fontWeight: 'normal', margin: '0 10px' }}>OR</h3>
                   <hr className='hr-line' />
-              </div> */}
-              <GoogleOAuthProvider clientId="493236703003-bigdauplfj2os7cahbp2903m7ug1inve.apps.googleusercontent.com">
+              </div>
+              {/* <GoogleOAuthProvider clientId="493236703003-bigdauplfj2os7cahbp2903m7ug1inve.apps.googleusercontent.com">
               <GoogleLogin
               buttonText="Sign in with Google"
   onSuccess={credentialResponse => {
@@ -169,7 +179,7 @@ const Login = () => {
     console.log('Login Failed');
   }}
 />
-                </GoogleOAuthProvider>
+                </GoogleOAuthProvider> */}
               <Form>
                   
 

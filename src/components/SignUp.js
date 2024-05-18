@@ -13,6 +13,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import { signInWithGooglePopup } from '../utils/firebase.utils';
 
 
 const SignUp = () => {
@@ -25,22 +26,26 @@ const SignUp = () => {
         navigate('/login');
     };
     const { userType } = useParams();
-    const googleSignup=async(credentialResponse)=>{
-        setLoading("Loading...")
-        const data=jwtDecode(credentialResponse.credential)
 
+    const googleSignup = async (credentialResponse) => {
+        const data = credentialResponse._tokenResponse;
+        console.log('credentialResponse:', credentialResponse);
         
-        // const encodedString = encodeBase64(inputString);
-
-        const registrationData = {
-            email: data.email,
-            password: data.jti,
-            first_name: data.given_name,
-            last_name: data.family_name,
-            list_as_freelancer:userType==='freelancer'
-          };
-
-          try {
+        if (!data || typeof data.idToken !== 'string') {
+            console.error('Invalid token specified: must be a string');
+            return;
+        }
+        // return
+        try {
+    
+            const registrationData = {
+                email: data.email,
+                password: data.localId,
+                first_name: data.firstName,
+                last_name: data.lastName,
+                list_as_freelancer: userType === 'freelancer'
+            };
+             console.log(registrationData);
             const response = await fetch(`${BAPI}/api/v0/auth/register`, {
                 method: 'POST',
                 headers: {
@@ -48,62 +53,61 @@ const SignUp = () => {
                 },
                 body: JSON.stringify(registrationData),
             });
-            console.log(response)
+    
+            console.log('Registration Response:', response);
+    
             if (response.status === 201) {
-                alert('User registered Successfully!')
+                alert('User registered Successfully!');
                 // navigate('/login');
-
+    
                 const formData = new URLSearchParams();
-        formData.append("username", data.email);
-        formData.append("password", data.jti);
+                formData.append("username", data.email);
+                formData.append("password", data.localId);
     
-        const response = await fetch(`${BAPI}/api/v0/auth/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: formData,
-        });
+                const loginResponse = await fetch(`${BAPI}/api/v0/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData,
+                });
     
-        if (response.ok) {
-          const responseData = await response.json();
+                if (loginResponse.ok) {
+                    const responseData = await loginResponse.json();
     
-          if (responseData.access_token) {
-            const accessToken = responseData.access_token;
-            console.log(accessToken);
-            localStorage.setItem('accessToken', accessToken);
-            navigate('/loading');
-          } else {
-            setLoading("")
-            alert('Unexpected response from the server');
-          }
-        } else if (response.status === 400) {
-            setLoading("")
-          alert('Wrong credentials or invalid user');
-        } else if (response.status === 422) {
-            setLoading("")
-          const errorData = await response.json();
-          console.error('Validation Error:', errorData);
-        } else {
-            setLoading("")
-          alert('Unexpected response from the server');
-        }
-
+                    if (responseData.access_token) {
+                        const accessToken = responseData.access_token;
+                        console.log('Access Token:', accessToken);
+                        localStorage.setItem('accessToken', accessToken);
+                        navigate('/loading');
+                    } else {
+                        setLoading("");
+                        alert('Unexpected response from the server');
+                    }
+                } else if (loginResponse.status === 400) {
+                    setLoading("");
+                    alert('Wrong credentials or invalid user');
+                } else if (loginResponse.status === 422) {
+                    setLoading("");
+                    const errorData = await loginResponse.json();
+                    console.error('Validation Error:', errorData);
+                } else {
+                    setLoading("");
+                    alert('Unexpected response from the server');
+                }
             } else if (response.status === 400) {
-                setLoading("")
-                alert('REGISTER USER ALREADY EXISTS');
-
+                setLoading("");
+                alert('User Already Exists');
             } else {
-                setLoading("")
+                setLoading("");
                 console.error('Unexpected response:', response);
             }
         } catch (error) {
-            setLoading("")
+            setLoading("");
             console.error('Error during registration:', error);
         }
-
-      }
-
+    };
+    
     const handleCreateAccountClick = async () => {
         if (isAgreeToTermsChecked) {
         const firstName = document.querySelector('[name="First_name"]').value;
@@ -161,6 +165,11 @@ const SignUp = () => {
         { value: 'Canada', label: 'Canada' },
     ];
 
+    const logGoogleUser = async () => {
+        const response = await signInWithGooglePopup();
+        // console.log(response);
+        await googleSignup(response)
+    }
     return (
         <div>
             <div className='headerStyle'>
@@ -181,11 +190,11 @@ const SignUp = () => {
                     {/* <div>
                         <Button className='apple-button' startIcon={<FaApple style={{fontSize:'23px',}}/>}>Continue with Apple</Button>
                     </div> */}
-            {/* <div>
-                <Button className='google-button' startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
-            </div> */}
+            <div>
+                <Button className='google-button' onClick={logGoogleUser} startIcon={<FcGoogle style={{backgroundColor:'#fff',borderRadius:'50%',fontSize:'25px'}}/>}>Continue with Google</Button>
+            </div>
 
-<GoogleOAuthProvider clientId="493236703003-bigdauplfj2os7cahbp2903m7ug1inve.apps.googleusercontent.com">
+{/* <GoogleOAuthProvider clientId="493236703003-bigdauplfj2os7cahbp2903m7ug1inve.apps.googleusercontent.com">
               <GoogleLogin
               buttonText="Sign up with Google"
   onSuccess={credentialResponse => {
@@ -195,7 +204,7 @@ const SignUp = () => {
     alert("Signup Failed")
   }}
 />
-                </GoogleOAuthProvider>
+                </GoogleOAuthProvider> */}
 
 
             <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>

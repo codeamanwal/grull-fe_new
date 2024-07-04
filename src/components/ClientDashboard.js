@@ -25,6 +25,8 @@ import Header1 from './Header1';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
+
 interface Props {
   window?: () => Window;
 }
@@ -51,6 +53,31 @@ export default function ClientDashboard(props: Props) {
   const [notifications,setNotifications]=useState([]);
   const [notificationmodel,setNotificationmodel]=useState(false);
   const container2 = useRef();
+  const [notificationsSeen,setNotificationsSeen]=useState(true);
+
+  
+  const UpdateNotificationStatus = async () => {
+    try {
+        for (let i = 0; i < notifications.length; i++) {
+            const notification = notifications[i];
+            if (!notification.isSeen) {
+                await axios.post(
+                    `${BAPI}/api/v0/notifications/update-notification-status?notification_id=${notification.id}`,
+                    {}, // empty data object
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`,
+                        }
+                    }
+                );
+            }
+        }
+        setNotificationsSeen(true);
+    } catch (error) {
+        console.error('Error during updating notifications:', error);
+    }
+}
   
   useEffect(()=>{
     const getNotifications=async()=>{
@@ -66,7 +93,15 @@ export default function ClientDashboard(props: Props) {
          }
        );
        const responseData = await response.json();
-       setNotifications(responseData)
+       const sortedData = responseData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        setNotifications(sortedData)
+       for (let i = 0; i < responseData.length; i++) {
+        if (responseData[i].isSeen === false) {
+            setNotificationsSeen(false);
+            break; 
+        }
+    }
      } catch (error) {
        console.error('Error during fetching notifications:', error);
      }
@@ -299,8 +334,21 @@ const handleShareProfile = () => {
                 </Button>
                 <ToastContainer />
                 <FiMessageSquare style={{color:'#0c0c0c',fontSize:'30px',cursor:'pointer'}} onClick={()=>navigate('/clientchat')}  className='resdash' />
-                <Box ref={container2} sx={{position:'relative'}} onClick={()=>{setNotificationmodel(!notificationmodel)}}>
+                <Box ref={container2} sx={{position:'relative'}} onClick={()=>{setNotificationmodel(!notificationmodel);UpdateNotificationStatus()}}>
                      <IoMdNotificationsOutline style={{color:'#414141',fontSize:'35px',cursor:'pointer'}} className='resdash' />
+                     {!notificationsSeen && ( // Render red dot if notificationSeen is false
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '5px', // Adjust the position of the dot as needed
+                                right: '5px',
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '50%',
+                                backgroundColor: 'red',
+                            }}
+                        />
+                    )}
                      {
                       notificationmodel && (
                         <Box
@@ -322,7 +370,7 @@ const handleShareProfile = () => {
                               notifications.length===0?(<p style={{textAlign:'center',color:'#000000'}}>No notifications received.</p>):(
                               <Box>{notifications.map((notification,index)=>(
                                 <>
-                                   <Box key={index} sx={{padding:'5px'}}>
+                                   <Box key={index} sx={{padding:'5px',backgroundColor: notification.isSeen ? '#fff' : '#f0f0f0',}}>
                                       <Typography sx={{fontSize:'14px',fontWeight:'600',color:'#000',}}>{notification.title}</Typography>
                                       <Typography sx={{fontSize:'12px',fontWeight:'400',color:'#000',}}>{notification.content}</Typography>
                                    </Box>

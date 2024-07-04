@@ -9,8 +9,11 @@ import { Button } from '@mui/material';
 import { FaArrowUp } from "react-icons/fa6";
 import BAPI from '../helper/variable'
 const ApplyProposal = () => {
-    const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
+    const { jobid } = useParams();
+    const fileInputRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const navigate = useNavigate();
 
     const CurrencyOptions = [
         { value: 'INDIA', label: 'INR' },
@@ -21,13 +24,9 @@ const ApplyProposal = () => {
         { value: 'RUSSIA', label: 'RUB' },
     ];
 
-    const { jobid } = useParams();
-    const fileInputRef = useRef(null);
-    const [selectedFile, setSelectedFile] = useState(null);
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        console.log('Selected File:', file);
+        // console.log('Selected File:', file);
         setSelectedFile(file);
     };
 
@@ -70,7 +69,6 @@ const ApplyProposal = () => {
     };
 
     const handleCancelClick = () => {
-        
         navigate('/browsejobs');
     }
 
@@ -86,7 +84,7 @@ const ApplyProposal = () => {
                   },
               });
               if (response.status===200) {
-                  console.log('Applied Proposal successfully');
+                //   console.log('Applied Proposal successfully');
                   navigate('/managejobs/applied');
               }
           }
@@ -97,10 +95,10 @@ const ApplyProposal = () => {
 
     return (
         <div>
-            {/* div 1 for header */}
+            {/* section - 1 */}
             <Header3 />
 
-            {/* div 2 for making the input form */}
+            {/* section 2 for making the input form */}
             <div className='input-form'>
                 <Form className='proposal-form'>
                 <h2 >Proposal</h2>
@@ -135,7 +133,7 @@ const ApplyProposal = () => {
                     <h4 >What is your Proposed rate?</h4>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }} className='bud-form'>
                         <Form.Group className="form-group" controlId="formBudget">
-                            <Form.Control className='form-val-5' type="text" name='proposed_rate' placeholder="" />
+                            <Form.Control className='form-val-5' type="text" name='proposed_rate' placeholder="Price" />
                         </Form.Group>
 
                         <Form.Group className="form-group" controlId="formCurrency">

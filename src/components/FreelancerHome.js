@@ -186,7 +186,7 @@ export default function FreelancerHome() {
                 <Typography sx={{fontSize:'32px',fontWeight:'600',letterSpacing:'-1px'}} className='home-heading'>Ongoing Jobs</Typography>
                 <Link style={{color:'#ED8335',marginLeft:'10px'}} to='/managejobs/ongoing'>View All</Link>
          </Box>
-         <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px', }} className='home-container-grid'>
+         <Grid sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '30px', marginTop: '10px',width:'100%' }} className='home-container-grid'>
             {jobData.filter(job => job.status === 'ONGOING').length > 0 ? (
                   jobData
                   .filter((job) => ['ONGOING'].includes(job.status))

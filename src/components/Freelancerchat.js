@@ -166,7 +166,13 @@ const sendMessageSocket = () => {
             }
            });
         //    console.log(response.data)
-          setClients(response.data);
+        const sortedClients = response.data.sort((a, b) => {
+            const dateA = new Date(JSON.parse(a).created_at);
+            const dateB = new Date(JSON.parse(b).created_at);
+            return dateB - dateA; 
+        });
+
+        setClients(sortedClients);
         }
         catch(err){
             console.log("Error while fetching chat : ", err)
@@ -302,15 +308,19 @@ const sendMessageSocket = () => {
         // console.log(response)
         }
         catch(err){
-            console.log("Error in sending chat : ",err)
+            console.log("Error in updating Milestone : ",err)
         }
       handleCloseDeliverableInput();
     } else {
-      toast.error('Please enter a valid deliverable and select a date');
+      toast.error('Please enter a valid link');
     }
     sendMessageSocket()
   };
   const handleSendDeliverable = async() => {
+    if(countDeliverable-submittedacceptDeliverables<=0){
+        toast.error("There are no Imcomplete Deliverables")
+        return;
+    }
     if (deliverableValue.trim() !== '') {
         const newMessage = {
             message: deliverableValue,
@@ -332,11 +342,11 @@ const sendMessageSocket = () => {
         
           }
           catch(err){
-              console.log("error while sending Image : ", err)
+              console.log("error while sending Milestone : ", err)
           }
       handleCloseDeliverableInput();
     } else {
-      toast.error('Please enter a valid deliverable and select a date');
+      toast.error('Please enter a valid link');
     }
     sendMessageSocket()
   };
@@ -369,6 +379,8 @@ const sendMessageSocket = () => {
                 Authorization:`Bearer ${accessToken}`,
             }
         })
+        await createnotification("Request for Deliverable extension", `${freelancername} has rejected the deliverable of ${job_title} job.`)
+   
     }
     catch(err){
         console.log("Error while Rejecting deliverable : ",err)
@@ -818,7 +830,7 @@ useEffect(() => {
                         </Box>
                         <div className='chat-container_client_Name'>
                             <h3>{clientname}</h3>
-                            <p>{clientlocation}</p>
+                            <p>{clientlocation?clientlocation:"Location : N/A"}</p>
                         </div>
                     </div>
                     <Divider />
@@ -1031,7 +1043,7 @@ return (
                     </Box>
                     {
                        message.status==='DELIVERABLES'?
-                            (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
+                            (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'left'}}>
                                 <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}} onClick={()=>{handleExtend(message.id)}}>Extend</Button>
                                 <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>{handleAccept(message.id)}}>Accept</Button>
                             </Box>):null
@@ -1068,6 +1080,22 @@ return (
                    margin:{md:'5px 0',sm:'2px 0',xs:'0'}
                 }}>
                  <Typography sx={{color:'#454545',fontWeight:'700',fontSize:{md:'18px',sm:'15px',xs:'13px'}}}>Congrats your project has been started</Typography>
+                </Box>
+            )
+        }
+        {
+            message.status==="NEGOTIATION_REJECTED" && (
+                <Box 
+                sx={{
+                   display:'flex',
+                   flexDirection:'row',
+                   justifyContent:'center',
+                   gap:'10px',
+                   alignItems:'center',
+                   width:'100%',
+                   margin:{md:'5px 0',sm:'2px 0',xs:'0'}
+                }}>
+                 <Typography sx={{color:'#454545',fontWeight:'700',fontSize:{md:'18px',sm:'15px',xs:'13px'}}}>Price was negotiated by the client</Typography>
                 </Box>
             )
         }
@@ -1278,6 +1306,7 @@ return (
                                                     autoFocus
                                                     type="text"
                                                     value={priceValue}
+                                                    placeholder='Price'
                                                     onChange={(e)=>setPriceValue(e.target.value)}
                                                     style={{border:'none',outline:'none',boxShadow:'0px 0px 4px 1px #00000040',borderRadius:'8px',padding:'5px 10px',width:'120px'}}
                                                 />
@@ -1294,6 +1323,7 @@ return (
                                             </Box>
                                             <Box sx={{width:'100%',display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}}>
                                                 <input 
+                                                placeholder='Link here'
                                                     autoFocus
                                                     type="text"
                                                     value={deliverableValue}

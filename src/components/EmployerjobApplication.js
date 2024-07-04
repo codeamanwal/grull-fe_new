@@ -14,46 +14,36 @@ import { LiaFilterSolid } from "react-icons/lia";
 import BAPI from '../helper/variable'
 const JobApplications = () => {
 
-  const navigate = useNavigate();
-
-  const [expandedDescriptions, setExpandedDescriptions] = useState([]);
-  const boxRefs = useRef([]);
-
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFreelancers,setSearchFreelancers]=useState('');
   const sortByOptions = [
     { value: 'Newest', label: 'Newest' },
     { value: 'Cheapest', label: 'Cheapest' },
   ]
-
   const [sort, setSort] = useState(sortByOptions[0]);
-  const [categoryExpanded, setCategoryExpanded] = useState(true);
-  const toggleCategory = () => setCategoryExpanded(!categoryExpanded);
-
-  const [experienceExpanded, setExperienceExpanded] = useState(true);
-  const toggleExperience = () => setExperienceExpanded(!experienceExpanded);
-
-  const [jobExpanded, setJobExpanded] = useState(true);
-  const toggleJob = () => setJobExpanded(!jobExpanded);
-
-  const [locationExpanded, setLocationExpanded] = useState(true);
-  const toggleLocation = () => setLocationExpanded(!locationExpanded);
   const [category,setcategory]=useState('freelancers');
-  const [state, setState] = useState(false);
 
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event &&
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
-    ) {
-      return;
-    }
-
-    setState(open);
+  const [expandedDesc, setExpandedDesc] = useState({});
+  const toggleFreeDescription = (freeId) => {
+    setExpandedDesc((prev) => ({
+          ...prev,
+          [freeId]: !prev[freeId]
+      }));
   };
+  const truncateText = (text, wordLimit) => {
+    const words = text.split(' ');
+    if (words.length > wordLimit) {
+        return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return text;
+  };
+  
   //fetch all freelancers
   const [allFreelancers, setAllFreelancers] = useState([]);
   const accessToken = localStorage.getItem('accessToken');
   const { jobid } = useParams();
+
   useEffect(() => {
     const getFreelancers = async () => {
       try {
@@ -81,12 +71,6 @@ const JobApplications = () => {
     getFreelancers();
   }, [accessToken]);
 
-  useLayoutEffect(() => {
-    // updaterefs();
-  }, [allFreelancers]);
-  
-
-
   const handleReject=async(applicationId)=>{
     try{
       const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/reject`, {
@@ -98,35 +82,33 @@ const JobApplications = () => {
         }
       });
        console.log(response)
-      
+       setAllFreelancers(prevFreelancers => prevFreelancers.filter(freelancer => freelancer.id !== applicationId));
     }
     catch (error) {
       console.error('Error occurred while rejecting :', error);
     }
 }
-
-const handleAccept=async(applicationId)=>{
-  try{
-    const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/accept`, {
-      
-    },{
+const handleAccept = async (applicationId) => {
+  console.log(applicationId);
+  try {
+    const response = await axios.post(`${BAPI}/api/v0/applications/${applicationId}/accept`, {}, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
       }
     });
-     await rejectAllRemainingFreelancers(applicationId);
-     navigate("/clientchat")
+    console.log(response);
+    await rejectAllRemainingFreelancers(applicationId);
+    navigate("/clientchat");
+  } catch (error) {
+    console.error('Error occurred while accepting:', error);
   }
-  catch (error) {
-    console.error('Error occurred while accepting :', error);
-  }
-}
+};
 
 const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
   try {
     for (const freelancer of allFreelancers) {
-      if (freelancer.id !== acceptedFreelancerId) {
+      if (freelancer.id !== acceptedFreelancerId && freelancer.status!=='REJECTED') {
         await handleReject(freelancer.id);
       }
     }
@@ -135,40 +117,30 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
   }
 }
 
-  const createrefs = (Freelancers) => {
-    // console.log("Freelancers:", Freelancers);
-    boxRefs.current = Freelancers.map(() => React.createRef(null));
-    // console.log("Refs created:", boxRefs.current);
-  };
-  
+const handleSearch=()=>{
+  setSearchFreelancers(searchQuery)
+}
 
-  const updaterefs = () => {
-    // console.log("Box refs:", boxRefs.current);
-    // console.log("Length of box refs array:", boxRefs.current.length);
-    setExpandedDescriptions(allFreelancers.map(()=>{return false;}));
-    boxRefs.current.forEach((ref,index) => {
-      const boxHeight = ref.clientHeight;
-      if (boxHeight > 200) {
-        console.log(index);
-        toggleExpand(index);
-      }
-    });
-  };
 
-  const toggleExpand = (index) => {
-    setExpandedDescriptions(prev => {
-      const newState = [...prev];
-      newState[index] = !newState[index];
-      return newState;
-    });
-  };
-  const handleDislikeClick=()=>{
-
+const filteredFreelancers = allFreelancers
+.filter((freelancer) => {
+  if (searchFreelancers && !(freelancer.employee.full_name.toLowerCase().includes(searchFreelancers.toLowerCase()) || freelancer.employee.description.toLowerCase().includes(searchFreelancers.toLowerCase()))) {
+    return false;
   }
-
-  const handleLikeClick=()=>{
-
+  return true;
+})
+.sort((a, b) => {
+  if (sort.value === 'Newest') {
+    return new Date(b.created_at) - new Date(a.created_at);
   }
+  if (sort.value === 'Cheapest') {
+    const rateA = a.proposed_rate;
+    const rateB = b.proposed_rate;
+    return rateA - rateB; 
+  }
+  return 0;
+});
+
   return (
     <div>
       <Header2 />
@@ -180,6 +152,8 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
         <Box sx={{display:'flex',flexDirection:{md:'row',xs:'column'},gap:{md:'20px',xs:'7px'},width:'100%'}}>
         <div style={{ position: 'relative',flex:1 }}>
           <input
+          value={searchQuery}
+          onChange={(e)=>setSearchQuery(e.target.value)}
             type="text"
             placeholder=" Search for Freelancers"
             style={{
@@ -197,22 +171,22 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
           }} />
           </div>
           <div style={{display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
-                <Button style={{
+                <Button onClick={handleSearch}  style={{
                   backgroundColor: '#B27EE3', color: 'white', border: 'none', borderRadius: '16px',
                   fontSize: '16px',padding:'7px 22px'
               }}>Search</Button>
-        <Button style={{
+        {/* <Button style={{
               border: 'none', backgroundColor: 'transparent', color: 'white',
               cursor: 'pointer', fontSize: '16px',outline:'none',float:'right'
-            }} sx={{display:{md:'none',xs:'block'}}}>   Show Advanced Options</Button>
+            }} sx={{display:{md:'none',xs:'block'}}}>   Show Advanced Options</Button> */}
               </div>
               </Box>
-              <Box sx={{display:{md:'block',xs:'none'}}}>
+              {/* <Box sx={{display:{md:'block',xs:'none'}}}>
             <Button style={{
               border: 'none', backgroundColor: 'transparent', color: 'white',
               cursor: 'pointer', fontSize: '16px',outline:'none',float:'right'
             }}>   Show Advanced Options</Button>
-          </Box>
+          </Box> */}
         </div>
 
         <div >
@@ -221,8 +195,8 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
         </div>
       </div>
       <div className="sortingjobs" style={{marginBottom:'30px',cursor:'pointer'}}>
-        <Button endIcon={<LiaFilterSolid />} onClick={toggleDrawer(true)} sx={{boxShadow: '0px 0px 4px 0px #00000040',color:'#000',padding:'7px 20px',borderRadius:'16px'}}>Filters</Button>
-        <Form>
+      <Button endIcon={<LiaFilterSolid />} sx={{boxShadow: '0px 0px 4px 0px #00000040',color:'#000',padding:'7px 20px',borderRadius:'16px',visibility:'hidden'}}>Filters</Button>
+       <Form>
           <Form.Group className="form-group" controlId="formSortByOptions">
             <span style={{ marginRight: '5px' }}>Sort by:</span>
             <Select
@@ -257,7 +231,7 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
       <Typography sx={{ fontSize: '18px', padding: '20px', textAlign: 'center' }}>No applications found.</Typography>
     </>
   ) : (
-    allFreelancers?.filter((application) => ['PENDING'].includes(application.status)).map((freelancer, indx) => (
+    filteredFreelancers?.filter((application) => ['PENDING'].includes(application.status)).map((freelancer, indx) => (
       <Box key={indx}>
         <Box sx={{ padding: { sm: '30px', xs: '18px 16px' } }}>
           <Box style={{ display: 'flex', flexDirection: 'column' }}>
@@ -299,16 +273,24 @@ const rejectAllRemainingFreelancers = async (acceptedFreelancerId) => {
                 </Box>
                 <Box>
                   <Typography sx={{ fontWeight: '500', fontSize: { sm: '17px', xs: '15px' }, color: '#454545' }}>
+
+                  {expandedDesc[freelancer.id] ? freelancer.proposal : truncateText(freelancer.proposal, 40)}
+                                    {!expandedDesc[freelancer.id] && freelancer.proposal.split(' ').length > 40 && (
+                                        <Button onClick={() => toggleFreeDescription(freelancer.id)} sx={{ padding: 0, textTransform: 'none', color: '#B27EE3', fontSize: '14px' }}>Read More</Button>
+                                    )}
+                                    {expandedDesc[freelancer.id] && (
+                                        <Button onClick={() => toggleFreeDescription(freelancer.id)} sx={{ padding: 0, textTransform: 'none', color: '#B27EE3', fontSize: '14px' }}>Read Less</Button>
+                                    )}
                   {/* Your description rendering logic */}
-                  {
-                    freelancer.employee.description
-                  }
+                  
                 </Typography>
               </Box>
             </Box>
           </Box>
           <Box sx={{ margin: { sm: '13px 0 5px 0', xs: '10px 0 3px 0' } }}>
             <ul style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+
+
               {
                 freelancer.employee.skills.map((skill, index) => <li key={index} style={{ fontSize: '16px', padding: "10px 25px", backgroundColor: '#E9E9E9', color: '#000000', borderRadius: '16px', width: 'fit-content', fontWeight: '500' }}>{skill}</li>)
               }

@@ -34,6 +34,8 @@ import FreelancerProfileShare from "../components/FreelancerProfileShare.js";
 import EmployerprofileShare from "../components/ClientProfileShare.js";
 import Freelancerwallet from "../components/Freelancerwallet.js";
 import FreelancerWalletPage from "../components/FreelancerWalletPage.js";
+import AddBalance from "../components/AddBalance.js";
+// import PaymentRazorpay from "../components/PaymentRazorpay.js";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -61,7 +63,6 @@ export default function PageRoute() {
             <Route path="/browsefreelancer" element={<BrowseFreelancer/>}/>
             <Route path="/browsejobs" element={<BrowseJobs/>}/>
             <Route path="/jobdetails/:jobid" element={<JobDetails/>}/>
-            <Route path="/paymentbyclient" element={<PaymentByClient/>}/>
             <Route path="/freelancer/*" element={<FreelancerDashboard/>}/>
             <Route path="/managejobs/:section" element={<FreelancerManagerJobs/>}/>
             <Route path="/client/*" element={<ClientDashboard />} />
@@ -80,6 +81,9 @@ export default function PageRoute() {
             <Route path="/google" element={<GoogleAuth />} />
             <Route path="/freelancer/profile/:userid" element={<FreelancerProfileShare />}/>
             <Route path="/client/profile/:userid" element={<EmployerprofileShare />}/>
+            <Route path="/client-transactions" element={<PaymentByClient />} />
+            <Route path="/addbalance" element={<AddBalance />} />
+            {/* <Route path="/payment/razorpay" element={<PaymentRazorpay />} /> */}
          </Routes>
  
        </BrowserRouter>

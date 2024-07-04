@@ -16,17 +16,17 @@ import { NavLink } from 'react-router-dom';
 
 const MilestonePoint = ({ completed, i }) => {
   return (
-      <div
-          style={{
-              width: '20px',
-              height: '20px',
-              borderRadius: '50%',
-              marginTop:'-24px',
-              backgroundColor: '#ED8335',
-              textAlign:'center',
-              color:'#fff',
-          }}
-        ></div>
+    <div
+    style={{
+        width: '17px',
+        height: '17px',
+        borderRadius: '50%',
+        marginTop:'-22px',
+        backgroundColor: '#D9D9D9',
+        textAlign:'center',
+        color:'#fff',
+    }}
+  ></div>
   );
 };
 const ClientJob = ({ passed_from,id, title, companyLogoUrl, companyName, postedDate, isLast, applicantcount, status,total_deliverables,completed_deliverables}) => {
@@ -82,7 +82,7 @@ useEffect(() => {
         <Avatar
           //  className='resdash'
            alt={companyName[0]}
-           style={{ backgroundColor: 'grey', cursor: 'pointer' }}
+           style={{ backgroundColor: 'grey', cursor: 'pointer',borderRadius:passed_from!==1?'':'5px' }}
                  >
                     {companyName?.split(' ').slice(0, 2).map(part => part[0]).join('')}
           </Avatar>
@@ -93,7 +93,7 @@ useEffect(() => {
           /> */}
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'row', gap: '2px', justifyContent: 'space-between', paddingLeft: '22px', flex: 1 }} className='job-container'>
-          <Box sx={{display:'flex',flexDirection:'row',justifyContent:'space-between',gap:'20px',marginRight:'50px',flex:1,flexWrap:'wrap'}} className='job-description'>
+          <Box sx={{display:'flex',flexDirection:passed_from===1?'column':'row',justifyContent:'space-between',gap:'20px',marginRight:passed_from===1?'0px':'50px',flex:1,flexWrap:'wrap'}} className='job-description'>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                   <Typography sx={{ color: "#000", fontSize: '22px' }} className='job-con1'>{title}</Typography>
                   <Typography sx={{ color: "#656565", fontSize: '15px' }} className='job-con3'>Posted On {formatDate(postedDate)}</Typography>
@@ -119,9 +119,11 @@ useEffect(() => {
                           label: <MilestonePoint completed={i < completed_deliverables} i={i+1} />,
                       }))}
                       step={1 / total_deliverables}
-                      className='ongoingjobslider' 
-                      sx={{ color: '#ED8335', height: '8px', width: '300px', marginLeft: '10px', '& .MuiSlider-thumb': { width: '20px', height: '20px',display:completed_deliverables!==0?'none':'block' } }}
-                       /></Box>
+                      className={`${passed_from === 1 ? '' : 'ongoingjobslider'}`}
+                      sx={{ color: '#ED8335', height: '8px', width:passed_from===1?'100%':'300px',minWidth:'0', marginLeft: '10px', '& .MuiSlider-thumb': { width: '20px', height: '20px',display:completed_deliverables!==0?'block':'block' },'& .MuiSlider-rail': {
+                        height: '8px',
+                        backgroundColor: '#B4B4B4',
+                      }, }} /></Box>
                   ) : status === 'PENDING' ? (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Button className='job-action' sx={{ backgroundColor: '#B27EE3', color: '#fff', textAlign: 'center', borderRadius: '16px', padding: '8px 0px', width: '120px', textTransform: 'none', ':hover': { backgroundColor: '#B27EE3', color: '#fff' } }} onClick={()=>{Clickwithdraw(id)}}>Withdraw</Button>

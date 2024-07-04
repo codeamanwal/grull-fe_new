@@ -117,7 +117,8 @@
     }
     .browseJobs{
         height: auto;
-        margin-top: 10px !important;
+        max-height: 800px;
+        /* margin-top: 10px !important; */
     }
     .sortingjobs{
         margin-bottom: 0px !important;
@@ -132,6 +133,7 @@
     }
     .browseJobs{
         width: 90%;
+        margin-top: 10px !important;
     }
    }
    @media only screen and (max-width:600px){

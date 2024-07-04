@@ -290,10 +290,10 @@ export const footerLinks = {
       link: "/cancellation-policies",
       text: "Cancellation Policy",
     },
-    // {
-    //   link: "",
-    //   text: "Fraud Disclaimer",
-    // },
+    {
+      link: "https://496gf0lz.r.ap-south-1.awstrack.me/L0/https:%2F%2Fmerchant.razorpay.com%2Fpolicy%2FOBw0C848KRuqes%2Fshipping/1/0109018f8f8f2386-1627329f-60fa-460e-9df6-b09ffd93888c-000000/55TaY7dR3TR-XVE2P-9XbFp-brg=155",
+      text: "Shipping and Delivery Policy",
+    },
   ],
   PRODUCTS: [
     {

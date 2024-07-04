@@ -98,7 +98,9 @@ export default function FreelancerDashboard(props: Props) {
          }
        );
        const responseData = await response.json();
-       setNotifications(responseData);
+       const sortedData = responseData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        setNotifications(sortedData)
        for (let i = 0; i < responseData.length; i++) {
         if (responseData[i].isSeen === false) {
             setNotificationsSeen(false);
@@ -378,7 +380,7 @@ export default function FreelancerDashboard(props: Props) {
                               notifications.length===0?(<p style={{textAlign:'center',color:'#000000'}}>No notifications received.</p>):(
                               <Box>{notifications.map((notification,index)=>(
                                 <>
-                                   <Box key={index} sx={{padding:'5px'}}>
+                                   <Box key={index} sx={{padding:'5px',backgroundColor: notification.isSeen ? '#fff' : '#f0f0f0',}}>
                                       <Typography sx={{fontSize:'14px',fontWeight:'600',color:'#000',}}>{notification.title}</Typography>
                                       <Typography sx={{fontSize:'12px',fontWeight:'400',color:'#000',}}>{notification.content}</Typography>
                                    </Box>

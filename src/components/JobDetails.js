@@ -14,37 +14,28 @@ import { CiLocationOn } from "react-icons/ci";
 import ClientDashboard from "./ClientDashboard";
 
 const JobDetails = () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const useR=localStorage.getItem('user');
+    const userId=JSON.parse(useR)?.id
+    const { jobid } = useParams();
+    const [jobDetails, setJobDetails] = useState(null);
     const [clientDetails,setClientDetails]=useState(null);
-
-    const navigate = useNavigate();
     const [clientReviews,setClientReviews]=useState({
         average:null,
         total:null
-    })
-    const accessToken = localStorage.getItem('accessToken');
-    const { jobid } = useParams();
-    const [jobDetails, setJobDetails] = useState(null);
-    const useR=localStorage.getItem('user');
-    const userId=JSON.parse(useR)?.id
+    });
+    const navigate = useNavigate();
 
     function convertTimestampToNormalTime(timestamp) {
-        // Create a new Date object from the provided timestamp
         const date = new Date(timestamp);
-        
-        // Define an array of month names
         const monthNames = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
-        
-        // Extract the year, month, and day components from the Date object
         const year = date.getFullYear();
         const month = monthNames[date.getMonth()];
         const day = date.getDate();
-        
-        // Concatenate the components into the desired format
         const formattedDate = `${month} ${day}, ${year}`;
-        
         return formattedDate;
     }
 
@@ -88,29 +79,7 @@ const JobDetails = () => {
         }
       };
 
-    const handleSaveJob=async()=>{
-        const job={
-            "job_id": jobid,
-            "title": jobDetails.title,
-            "company_name": jobDetails.company_name,
-            "location": jobDetails.location
-        }
-        try{
-            const response = await axios.post(`${BAPI}/api/v0/jobs/save-job`,job, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
-            if (response.status === 200) {
-                // console.log(response.data)
-                navigate("/managejobs/saved")
-            }
-        }
-        catch(err){
-            console.log("Error while saving the job : ",err)
-        }
-    }
-
+      
     useEffect(() => {
         const fetchJobDetails = async () => {
             try {
@@ -121,7 +90,7 @@ const JobDetails = () => {
                 });
     
                 if (response.status === 200) {
-                    console.log("job details : ",response.data)
+                    // console.log("job details : ",response.data)
                     setJobDetails(response.data);
                 } else {
                     console.error('Error fetching job details:', response.data.error);
@@ -133,6 +102,32 @@ const JobDetails = () => {
     
         fetchJobDetails();
     }, [jobid, accessToken]);
+
+    useEffect(()=>{
+        const fetchClientDetails=async()=>{
+          try {
+              const response = await axios.get(`${BAPI}/api/v0/users/public/${jobDetails?.posted_by.id}`, {
+                  headers: {
+                      'Authorization': `Bearer ${accessToken}`,
+                  },
+              });
+  
+              if (response.status === 200) {
+                //   console.log("client details : ",response.data)
+                  setClientDetails(response.data);
+                  fetchClientReviews(response.data.id);
+              } else {
+                  console.error('Error fetching job details:', response.data.error);
+              }
+          } catch (error) {
+              console.error('Error occurred:', error);
+          }
+        }
+  
+        if(jobDetails){
+          fetchClientDetails();
+        }
+      },[jobDetails])
 
     const fetchClientReviews=async(Id)=>{
         try {
@@ -162,32 +157,29 @@ const JobDetails = () => {
             console.error('Error occurred while getting reviews:', error);
         }
     }
-    
-    useEffect(()=>{
-      const fetchClientDetails=async()=>{
-        try {
-            const response = await axios.get(`${BAPI}/api/v0/users/public/${jobDetails?.posted_by.id}`, {
+
+    const handleSaveJob=async()=>{
+        const job={
+            "job_id": jobid,
+            "title": jobDetails.title,
+            "company_name": jobDetails.company_name,
+            "location": jobDetails.location
+        }
+        try{
+            const response = await axios.post(`${BAPI}/api/v0/jobs/save-job`,job, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 },
             });
-
             if (response.status === 200) {
-                console.log("client details : ",response.data)
-                setClientDetails(response.data);
-                fetchClientReviews(response.data.id);
-            } else {
-                console.error('Error fetching job details:', response.data.error);
+                // console.log(response.data)
+                navigate("/managejobs/saved")
             }
-        } catch (error) {
-            console.error('Error occurred:', error);
         }
-      }
-
-      if(jobDetails){
-        fetchClientDetails();
-      }
-    },[jobDetails])
+        catch(err){
+            console.log("Error while saving the job : ",err)
+        }
+    }
 
     const handleApplyNow = () => {
         navigate(`/applyproposal/${jobid}`);
@@ -195,10 +187,13 @@ const JobDetails = () => {
 
     return (
         <div>
-           <Header3 />
 
+            {/* section- 1 */}
+           <Header3 />
+            {/* section -2 containing left and right boxes  */}
            <Box sx={{display:'flex',flexDirection:{xs:'column',lg:'row'},marginTop:'40px',marginBottom:'60px',padding:{md:'10px 70px',xs:'10px 30px'},gap:'40px'}}>
-            <Box sx={{ display: 'flex',flex:'1',boxShadow: '0px 0px 4px 0px #00000040', borderRadius: '16px',flexDirection:'column',padding:{sm:'0px 40px 30px',xs:'0px 25px 30px'}}}>
+             {/* left box  */}
+            <Box sx={{ display: 'flex',flex:'1',boxShadow: '0px 0px 4px 0px #00000040', borderRadius: '16px',flexDirection:'column',height:'fit-content',padding:{sm:'0px 40px 30px',xs:'0px 25px 30px'}}}>
                 <Box sx={{padding:'25px 0'}}>
                     <Typography sx={{fontWeight:'700',fontSize:'28px'}}>{jobDetails?.title}</Typography >
                     <Box sx={{ display: 'flex',flexDirection:{sm:'row',xs:'column'},justifyContent:'space-between',marginTop:'10px',gap:{xs:'5px',sm:'0'}}}>
@@ -209,23 +204,17 @@ const JobDetails = () => {
                         {/* <a href="" style={{ fontWeight:'500',fontSize:'16px', color: '#ED8335' }}>Download reference files</a> */}
                     </Box>
                 </Box>
-
                 <Divider />
-
                 <Box sx={{padding:'25px 0 35px'}}>
                     <Typography sx={{fontWeight:'500',fontSize:'16px',color:'#454545'}}>{jobDetails?.description}</Typography>
-                    {
-                        jobDetails?.company_description!=='' && (
-                            <Box>
+                    <Box>
                             <Typography  sx={{fontWeight:'700',fontSize:'18px',color:'#00000',marginTop:'30px'}}>About Company:</Typography>
-                            <Typography sx={{fontWeight:'500',fontSize:'16px',color:'#454545',marginTop:'8px'}}>{jobDetails?.company_description}</Typography>
-                            </Box>
-                        )
-                    }
+                            <Typography sx={{ fontWeight: '500', fontSize: '16px', color: '#454545', marginTop: '8px' }}>
+                            {jobDetails?.company_description ? jobDetails.company_description : "N/A"}
+                            </Typography>
+                    </Box>
                 </Box>
-
                 <Divider />
-
                 <Box sx={{ display: 'flex',flexDirection:'row',flexWrap:'wrap',padding:'25px 0 45px',gap:'20px' }}>
                         {/* <Box sx={{width: {sm:'150px',xs:'125px'}, height: '115px', backgroundColor: '#2E66EC', borderRadius: '21px', display: 'flex',gap:'5px', border:'1px solid #000000',padding:'15px 15px 2px',flexDirection:'column',boxShadow:'-3px -2px' }}>
                             <LuClock4 style={{color:'#fff',fontSize:'24px',marginLeft:'5px'}} />
@@ -247,9 +236,7 @@ const JobDetails = () => {
                             <Typography sx={{color:'#fff',fontWeight:'600',fontSize:{sm:'19px',xs:'16px'}}}>{jobDetails?.rate_per_hour} {jobDetails?.currency_type}</Typography>
                         </Box>
                 </Box>
-
                 <Divider />
-
                 <Box sx={{padding:'20px 0'}}>
                     <Typography sx={{fontWeight:'500',fontSize:'22px'}}>Skills and Expertise</Typography >
                     <Box style={{ display: 'flex',flexDirection:'row',flexWrap:'wrap',gap:'10px',marginTop:'20px' }}>
@@ -265,24 +252,25 @@ const JobDetails = () => {
                         ))}
                     </Box>
                 </Box>
-
             </Box>
-
-            <Box sx={{width:{lg:'300px',xs:'auto'}, borderRadius: '16px',display: 'flex', flexDirection: 'column',boxShadow:'0px 0px 4px 0px #00000040'}}>
+             
+             {/* right box  */}
+            <Box sx={{width:{lg:'300px',xs:'auto'}, borderRadius: '16px',display: 'flex', flexDirection: 'column',boxShadow:'0px 0px 4px 0px #00000040',height:'fit-content'}}>
                 <Box sx={{display:'flex',flexDirection:'column',gap:'8px',alignItems:'center',padding:'30px 0 20px'}}>
                     <Typography style={{ color: '#B27EE3', fontSize: '13px',}}>Non Negotiable</Typography>
                     {
-                       jobDetails?.posted_by.id!==userId? jobDetails?.employee===null?
+                       jobDetails?.posted_by.id!==userId?( jobDetails?.employee===null?
                     //    when no employee is there
-                       (<Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>) :
+                       (<Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={handleApplyNow}>Apply Now</Button>) :(
                        jobDetails?.employee?.id!==userId?(
                     //    when some employee else is selected
                        <Typography style={{ color: '#000',fontWeight:'600'}}>Job Closed or Expired</Typography>):
                        (
                         // when he is the selected
                         <Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={()=>{navigate('/freelancerchat')}}>Chat Now</Button>
-                            ) :''
+                         ) ) ):<Button style={{ backgroundColor: '#B27EE3', color: 'white',borderRadius: '16px',padding:'8px',width:'160px'}} onClick={() => { navigate(`/jobapplications/${jobid}`) }}>View Applicants</Button>
                     }
+
                     {
                         jobDetails?.posted_by.id!==userId? (jobDetails?.employee===null?(
                             <Button style={{backgroundColor: 'white',border: '1px solid #B27EE3', color: '#B27EE3', borderRadius: '16px',padding:'8px',width:'160px'}} startIcon={<GoHeart />} onClick={()=>handleSaveJob()} >Save Job</Button>):''):''
@@ -294,15 +282,20 @@ const JobDetails = () => {
 
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
                     <Typography style={{ color: '#000', fontSize: '26px',fontWeight:'700'}}>About the Client</Typography>
-                    {
-                        clientDetails?.location &&(
-                            <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}><CiLocationOn /> {clientDetails?.location.country}</Typography>)
-                    }
-                    {
-                        clientReviews.average && clientReviews.total &&(
-                            <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500',marginTop:'3px'}}>{clientReviews.average} star of {clientReviews.total} reviews</Typography>
-                        )
-                    }
+                    <Typography style={{ color: '#454545', fontSize: '16px', fontWeight: '500' }}>
+                        {clientDetails?.location ? (<><CiLocationOn /> {clientDetails.location.country}</>) :
+                         (
+                            'Location : N/A'
+                          )}
+                        </Typography>
+                    
+                        <Typography style={{ color: '#454545', fontSize: '16px', fontWeight: '500', marginTop: '3px' }}>
+                        {clientReviews.average && clientReviews.total ? (
+                            `${clientReviews.average} stars from ${clientReviews.total} reviews`
+                        ) : (
+                            'No reviews available'
+                        )}
+                        </Typography>
                     <Typography style={{ color: '#000000', fontSize: '16px',fontWeight:'400',marginTop:'7px'}}>{clientDetails?.description}</Typography>
                 </Box>
 
@@ -324,8 +317,11 @@ const JobDetails = () => {
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} />
                 <Box sx={{padding:'15px 10px 15px 20px'}}>
-                    <Typography style={{ color: '#000000', fontSize: '20px',fontWeight:'500'}}>{clientDetails?.company_name}</Typography>
-                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>{clientDetails?.company_description}</Typography>
+                    <Typography style={{ color: '#000000', fontSize: '20px', fontWeight: '500' }}>
+                    {clientDetails?.company_name ? clientDetails.company_name : 'Company : N/A'}
+                    </Typography>
+
+                    <Typography style={{ color: '#454545', fontSize: '16px',fontWeight:'500'}}>{clientDetails?.company_description? clientDetails.company_description:'Description : N/A'}</Typography>
                 </Box>
                 <hr style={{color:'#000000',height:'1px'}} />
                 <Box sx={{padding:'75px 10px 15px 20px'}}>

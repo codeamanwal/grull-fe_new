@@ -22,15 +22,27 @@ import Header4 from "./Header4";
 
 const BrowseFreelancer = () => {
   const navigate = useNavigate();
-  const [expandedDescriptions, setExpandedDescriptions] = useState([]);
-  const boxRefs = useRef([]);
+  const accessToken = localStorage.getItem('accessToken');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFreelancers,setSearchFreelancers]=useState('');
   const [allFreelancers, setAllFreelancers] = useState([]);
-
+  const [postedJobs,setPostedJobs]=useState({});
+  const [selectedJobs, setSelectedJobs] = useState({});
   const sortByOptions = [
     { value: 'Newest', label: 'Newest' },
     { value: 'Cheapest', label: 'Cheapest' },
   ]
   const [sort, setSort] = useState(sortByOptions[0]);
+  const [category,setcategory]=useState('freelancers');
+  const [state, setState] = useState(false);
+  const currencyConversionRates = {
+    'INR': 1,
+    'USD': 74,
+    'CAD': 59,
+    'GBP': 103,
+    'CNY': 11,
+    'RUB': 1,
+};
 
   const [categoryExpanded, setCategoryExpanded] = useState(true);
   const toggleCategory = () => setCategoryExpanded(!categoryExpanded);
@@ -44,9 +56,85 @@ const BrowseFreelancer = () => {
   const [locationExpanded, setLocationExpanded] = useState(true);
   const toggleLocation = () => setLocationExpanded(!locationExpanded);
 
+  const [expandedDesc, setExpandedDesc] = useState({});
+  const toggleFreeDescription = (freeId) => {
+    setExpandedDesc((prev) => ({
+          ...prev,
+          [freeId]: !prev[freeId]
+      }));
+  };
+  const truncateText = (text, wordLimit) => {
+    const words = text.split(' ');
+    if (words.length > wordLimit) {
+        return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return text;
+  };
+
+  const items1 = {
+    "Graphic Designer": "GRAPHIC_DESIGNER",
+    "Illustrator": "ILLUSTRATOR",
+    "Programmer": "PROGRAMMER",
+    "Video Editor": "VIDEO_EDITOR",
+    "3D Artist": "THREE_D_ARTIST",
+    "Product Designer": "PRODUCT_DESIGNER",
+  };
+  const items2 = {
+    Beginner: "BEGINNER",
+    Intermediate: "INTERMEDIATE",
+    Advanced: "ADVANCED",
+    Expert: "EXPERT",
+  };
+
+  const items3 = {
+    India: "INDIA",
+    USA: "USA",
+    Canada: "CANADA",
+    England: "ENGLAND",
+    China: "CHINA",
+    Russia: "RUSSIA",
+  };
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categorySearchQuery, setCategorySearchQuery] = useState('');
+  const [currentpage, setCurrentpage] = useState(1);
+  
+  const [hasMore, setHasMore] = useState(false);
+  const scrollableFreelancers = useRef(null);
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return;
+    }
+
+    setState(open);
+  };
+  
+  const filteredCategories = Object.keys(items1).filter(category => category.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+
+  const handleLocationChange = (location) => {
+    setSelectedLocations((prevSelected) => {
+      if (prevSelected.includes(location)) {
+        return prevSelected.filter((loc) => loc !== location);
+      } else {
+        return [...prevSelected, location];
+      }
+    });
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategories((prevSelected) => {
+      if (prevSelected.includes(category)) {
+        return prevSelected.filter((cat) => cat !== category);
+      } else {
+        return [...prevSelected, category];
+      }
+    });
+  };
   //fetch all freelancers
-  const accessToken = localStorage.getItem('accessToken');
-  const [postedJobs,setPostedJobs]=useState({});
   useEffect(() => {
     const fetchPostedJobs = async () => {
         try {
@@ -60,7 +148,7 @@ const BrowseFreelancer = () => {
             });
 
             if (response.status === 200) {
-                console.log(response.data)
+                // console.log(response.data)
                 const transformedJobs = response.data.results.map(job => ({
                   value: job.id,
                   label: job.title
@@ -81,77 +169,85 @@ const BrowseFreelancer = () => {
     fetchPostedJobs();
 }, [accessToken]);
 
-  useEffect(() => {
-    const getFreelancers = async () => {
-      try {
-        const response = await axios.get(`${BAPI}/api/v0/freelancers`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-          },
+
+const getFreelancers = async(type) => {
+  try {
+    const param={
+      page: type === 1 ? currentpage : 1,
+      per_page: 8
+    }
+    // console.log(currentpage,param)
+    const response = await axios.get(`${BAPI}/api/v0/freelancers`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      params: param,
+    });
+    // console.log(response);
+
+    if (response.status === 200) {
+      setCurrentpage(response.data.page+1);
+      const client_id = JSON.parse(localStorage.getItem('user'))?.id;
+      const freelancers_data = response.data.results.filter(free => free.id !== client_id);
+      // console.log(freelancers_data)
+      if (type === 2) {
+        setAllFreelancers([...freelancers_data]);
+      } else {
+        setAllFreelancers(prevFree => {
+          const newFree = freelancers_data.filter(newFree => !prevFree.some(existingFree => existingFree.id === newFree.id));
+          return [...prevFree, ...newFree];
         });
-
-        if (response.status === 200) {
-          console.log('Freelancers Fetched successfully',response.data.results);
-          const client_id=JSON.parse(localStorage.getItem('user'))?.id
-          const freelancers_data=response.data.results.filter((free)=>free.id!==client_id)
-          console.log('Freelancers Fetched successfully',freelancers_data);
-          createrefs(freelancers_data);
-          setAllFreelancers(freelancers_data);          
-          // console.log(boxRefs);
-
-        } else {
-          console.error('Error fetching freelancers:', response.data.error);
-        }
-      } catch (error) {
-        console.error('Error occurred:', error);
       }
-    };
 
-    getFreelancers();
+      if (response.data.next) {
+        setHasMore(true);
+        
+      } else {
+        setHasMore(false);
+      }
+    } else {
+      console.error('Error fetching freelancers:', response.data.error);
+    }
+  } catch (error) {
+    console.error('Error occurred:', error);
+  }
+};
+
+  useEffect(() => {    
+   getFreelancers(2);
   }, [accessToken]);
 
-  useLayoutEffect(() => {
-    updaterefs();
-  }, [allFreelancers]);
-  
-
-  const createrefs = (Freelancers) => {
-    // console.log("Freelancers:", Freelancers);
-    boxRefs.current = Freelancers.map(() => React.createRef(null));
-    // console.log("Refs created:", boxRefs.current);
-  };
-  
-
-  const updaterefs = () => {
-    // console.log("Box refs:", boxRefs.current);
-    // console.log("Length of box refs array:", boxRefs.current.length);
-    setExpandedDescriptions(allFreelancers.map(()=>{return false;}));
-    boxRefs.current.forEach((ref,index) => {
-      const boxHeight = ref.clientHeight;
-      if (boxHeight > 200) {
-        console.log(index);
-        toggleExpand(index);
-      }
-    });
-  };
-
-  const toggleExpand = (index) => {
-    setExpandedDescriptions(prev => {
-      const newState = [...prev];
-      newState[index] = !newState[index];
-      return newState;
-    });
-  };
-  
-  const handleDislikeClick=()=>{
-
-  }
-
-  const handleLikeClick=()=>{
-
-  }
-  const [selectedJobs, setSelectedJobs] = useState({});
+  const loadMore=()=>{
+    if(hasMore){
+    // console.log("Current page is:", currentpage);
+     getFreelancers(1)
+    }
+ }
+ useEffect(() => {
+   const handleScroll = () => {
+     const scrollableDiv = scrollableFreelancers.current;
+     const scrollTop = scrollableDiv.scrollTop;
+     const clientHeight = scrollableDiv.clientHeight;
+     const scrollHeight = scrollableDiv.scrollHeight;
+   
+     const isAtPercent = scrollTop + clientHeight >= scrollHeight * 0.98;
+     if (isAtPercent && hasMore) {
+       loadMore();
+      //  console.log("loading")
+     }
+   };
+   
+   const scrollableDiv = scrollableFreelancers.current;
+   if (scrollableDiv) {
+     scrollableDiv.addEventListener("scroll", handleScroll);
+   }
+   return () => {
+     if (scrollableDiv) {
+       scrollableDiv.removeEventListener("scroll", handleScroll);
+     }
+   };
+ }, [currentpage]);
 
   const handleJobSelection = (freelancerId, selectedJob) => {
     setSelectedJobs(prevState => ({
@@ -160,7 +256,7 @@ const BrowseFreelancer = () => {
     }));
   };
 
-  const handleHire = async (freelancerId) => {
+  const handleHire = async(freelancerId) => {
     try {
       // Get the selected job for the freelancer
       const selectedJob = selectedJobs[freelancerId];
@@ -173,16 +269,14 @@ const BrowseFreelancer = () => {
         console.error('Corresponding job data not found');
         return;
       }
-      // Prepare the data for the API call
       const hireData = {
         freelancer_id: freelancerId,
-        job_id: selectedJob.value, // Assuming the job ID is stored in the value property
-        title: selectedJob.label, // Assuming the job title is stored in the label property
-        location: correspondingJob.location, // Replace "loc" with the actual location property name
+        job_id: selectedJob.value, 
+        title: selectedJob.label, 
+        location: correspondingJob.location, 
         company_name: correspondingJob.company_name
       };
   
-      // Make the API call
       const response = await axios.post(`${BAPI}/api/v0/jobs/hire-freelancer`, hireData, {
         headers: {
           'Content-Type': 'application/json',
@@ -191,43 +285,58 @@ const BrowseFreelancer = () => {
       });
   
       if (response.status === 200) {
-        console.log(response.data)
+        // console.log(response.data)
         alert('Sent Job request to Freelancer successfully');
-        // Handle success as needed
+        setSelectedJobs(prevState => ({
+          ...prevState,
+          [freelancerId]: null
+        }));
       } else {
         console.error('Error hiring freelancer:', response.data.error);
-        // Handle error as needed
       }
     } catch (error) {
       console.error('Error occurred while hiring freelancer:', error);
-      // Handle error as needed
     }
   };
-  
 
-  const [category,setcategory]=useState('freelancers');
-  const [state, setState] = useState(false);
+  const handleSearch=()=>{
+    setSearchFreelancers(searchQuery)
+  }
 
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event &&
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
-    ) {
-      return;
+  const filteredFreelancers = allFreelancers
+  .filter((freelancer) => {
+    if (searchFreelancers && !(freelancer.full_name.toLowerCase().includes(searchFreelancers.toLowerCase()) || freelancer.description.toLowerCase().includes(searchFreelancers.toLowerCase()))) {
+      return false;
+    }
+    if (selectedLocations.length > 0 && (!freelancer.location || !freelancer.location.country || !selectedLocations.includes(freelancer.location.country))) {
+      return false;
     }
 
-    setState(open);
-  };
+    // Filter by selected categories
+    if (selectedCategories.length > 0 && (!freelancer.role || !selectedCategories.includes(freelancer.role))) {
+      return false;
+    }
+    return true;
+  })
+  .sort((a, b) => {
+    if (sort.value === 'Newest') {
+      return new Date(b.created_at) - new Date(a.created_at);
+    }
+    if (sort.value === 'Cheapest') {
+      const rateA = a.rate_per_hour;
+      const rateB = b.rate_per_hour;
+      return rateA - rateB; 
+    }
+    return 0;
+  });
 
 
   return (
     <div>
-      {/* div 1 for header */}
+      {/* section 1 for header */}
       <Header4 />
 
-
-      {/* div 2 for box and browse, search bar */}
+      {/* section 2 for box and browse, search bar */}
       {/* <div className='rectangle'></div> */}
       <div className='search-bar'>
       <h1 style={{ color: 'white'}}>Browse</h1>
@@ -235,6 +344,8 @@ const BrowseFreelancer = () => {
         <Box sx={{display:'flex',flexDirection:{md:'row',xs:'column'},gap:{md:'20px',xs:'7px'},width:'100%'}}>
         <div style={{ position: 'relative',flex:1 }}>
           <input
+          value={searchQuery}
+          onChange={(e)=>setSearchQuery(e.target.value)}
             type="text"
             placeholder=" Search for Freelancers"
             style={{
@@ -255,18 +366,18 @@ const BrowseFreelancer = () => {
                 <Button style={{
                   backgroundColor: '#B27EE3', color: 'white', border: 'none', borderRadius: '16px',
                   fontSize: '16px',padding:'7px 22px'
-              }}>Search</Button>
-        <Button style={{
+              }} onClick={handleSearch}>Search</Button>
+        {/* <Button style={{
               border: 'none', backgroundColor: 'transparent', color: 'white',
               cursor: 'pointer', fontSize: '16px',outline:'none',float:'right'
-            }} sx={{display:{md:'none',xs:'block'}}}>   Show Advanced Options</Button>
+            }} sx={{display:{md:'none',xs:'block'}}}>   Show Advanced Options</Button> */}
               </div>
               </Box>
               <Box sx={{display:{md:'block',xs:'none'}}}>
-            <Button style={{
+            {/* <Button style={{
               border: 'none', backgroundColor: 'transparent', color: 'white',
               cursor: 'pointer', fontSize: '16px',outline:'none',float:'right'
-            }}>   Show Advanced Options</Button>
+            }}>   Show Advanced Options</Button> */}
           </Box>
         </div>
 
@@ -302,9 +413,184 @@ const BrowseFreelancer = () => {
         </Form>
       </div>
 
+      {/* section 3 - responsive drawer for filters  */}
+      <SwipeableDrawer
+            anchor='top'
+            open={state}
+            onClose={toggleDrawer(false)}
+            onOpen={toggleDrawer(true)}
+          >
+            <Box sx={{minHeight:'100vh',display:'flex',flexDirection:'column',gap:'20px',padding:'20px 30px'}}>
+               <Box sx={{textAlign:'end'}}>
+               <VscChromeClose style={{fontSize:'35px',cursor:'pointer'}} onClick={toggleDrawer(false)}/>
+               </Box>
+               <Box >
+               <div className='browseJobs-left-box blb'>
+          <div className='category' style={{ marginBottom: '40px' }}>
+           <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between'}} onClick={toggleCategory} >
+              Category
+              <div>{
+              categoryExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
+              }</div>
+            </Box>
+            
+
+            {categoryExpanded && (
+              <div style={{ marginLeft: '10px',marginRight:'10px' }}>
+                <div style={{ position: 'relative',marginBottom:'15px',marginTop:'10px'}}>
+                  <input
+                    type="text"
+                    placeholder=" Search categories"
+                    style={{
+                     borderRadius: '16px', boxShadow: '0px 0px 4px 0px #00000040',
+                      width:'100%',
+                      padding:'10px 0px 10px 35px',
+                      border:'none',outline:'none'
+                    }}
+                  />
+                  <FontAwesomeIcon icon={faSearch} style={{
+                    position: 'absolute', left: '10px', top: '10px',
+                    color: '#00000080',
+                  }} />
+                </div>
+
+                {
+                    Object.keys(items1).map((item,index)=>(
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                      <label style={{color:'#000'}}>
+                          <input type="checkbox" onChange={() => handleCategoryChange(items1[item])} style={{marginRight:'7px',cursor:'pointer'}}/>
+                          {item}
+                      </label>
+                    </div>
+                    ))
+                  }
+              </div>
+            )}
+          </div>
+
+          <div className='experience-level' style={{ marginBottom: '40px' }}>
+          <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleExperience} >
+          Experience Level
+              <div>{
+              experienceExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
+              }</div>
+            </Box>
+
+            {experienceExpanded && (
+              <div style={{ marginLeft: '10px' }}>
+                 {
+                    Object.keys(items2).map((item,index)=>(
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                      <label style={{color:'#000'}}>
+                          <input type="checkbox"  style={{marginRight:'7px',cursor:'pointer'}}/>
+                          {item}
+                      </label>
+                    </div>
+                    ))
+                  }
+              </div>
+            )}
+          </div>
+
+          <div className='job-type' style={{ marginBottom: '40px' }}>
+              <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleJob} >
+              Job Type
+              <div>{
+              jobExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
+              }</div>
+            </Box>
+            {jobExpanded && (
+              <div>
+                <div style={{ marginLeft: '10px', marginBottom: '20px' }}>
+                  <label>
+                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
+                    Hourly
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', marginLeft: '30px', marginBottom: '10px',marginTop:'10px' }}>
+                    <label style={{ marginRight: '10px' }}>
+                      <input type="checkbox" />
+                    </label>
+                    <label style={{ marginRight: '10px' }}>
+                      <input type="text" placeholder="$ min" style={{ width: '45px',padding:'0 4px' }} />
+                      <span style={{ color: '#808080' }}>/hr</span>
+                    </label>
+                    <label style={{ marginRight: '10px' }}>
+                      <input type="text" placeholder="$ max" style={{ width: '45px',padding:'0 2px' }} />
+                      <span style={{ color: '#808080' }}>/hr</span>
+                    </label>
+                  </div>
+                </div>
+                <div style={{ marginLeft: '10px' }}>
+                  <label>
+                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
+                    Fixed-Price
+                  </label>
+                  <div style={{ marginLeft: '30px', marginTop: '10px' }}>
+                    <div style={{ marginBottom: '10px', fontSize: '14px' }}>
+                      <label>
+                        <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
+                        Less than $100
+                      </label>
+                    </div>
+                    <div style={{ marginBottom: '10px', fontSize: '14px' }}>
+                      <label>
+                        <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
+                        $100 to $500
+                      </label>
+                    </div>
+                    <div style={{ marginBottom: '10px', fontSize: '14px' }}>
+                      <label>
+                        <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
+                        $500 to $1k
+                      </label>
+                    </div>
+                    <div style={{ marginBottom: '10px', fontSize: '14px' }}>
+                      <label>
+                        <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
+                        $1k to $5k
+                      </label>
+                    </div>
+                    <div style={{ marginBottom: '10px', fontSize: '14px' }}>
+                      <label>
+                        <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
+                        $5k +
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className='location' style={{ marginBottom: '40px' }}>
+              <Box style={{ cursor: 'pointer',fontSize:'24px',fontWeight:'700',color:'#000',width:'100%',display:'flex',flexDirection:'row',justifyContent:'space-between',marginBottom:'10px'}} onClick={toggleLocation} >
+              Location
+              <div>{
+              locationExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />
+              }</div>
+            </Box>
+            {locationExpanded && (
+              <div style={{ marginLeft: '10px' }}>
+                {
+                    Object.keys(items3).map((item,index)=>(
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                      <label style={{color:'#000'}}>
+                          <input type="checkbox" onChange={() => handleLocationChange(items3[item])} style={{marginRight:'7px',cursor:'pointer'}}/>
+                          {item}
+                      </label>
+                    </div>
+                    ))
+                  }
+              </div>
+            )}
+          </div>
+        </div>
+               </Box>
+            </Box>
+     </SwipeableDrawer>
 
 
-      {/* div 3  */}
+      {/* div 4  */}
       <div style={{ marginBottom: '50px', display: 'flex',marginTop:'30px'}} className='browseFreelancers'>
         {/* left box  */}
         <div className='browseFreelancers-left-box'>
@@ -320,6 +606,8 @@ const BrowseFreelancer = () => {
               <div style={{ marginLeft: '10px',marginRight:'10px' }}>
               <div style={{ position: 'relative',marginBottom:'15px',marginTop:'10px'}}>
                 <input
+                 value={categorySearchQuery}
+                 onChange={(e) => setCategorySearchQuery(e.target.value)}
                   type="text"
                   placeholder="Search categories"
                   style={{
@@ -335,42 +623,16 @@ const BrowseFreelancer = () => {
                 }} />
               </div>
 
-                <div style={{ marginBottom: '10px' }}>
-                <label style={{color:'#000'}}>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Graphic Designer
-                </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{color:'#000'}}>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Illustrator
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{color:'#000'}}>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Programmer
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{color:'#000'}}>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Video Editor
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{color:'#000'}}>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    3D Artist
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{color:'#000'}}>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Product Designer
-                  </label>
-                </div>
+              {
+                   filteredCategories.map((item,index)=>(
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                      <label style={{color:'#000'}}>
+                          <input type="checkbox" onChange={() => handleCategoryChange(items1[item])} style={{marginRight:'7px',cursor:'pointer'}}/>
+                          {item}
+                      </label>
+                    </div>
+                    ))
+                  }
               </div>
             )}
           </div>
@@ -384,30 +646,16 @@ const BrowseFreelancer = () => {
               </Box>
             {experienceExpanded && (
               <div style={{ marginLeft: '10px' }}>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    Beginner
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Intermediate
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Advanced
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}}/>
-                    Expert
-                  </label>
-                </div>
+               {
+                    Object.keys(items2).map((item,index)=>(
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                      <label style={{color:'#000'}}>
+                          <input type="checkbox"  style={{marginRight:'7px',cursor:'pointer'}}/>
+                          {item}
+                      </label>
+                    </div>
+                    ))
+                  }
               </div>
             )}
           </div>
@@ -491,49 +739,23 @@ const BrowseFreelancer = () => {
             </Box>
             {locationExpanded && (
               <div style={{ marginLeft: '10px' }}>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    India
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    USA
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    Canada
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    England
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    China
-                  </label>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                  <label>
-                    <input type="checkbox" style={{marginRight:'7px',cursor:'pointer'}} />
-                    Russia
-                  </label>
-                </div>
+                {
+                    Object.keys(items3).map((item,index)=>(
+                      <div key={index} style={{ marginBottom: '10px' }}>
+                      <label style={{color:'#000'}}>
+                          <input type="checkbox" onChange={() => handleLocationChange(items3[item])} style={{marginRight:'7px',cursor:'pointer'}}/>
+                          {item}
+                      </label>
+                    </div>
+                    ))
+                  }
               </div>
             )}
           </div>
         </div>
         {/* right box  */}
-        <div className='browseFreelancers-right-box'>
-          {allFreelancers?.map((freelancer,indx) => (
+        <div className='browseFreelancers-right-box'  ref={scrollableFreelancers}>
+          {filteredFreelancers?.map((freelancer,indx) => (
             <Box key={indx} >
                 <Box sx={{padding:{sm:'30px',xs:'18px 16px'}}}>
                   <Box style={{ display: 'flex',flexDirection:'column'}}>
@@ -543,7 +765,7 @@ const BrowseFreelancer = () => {
                                             className='user-picture-img'
                                             alt={freelancer.first_name}
                                             src={freelancer.photo_url}
-                                            style={{ borderRadius:'16px'}}
+                                            style={{ borderRadius:'16px',border:'none'}}
                                         />
                                     ) : (
                                       <Avatar variant="square" sx={{textTransform:'uppercase',width:{sm:'200px',xs:'120px'},height:{sm:'200px',xs:'120px'},borderRadius:'16px'}}>
@@ -552,12 +774,12 @@ const BrowseFreelancer = () => {
                                       </Avatar>
                                       
                                     )}
-                      <Box style={{ display: 'flex',flexDirection:'column',gap:'5px',width:'100%',height:'auto'}} ref={ref => boxRefs.current[indx] = ref} key={indx*indx} >
+                      <Box style={{ display: 'flex',flexDirection:'column',gap:'5px',width:'100%',height:'auto'}} key={indx*indx} >
                           <Box style={{ display: 'flex',flexDirection:'row',justifyContent:'space-between'}}>
                                <Box style={{ display: 'flex',flexDirection:'column'}}>
                                    <Typography sx={{fontWeight:'700',fontSize:{sm:'28px',xs:'22px'}}}>{freelancer.full_name}</Typography>
-                                   <Typography sx={{fontWeight:'600',fontSize:{sm:'17px',xs:'15px'}}}>{freelancer.role}</Typography>
-                                   <Typography sx={{fontWeight:'600',fontSize:{sm:'17px',xs:'15px'}}}>${freelancer.rate_per_hour}/hr</Typography>
+                                   <Typography sx={{fontWeight:'500',fontSize:{sm:'17px',xs:'15px'}}}>{freelancer.role}</Typography>
+                                   <Typography sx={{fontWeight:'500',fontSize:{sm:'17px',xs:'15px'}}}>${freelancer.rate_per_hour}/hr</Typography>
                                </Box>
                                <Box style={{ display: 'flex',flexDirection:'row',gap:'10px'}}>
                                {/* <img
@@ -576,13 +798,13 @@ const BrowseFreelancer = () => {
                           </Box>
                           <Box>
                           <Typography sx={{ fontWeight: '500', fontSize: { sm: '17px', xs: '15px' }, color: '#454545' }}>
-                              {expandedDescriptions[indx]? 
-                                (freelancer?.description.substring(0, 350) + '...'):freelancer?.description}
-                              {boxRefs.current[indx] && boxRefs.current[indx].clientHeight > 200 && (
-                                <Button onClick={() => toggleExpand(indx)} sx={{padding:'0px',color:'#B27EE3',width:'fit-content'}}>
-                                  {!expandedDescriptions[indx] ? 'less' : 'more'}
-                                </Button>
-                              )}
+                                   {expandedDesc[freelancer.id] ? freelancer.description : truncateText(freelancer.description, 40)}
+                                    {!expandedDesc[freelancer.id] && freelancer.description.split(' ').length > 40 && (
+                                        <Button onClick={() => toggleFreeDescription(freelancer.id)} sx={{ padding: 0, textTransform: 'none', color: '#B27EE3', fontSize: '14px' }}>Read More</Button>
+                                    )}
+                                    {expandedDesc[freelancer.id] && (
+                                        <Button onClick={() => toggleFreeDescription(freelancer.id)} sx={{ padding: 0, textTransform: 'none', color: '#B27EE3', fontSize: '14px' }}>Read Less</Button>
+                                    )}
                             </Typography>
                           </Box>
                       </Box>
@@ -597,11 +819,14 @@ const BrowseFreelancer = () => {
                     </Box>
                     <Box sx={{marginTop:'15px',display:'flex',flexDirection:'row',gap:'20px',flexWrap:'wrap'}}>
                     <Select
-                             options={postedJobs.postedJobsOpts} placeholder="Select" name="Job_Category"
-                              onChange={(selectedOption) => handleJobSelection(freelancer.id, selectedOption)}
-                                className='form-val-two_brfre'
-                                styles={{ control: (provided) => ({ ...provided, border:'none',cursor:'pointer' }) }}
-                            />
+                        options={postedJobs.postedJobsOpts}
+                        placeholder="Select"
+                        name="Job_Category"
+                        value={setSelectedJobs[freelancer.id]}
+                        onChange={(selectedOption) => handleJobSelection(freelancer.id, selectedOption)}
+                        className='form-val-two_brfre'
+                        styles={{ control: (provided) => ({ ...provided, border:'none', cursor:'pointer' }) }}
+                      />
                       <Button onClick={()=>{handleHire(freelancer.id)}} sx={{color: 'white',backgroundColor: '#B27EE3',borderRadius: '16px',padding:'6px 40px',fontSize:'16px',':hover':{color: 'white',backgroundColor: '#B27EE3'}}}>Hire</Button>
                     </Box>
                   </Box>

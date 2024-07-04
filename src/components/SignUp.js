@@ -39,12 +39,13 @@ const SignUp = () => {
         try {
     
             const registrationData = {
-                email: data.email,
-                password: data.localId,
-                first_name: data.firstName,
-                last_name: data.lastName,
-                list_as_freelancer: userType === 'freelancer'
+                email: data.email || '',
+                password: data.localId || '',
+                first_name: data.firstName || '',
+                last_name: data.lastName || '',
+                list_as_freelancer: userType === 'freelancer' ? true : false
             };
+            
              console.log(registrationData);
             const response = await fetch(`${BAPI}/api/v0/auth/register`, {
                 method: 'POST',

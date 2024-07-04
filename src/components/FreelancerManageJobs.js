@@ -48,7 +48,8 @@ const ManageJobs = () => {
           //   const newApplications = response.data.results.filter(newApp => !prevApplications.some(existingApp => existingApp.id === newApp.id));
           //   return [...prevApplications, ...newApplications];
           // });
-          setApplications(response.data.results)
+          setApplications(response.data.results);
+          console.log("applications: ",response.data.results)
           // console.log(response.data.results)
           // if (response.data.next) {
           //   await getApplications(page + 1);
@@ -65,6 +66,7 @@ const ManageJobs = () => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       const jobDetails = await getJobDetails(applications);
+      console.log("job details: ",jobDetails)
       setJobs(jobDetails);
     };
 
@@ -127,6 +129,7 @@ const ManageJobs = () => {
         }
       }
     }
+    console.log("up: ",updatedSavedJobs)
     setSavedJobs(updatedSavedJobs);
   };
   
@@ -154,7 +157,7 @@ const ManageJobs = () => {
             const jobDetails = jobDetailsResponse.data;
             console.log(jobDetails)
             if (!jobDetails.employee) {
-              ReqJob.status = 'HIRED';
+              ReqJob.status = 'SAVED';
             } else {
               ReqJob.status = 'CLOSED';
             }
@@ -165,7 +168,7 @@ const ManageJobs = () => {
         }
       }
     }
-    console.log("up: ",updatedReqJobs)
+    console.log("requested: ",updatedReqJobs)
     setRequestJobs(updatedReqJobs);
   };
   useEffect(() => {
@@ -185,7 +188,7 @@ const ManageJobs = () => {
         if (response.status === 200) {
           // await handleSavedjobs(response.data)
           // setRequestJobs(response.data)
-          console.log(response.data)
+          // console.log(response.data)
           await handleRequestedjobs(response.data)
         }
       } catch (error) {
@@ -392,7 +395,7 @@ const ManageJobs = () => {
                           startDate={job.created_at}
                           isLast={index === savedJobs.length - 1}
                           status="SAVED"
-                          status_saved="SAVED"
+                          status_saved={job.status}
                           job_id={job.job_id}
                           total_deliverables={0}
                           completed_deliverables={0}

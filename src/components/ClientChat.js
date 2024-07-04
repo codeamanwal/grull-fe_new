@@ -20,6 +20,7 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import { DatePicker} from 'antd';
 import BAPI from '../helper/variable'
 // import {Cloudinary} from "@cloudinary/url-gen";
+import moment from 'moment';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import io from 'socket.io-client';
@@ -55,6 +56,7 @@ export default function Clientchat() {
   const [editmessageId,setEditmessageId]=useState('');
   let countDeliverable = 0;
   let submittedacceptDeliverables=0;
+  let priceAcceptId=null;
   const [receivedMessage, setReceivedMessage] = useState(true);
   const [connected, setConnected] = useState(false);
   const [clientId, setClientId] = useState(
@@ -83,6 +85,10 @@ export default function Clientchat() {
     }
     if (container2.current && !container2.current.contains(e.target) && !e.target.closest('.ant-picker-dropdown')) {
         setDeliverableInputOpen(false);
+        setSelectedDate('');
+        if(document.getElementsByClassName('ant-picker-clear') && document.getElementsByClassName('ant-picker-clear')[0]){
+            document.getElementsByClassName('ant-picker-clear')[0].click();}
+        setDeliverableValue('');
     }
 };
 // attaches an eventListener to listen when componentDidMount
@@ -171,7 +177,6 @@ const handleCancel=async(messageId)=>{
     }
     sendMessageSocket()
   }
-
    
   useEffect(()=>{
     const getChats=async()=>{
@@ -181,7 +186,14 @@ const handleCancel=async(messageId)=>{
                 Authorization:`Bearer ${accessToken}`
             }
            });
-          setFreelancers(response.data);
+
+           const sortedFreelancers = response.data.sort((a, b) => {
+            const dateA = new Date(JSON.parse(a).created_at);
+            const dateB = new Date(JSON.parse(b).created_at);
+            return dateB - dateA; 
+        });
+
+          setFreelancers(sortedFreelancers);
         }
         catch(err){
             console.log("Error while fetching chat : ", err)
@@ -204,6 +216,8 @@ const handleCancel=async(messageId)=>{
   const handleCloseDeliverableInput = () => {
     setDeliverableInputOpen(false);
     setSelectedDate('');
+if(document.getElementsByClassName('ant-picker-clear') && document.getElementsByClassName('ant-picker-clear')[0]){
+    document.getElementsByClassName('ant-picker-clear')[0].click();}
     setDeliverableValue('');
   };
 
@@ -231,6 +245,11 @@ const handleCancel=async(messageId)=>{
   };
 
   const handleSendDeliverable = async() => {
+    if(!priceAcceptId){
+        toast.error('Price should be fixed first');
+        handleCloseDeliverableInput();
+        return;
+    }
     if (deliverableValue.trim() !== '' && selectedDate) {
       const newDeliverableMessage = {message: deliverableValue, sent_by: selectedChatInfo.manager_id, chat_id:selectedChatInfo.id ,status:'DELIVERABLES',deadline:selectedDate};
       try{
@@ -260,7 +279,6 @@ const handleCancel=async(messageId)=>{
     setEditmessageId(message.id);
   }
 
-  
 const createnotification=async(title, content)=>{
     const notification={
         "title": title,
@@ -279,7 +297,6 @@ const createnotification=async(title, content)=>{
          console.log("Error while creating notification : ", err)
      }
   }
-
 
     const handleNegotiate=async(messaegId)=>{
         try{
@@ -317,6 +334,7 @@ const createnotification=async(title, content)=>{
         }
         sendMessageSocket()
     }
+
     const handleAcceptSubmission = async(messageId)=>{
         try{
             const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
@@ -334,6 +352,7 @@ const createnotification=async(title, content)=>{
         }
         sendMessageSocket()
     }
+
     const handleRejectSubmission = async(messageId)=>{
         try{
             const negres = await axios.post(`${BAPI}/api/v0/chats/update-message-status`,{
@@ -351,7 +370,6 @@ const createnotification=async(title, content)=>{
         }
         sendMessageSocket()
     }
-
 
     useEffect(()=>{ 
         const uploadImage = async () => {
@@ -708,7 +726,7 @@ useEffect(() => {
                                         </Box>
                                     </Box>
                                     <Box sx={{minWidth:'50px'}}>
-                                       <Typography sx={{color:'#74767E',fontSize:'14px'}}>Nov 9</Typography>
+                                       <Typography sx={{color:'#74767E',fontSize:'13px'}}>{handleConvertDate(JSON.parse(chat)?.created_at)}</Typography>
                                     </Box>
                                 </Box>
                                 <Divider/>
@@ -773,7 +791,7 @@ useEffect(() => {
                         </Box>
                         <div className='chat-container_client_Name'>
                             <h3>{freelancername}</h3>
-                            <p>{freelancerlocation}</p>
+                            <p>{freelancerlocation?freelancerlocation:"Location : N/A"}</p>
                         </div>
                     </div>
                     <Divider />
@@ -788,6 +806,9 @@ useEffect(() => {
                                 }
                                 if (message.status === 'DELIVERABLE_IMAGE_ACCEPTED') {
                                     submittedacceptDeliverables++;
+                                }
+                                if(message.status === 'NEGOTIATION_ACCEPTED'){
+                                    priceAcceptId=message.id;
                                 }
                                 const convertedDate=handleConvertDate(message.created_at);
                              return (
@@ -930,7 +951,7 @@ useEffect(() => {
                                                     maxWidth: '100%',
                                                     color: message.status!=='NEGOTIATION_REJECTED'?'#ffffff':'#000000',
                                                     padding:'10px 15px 10px 15px',
-                                                    minWidth:{md:'130px'},
+                                                    minWidth:{md:'120px'},
                                                     backgroundColor:message.status!=='NEGOTIATION_REJECTED'?'#ED8335':'#EAEAEA',
                                                     borderRadius:'16px',
                                                     display:'flex',flexDirection:'column',gap:'0px'
@@ -984,7 +1005,7 @@ useEffect(() => {
                                             </Box>
                                             {
                                                message.status==='DELIVERABLES'?
-                                               (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'center'}}>
+                                               (<Box sx={{display: 'flex',width:'100%',flexDirection:'row',gap:'10px',justifyContent:'right'}}>
                                                <Button sx={{backgroundColor:'#B27EE3',color:'#fff',padding:'7px 20px',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#B27EE3',color:'#fff'}}} onClick={()=>{handleCancel(message.id)}}>Cancel</Button>
                                                <Button sx={{backgroundColor:'#fff',color:'#B27EE3',padding:'7px 20px',border:'1px solid #B27EE3',fontSize:'14px',borderRadius:'16px',':hover':{backgroundColor:'#fff',color:'#B27EE3'}}} onClick={()=>{handleEditDeliverable(message)}}>Edit</Button>
                                            </Box>):null
@@ -1021,6 +1042,22 @@ useEffect(() => {
                                            margin:{md:'5px 0',sm:'2px 0',xs:'0'}
                                         }}>
                                          <Typography sx={{color:'#454545',fontWeight:'700',fontSize:{md:'18px',sm:'15px',xs:'13px'}}}>Congrats your project has been started</Typography>
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    message.status==="NEGOTIATION_REJECTED" && (
+                                        <Box 
+                                        sx={{
+                                        display:'flex',
+                                        flexDirection:'row',
+                                        justifyContent:'center',
+                                        gap:'10px',
+                                        alignItems:'center',
+                                        width:'100%',
+                                        margin:{md:'5px 0',sm:'2px 0',xs:'0'}
+                                        }}>
+                                        <Typography sx={{color:'#454545',fontWeight:'700',fontSize:{md:'18px',sm:'15px',xs:'13px'}}}>Price was negotiated by the client</Typography>
                                         </Box>
                                     )
                                 }
@@ -1248,13 +1285,17 @@ useEffect(() => {
                                             </Box>
                                             <Box sx={{width:'100%',display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}}>
                                                 <input 
+                                                placeholder='Deliverable'
                                                     autoFocus
                                                     type="text"
                                                     value={deliverableValue}
                                                     onChange={(e)=>setDeliverableValue(e.target.value)}
                                                     style={{border:'none',outline:'none',boxShadow:'0px 0px 4px 1px #00000040',borderRadius:'8px',padding:'5px 10px',width:'200px'}}
                                                 />
-                                                <DatePicker onChange={handleDateChange} defaultPickerValue={dateval}
+                                                <DatePicker
+                                                id="custom-datapicker"
+                                                // value={selectedDate!=='' ? moment(selectedDate, "DD-MM-YYYY") : ''}
+                                                onChange={handleDateChange}
                                                  style={{width:'100%'}} format="DD-MM-YYYY"/>
                                                 <Box sx={{
                                                     backgroundColor:'#B27EE3',
